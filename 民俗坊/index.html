@@ -1,0 +1,544 @@
+<html>
+
+<head>
+	<title>泉州民俗数字平台</title>
+	<style>
+		* {
+    margin: 0;
+    padding: 0;
+}
+
+/* 标题样式 */
+.subtitle-title {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5rem;
+    /* margin-bottom: 60px; */
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.subtitle-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: #e74c3c;
+    border-radius: 2px;
+}
+
+
+/* Header CSS */
+a {
+    text-decoration: none;
+}
+
+ul,
+li {
+    list-style: none;
+}
+
+.w {
+    width: 1300px;
+    margin: 0 auto;
+    max-width: 1300px;
+    min-width: 1300px;
+    overflow: hidden;
+}
+
+.site-header {
+    background: #ecf0f161;
+    border-bottom: 3px solid #c0392b;
+}
+
+.top-banner {
+    position: relative;
+    height: 120px;
+    background: linear-gradient(45deg, #d7a07b, #c0392b);
+}
+
+.banner-pattern {
+    position: absolute;
+    width: 100%;
+    opacity: 0.3;
+    width: 130px;
+}
+
+.site-title {
+    position: relative;
+    color: #fff;
+    font-family: '仿宋', cursive;
+    font-size: 2.5em;
+    text-align: center;
+    padding-top: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.main-nav {
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-nav ul li {
+    float: left;
+    margin-left: 50px;
+}
+
+.main-nav a {
+    color: #2c3e50;
+    font-size: 1.1em;
+    transition: color 0.3s;
+}
+
+.main-nav a:hover {
+    color: #c0392b;
+    border-bottom: #e74c3c 1px solid;
+}
+
+.search-box {
+    float: right;
+}
+
+.search-box input {
+    padding: 8px 12px;
+    border: 1px solid #c0392b;
+    border-radius: 20px 0 0 20px;
+}
+
+.search-box button {
+    background: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 0 20px 20px 0;
+    height: 43px;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 66px;
+    margin-left: -2px;
+}
+
+.subtitle-title {
+    color: #320f0f;
+    font-family: '仿宋', cursive;
+    font-size: 42px;
+    text-align: center;
+    text-shadow: 2px 2px 4px #dc42429c;
+}
+
+/*浮动相关布局 start*/
+
+#float_container {
+    overflow: hidden;
+    /* 清除浮动影响 */
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.float-item {
+    float: left;
+    /* 左浮动 */
+    width: 360px;
+    /* 每个元素占据宽度 */
+    margin: 20px;
+    /* 元素之间的间距 */
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.float-last-item {
+    margin-right: 0;
+}
+
+.float-item:hover {
+    transform: scale(1.1);
+    /* 放大效果 */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.float-item img {
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.float-item img:hover {
+    transform: scale(1.05);
+    /* 图片放大效果 */
+}
+
+.float-item h3 {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.float-item p {
+    font-size: 0.9em;
+    color: #666;
+    text-indent: 2em;
+}
+
+/*浮动相关布局 end*/
+
+/* position相关布局 start */
+
+#position_container {
+    position: relative;
+    height: 500px;
+    border-radius: 25px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.cultural-item {
+    position: absolute;
+    width: 300px;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.cultural-item:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+
+.item-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-bottom: 4px solid #eee;
+}
+
+.item-content {
+    padding: 10px;
+    text-align: center;
+}
+
+.item-title {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.item-desc {
+    font-size: 1rem;
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 具体定位 */
+#minnanhua {
+    top: 15%;
+    left: 8%;
+    transform: rotate(-3deg);
+}
+
+#nanyin {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(2deg);
+    width: 360px;
+}
+
+#gaojiaxi {
+    top: 18%;
+    right: 5%;
+    transform: rotate(4deg);
+}
+
+#minnanhua .item-title {
+    color: #c0392b;
+}
+
+#nanyin .item-title {
+    color: #2980b9;
+}
+
+#gaojiaxi .item-title {
+    color: #27ae60;
+}
+
+/* position相关布局 end */
+
+/* flex相关布局 start*/
+#flex_food {
+    min-width: 1300px
+}
+
+#flex_container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 18px;
+    padding: 20px;
+    /* background-color: #fdf5e6; */
+    /* 文化柔和背景色 */
+}
+
+.food-card {
+    width: 253px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    /* 保证图片不会超出圆角 */
+    cursor: pointer;
+}
+
+.food-card:hover {
+    transform: scale(1.1);
+    /* 放大效果 */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.food-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.food-card img:hover {
+    transform: scale(1.05);
+    /* 图片放大效果 */
+}
+
+.food-card h3 {
+    margin: 10px 0 5px;
+    color: #b22222;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+    transition: color 0.3s ease;
+}
+
+.food-card:hover h3 {
+    color: #ff6347;
+    /* Hover时字体颜色变化 */
+}
+
+.food-card p {
+    font-size: 14px;
+    color: #555;
+    font-family: 'Georgia', serif;
+    opacity: 0.8;
+}
+
+/* flex相关布局 end */
+
+/* Footer CSS */
+.site-footer {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 2rem 5%;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    border-bottom: 1px solid #34495e;
+    padding-bottom: 2rem;
+}
+
+.footer-section h4 {
+    color: #c0392b;
+    font-family: '仿宋', serif;
+    border-left: 3px solid #c0392b;
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-icon {
+    width: 80px;
+    opacity: 0.8;
+    margin: 1rem 0;
+}
+
+.social-media {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+
+.social-media a {
+    color: #bdc3c7;
+    transition: color 0.3s;
+}
+
+.social-media a:hover {
+    color: #c0392b;
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 1.5rem;
+    font-size: 0.9em;
+    color: #bdc3c7;
+}
+	</style>
+</head>
+
+<body class="site-header">
+	<div class="top-banner">
+		<img src="images/chuantong.png" alt="传统纹样装饰" class="banner-pattern">
+		<h1 class="site-title">泉州民俗坊</h1>
+	</div>
+
+	<nav class="main-nav w">
+		<ul>
+			<li><a href="#">首页</a></li>
+			<li><a href="#">民俗文化</a></li>
+			<li><a href="#">节庆活动</a></li>
+			<li><a href="#">手工艺坊</a></li>
+			<li><a href="#"><i class="fas fa-landmark"></i>关于我们</a></li>
+		</ul>
+		<div class="search-box">
+			<input type="text" placeholder="搜索民俗..."><button><i class="fas fa-search">搜索</i></button>
+		</div>
+	</nav>
+
+	<div id="float_container" class="w">
+		<h3 class="subtitle-title">节庆文化</h3>
+		<div class="float-item">
+			<img src="images/tixianmuou.jpg" alt="提线木偶">
+			<h3>提线木偶</h3>
+			<p>提线木偶是泉州传统民间艺术的瑰宝，以其精巧的操控技艺和生动的艺术表现力著称。</p>
+		</div>
+		<div class="float-item">
+			<img src="images/houdinggong.jpg" alt="火鼎公火鼎婆">
+			<h3>火鼎公火鼎婆</h3>
+			<p>火鼎公火鼎婆是闽南地区独特的民俗舞蹈，常在节庆活动中表演，寓意吉祥如意。</p>
+		</div>
+		<div class="float-item float-right-item">
+			<img src="images/paixiongwu.jpg" alt="拍胸舞">
+			<h3>拍胸舞</h3>
+			<p>拍胸舞是一种富有节奏感的传统舞蹈，通过拍打身体表达欢快情绪，展现闽南人民的热情与活力。</p>
+		</div>
+	</div>
+
+	<div id="position_sound" class="w">
+		<h3 class="subtitle-title">泉州民俗之声</h3>
+		<div id="position_container">
+			<div class="cultural-item" id="minnanhua">
+				<img src="images/mianxianhu.jpg" class="item-img" alt="闽南话">
+				<div class="item-content">
+					<div class="item-title">闽南话</div>
+					<p class="item-desc">古汉语活化石<br>唐宋官话的现存代表</p>
+				</div>
+			</div>
+
+			<div class="cultural-item" id="nanyin">
+				<img src="images/nanyin.png" class="item-img" alt="南音">
+				<div class="item-content">
+					<div class="item-title">南音</div>
+					<p class="item-desc">华夏正音<br>联合国非遗代表作</p>
+				</div>
+			</div>
+
+			<div class="cultural-item" id="gaojiaxi">
+				<img src="images/gaojiaxi.png" class="item-img" alt="高甲戏">
+				<div class="item-content">
+					<div class="item-title">高甲戏</div>
+					<p class="item-desc">闽南戏曲明珠<br>源自明末的民间戏剧</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div id="flex_food" class="w">
+		<h3 class="subtitle-title">特色美食</h3>
+		<div id="flex_container" class="w">
+			<div class="food-card">
+				<img src="images/rouzong.jpg" alt="肉粽">
+				<h3>肉粽</h3>
+				<p>山珍海味交融其中，是泉州人舌尖上的乡愁。</p>
+			</div>
+			<div class="food-card">
+				<img src="images/runbing.jpg" alt="润饼皮">
+				<h3>润饼皮</h3>
+				<p>思乡的味道，闽南传统节令不可缺。</p>
+			</div>
+			<div class="food-card">
+				<img src="images/shihuagao.jpg" alt="石花膏">
+				<h3>石花膏</h3>
+				<p>原汁原味的天然冷饮，爽滑又富嚼劲。</p>
+			</div>
+			<div class="food-card">
+				<img src="images/shuiwantang.jpg" alt="水丸汤">
+				<h3>水丸汤</h3>
+				<p>手打鱼丸，清汤鲜美，是泉州人的家常滋味。</p>
+			</div>
+			<div class="food-card">
+				<img src="images/mianxianhu.jpg" alt="面线糊">
+				<h3>面线糊</h3>
+				<p>非遗技艺传承，细面如丝，糊香柔滑。</p>
+			</div>
+			<div class="food-card">
+				<img src="images/jizhua.jpg" alt="洪濑鸡爪">
+				<h3>洪濑鸡爪</h3>
+				<p>独家卤汁，色泽诱人，有嚼头，有滋味，醇香扑鼻。</p>
+			</div>
+			<div class="food-card">
+				<img src="images/manjiangao.jpg" alt="满煎糕">
+				<h3>满煎糕</h3>
+				<p>外酥内软，甜香诱人，是街头巷尾的古早味。</p>
+			</div>
+			<div class="food-card">
+				<img src="images/tusundong.jpg" alt="土笋冻">
+				<h3>土笋冻</h3>
+				<p>晶莹剔透，口感爽脆嫩滑，海味十足。</p>
+			</div>
+		</div>
+	</div>
+	<footer class="site-footer">
+		<div class="footer-content w">
+			<div class="footer-section">
+				<h4>民俗传承</h4>
+				<p>保护非物质文化遗产<br>传承千年文化记忆</p>
+			</div>
+
+			<div class="footer-section">
+				<h4>快速链接</h4>
+				<ul>
+					<li>联系我们</li>
+					<li>合作机构</li>
+					<li>隐私政策</li>
+				</ul>
+			</div>
+
+			<div class="footer-section">
+				<h4>关注我们</h4>
+				<p>电子邮箱：qzmx@qq.com</p>
+			</div>
+		</div>
+
+		<div class="copyright">
+			<p>2025 泉州民俗坊 保留所有权利 | 非遗认证编号：2025-5-1</p>
+			<p>网站包含 <i class="fas fa-heart"></i> 传统元素</p>
+		</div>
+	</footer>
+
+</body>
+
+</html>
