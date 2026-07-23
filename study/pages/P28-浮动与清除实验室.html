@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P28-浮动与清除实验室 | 5.2.1 元素的浮动</title>
+<style>
+:root{
+  --primary:#185FA5;--primary-light:#4A8FCE;--primary-dark:#0F4378;
+  --bg:#F0F4F8;--card-bg:#FFFFFF;--text:#2C3E50;--text-light:#6B7C8C;
+  --border:#D5DDE5;--code-tag:#185FA5;--code-attr:#0F6E56;
+  --code-value:#BA7517;--code-comment:#888780;--danger:#D94545;
+  --success:#0F6E56;--warning:#BA7517;--radius:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* ========== 顶部导航条 ========== */
+.navbar{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(15,67,120,0.3);flex-shrink:0;z-index:100;}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.nav-chapter{background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:4px;font-size:13px;font-weight:600;}
+.nav-title{font-size:16px;font-weight:600;}
+.nav-tags{display:flex;gap:8px;}
+.nav-tag{background:rgba(255,255,255,0.2);padding:2px 10px;border-radius:12px;font-size:12px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:5px 14px;border-radius:4px;cursor:pointer;font-size:13px;transition:all .2s;}
+.nav-btn:hover{background:rgba(255,255,255,0.3);}
+.nav-btn.active{background:#fff;color:var(--primary);font-weight:600;}
+
+/* ========== 主区域 ========== */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.workspace{flex:1;display:flex;gap:8px;padding:8px;overflow:hidden;min-height:0;}
+
+/* ========== ①代码原理区 ========== */
+.code-panel{width:25%;background:var(--card-bg);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.panel-header{background:var(--primary);color:#fff;padding:8px 14px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.copy-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px;}
+.copy-btn:hover{background:rgba(255,255,255,0.35);}
+.code-content{flex:1;overflow:auto;padding:12px;font-family:"Consolas","Courier New",monospace;font-size:13px;line-height:1.7;}
+.code-line{padding:2px 8px;border-radius:3px;cursor:pointer;transition:background .15s;white-space:pre;}
+.code-line:hover{background:rgba(24,95,165,0.08);}
+.code-line.highlight{background:rgba(24,95,165,0.18);border-left:3px solid var(--primary);}
+.code-line.highlight-float{background:rgba(186,117,23,0.15);border-left:3px solid var(--code-value);}
+.code-line.highlight-clear{background:rgba(15,110,86,0.15);border-left:3px solid var(--code-attr);}
+.code-tag{color:var(--code-tag);font-weight:600;}
+.code-attr{color:var(--code-attr);}
+.code-value{color:var(--code-value);}
+.code-comment{color:var(--code-comment);font-style:italic;}
+
+/* ========== ②实时预览区 ========== */
+.preview-panel{width:50%;background:var(--card-bg);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.address-bar{background:#E8EDF2;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.address-dot{width:10px;height:10px;border-radius:50%;}
+.dot-red{background:#FF5F57;}.dot-yellow{background:#FEBC2E;}.dot-green{background:#28C840;}
+.address-input{flex:1;background:#fff;border:1px solid var(--border);border-radius:4px;padding:4px 12px;font-size:12px;color:var(--text-light);}
+.preview-frame{flex:1;overflow:auto;background:#FAFBFC;padding:20px;position:relative;}
+/* 父容器 */
+.float-parent{
+  border:2px dashed var(--danger);padding:10px;margin-bottom:20px;position:relative;
+  transition:all .3s;
+}
+.float-parent.collapsed{border-color:var(--danger);animation:collapseWarn 1s ease;}
+@keyframes collapseWarn{0%,100%{border-color:var(--danger);}50%{border-color:#FF0000;border-width:3px;}}
+.parent-label{
+  position:absolute;top:-10px;left:10px;background:var(--danger);color:#fff;
+  padding:1px 8px;border-radius:3px;font-size:11px;font-weight:600;
+}
+.parent-height-info{
+  position:absolute;top:-10px;right:10px;background:#fff;border:1px solid var(--border);
+  padding:1px 8px;border-radius:3px;font-size:11px;color:var(--text-light);
+}
+/* 浮动盒子 */
+.float-box{
+  width:120px;height:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:14px;margin-bottom:8px;transition:all .3s;
+}
+.box1{background:var(--primary);}
+.box2{background:var(--success);}
+.box3{background:var(--warning);}
+/* 后续元素 */
+.after-element{
+  background:#6B7C8C;color:#fff;padding:12px;border-radius:4px;font-size:13px;text-align:center;
+}
+/* 清除浮动标签 */
+.clear-tag{
+  background:var(--success);color:#fff;padding:4px;border-radius:3px;
+  font-size:11px;text-align:center;margin-bottom:8px;display:none;
+}
+.clear-tag.show{display:block;}
+
+/* ========== ③参数调节区 ========== */
+.param-panel{width:25%;background:var(--card-bg);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.param-content{flex:1;overflow-y:auto;padding:14px;}
+.param-section{margin-bottom:18px;}
+.param-section-title{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--primary);}
+.box-control{background:#F7F9FB;border-radius:var(--radius);padding:10px;margin-bottom:8px;}
+.box-control-title{font-size:12px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.box-color{width:12px;height:12px;border-radius:3px;}
+.float-btns{display:flex;gap:4px;}
+.float-btn{
+  flex:1;border:1px solid var(--border);background:#fff;border-radius:4px;
+  padding:5px 8px;font-size:11px;cursor:pointer;transition:all .2s;
+  font-family:"Consolas",monospace;
+}
+.float-btn:hover{border-color:var(--primary-light);}
+.float-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600;}
+.clearfix-select{display:flex;flex-direction:column;gap:6px;}
+.clearfix-option{
+  border:2px solid var(--border);border-radius:var(--radius);padding:8px 10px;cursor:pointer;
+  font-size:12px;transition:all .2s;display:flex;align-items:center;gap:8px;
+}
+.clearfix-option:hover{border-color:var(--primary-light);}
+.clearfix-option.active{border-color:var(--primary);background:rgba(24,95,165,0.06);}
+.clearfix-option .opt-icon{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;}
+.clearfix-option.active .opt-icon{border-color:var(--primary);background:var(--primary);}
+.clearfix-option .opt-info{flex:1;}
+.clearfix-option .opt-name{font-weight:600;color:var(--text);}
+.clearfix-option .opt-desc{font-size:10px;color:var(--text-light);margin-top:2px;}
+.clearfix-option.recommended .opt-name::after{content:" 推荐";background:var(--success);color:#fff;padding:1px 6px;border-radius:3px;font-size:9px;margin-left:4px;}
+
+/* ========== ④教学提示卡 ========== */
+.tip-bar{display:flex;gap:8px;padding:0 8px 8px 8px;flex-shrink:0;}
+.tip-card{flex:1;background:var(--card-bg);border-radius:var(--radius);padding:10px 14px;box-shadow:0 1px 4px rgba(0,0,0,0.08);border-top:3px solid var(--primary);}
+.tip-card.danger{border-top-color:var(--danger);}
+.tip-title{font-size:12px;font-weight:600;margin-bottom:4px;}
+.tip-card .tip-title{color:var(--primary);}
+.tip-card.danger .tip-title{color:var(--danger);}
+.tip-content{font-size:12px;color:var(--text-light);line-height:1.6;}
+
+.explain-mode .code-panel,.explain-mode .param-panel,.explain-mode .tip-bar{display:none;}
+.explain-mode .preview-panel{width:100%;}
+.explain-mode .workspace{padding:16px;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:#F0F4F8;}
+::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:3px;}
+@media(max-width:1024px){.workspace{flex-direction:column;}.code-panel,.preview-panel,.param-panel{width:100%;}.tip-bar{flex-wrap:wrap;}.tip-card{min-width:48%;}}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-left">
+    <span class="nav-chapter">第5章 网页布局</span>
+    <span class="nav-title">P28-浮动与清除实验室</span>
+    <div class="nav-tags">
+      <span class="nav-tag">5.2.1 元素的浮动</span>
+      <span class="nav-tag">B参数调节型</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-btn" id="btnCode">查看代码</button>
+    <button class="nav-btn" id="btnExplain">讲解模式</button>
+    <button class="nav-btn" id="btnReset">重置</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="workspace" id="workspace">
+
+    <!-- ①代码原理区 -->
+    <div class="code-panel" id="codePanel">
+      <div class="panel-header">
+        <span>&lt;/&gt; 代码原理</span>
+        <button class="copy-btn" onclick="copyCode()">复制</button>
+      </div>
+      <div class="code-content" id="codeContent"></div>
+    </div>
+
+    <!-- ②实时预览区 -->
+    <div class="preview-panel">
+      <div class="panel-header">
+        <span>&#9635; 实时预览</span>
+        <span style="font-size:12px;font-weight:400;opacity:.8" id="previewStatus">默认状态（无浮动）</span>
+      </div>
+      <div class="address-bar">
+        <span class="address-dot dot-red"></span>
+        <span class="address-dot dot-yellow"></span>
+        <span class="address-dot dot-green"></span>
+        <span class="address-input">https://float-lab.example.com/clearfix-demo</span>
+      </div>
+      <div class="preview-frame">
+        <div class="float-parent" id="floatParent">
+          <span class="parent-label">父元素 .parent</span>
+          <span class="parent-height-info" id="heightInfo">高度: 自适应</span>
+          <div class="float-box box1" id="box1">Box 1</div>
+          <div class="float-box box2" id="box2">Box 2</div>
+          <div class="float-box box3" id="box3">Box 3</div>
+          <div class="clear-tag" id="clearTag">clear:both（额外标签）</div>
+        </div>
+        <div class="after-element">后续元素 .after-content（观察是否上移）</div>
+      </div>
+    </div>
+
+    <!-- ③参数调节区 -->
+    <div class="param-panel">
+      <div class="panel-header">
+        <span>&#9881; 参数调节</span>
+      </div>
+      <div class="param-content">
+        <!-- 盒子浮动设置 -->
+        <div class="param-section">
+          <div class="param-section-title">盒子浮动设置</div>
+          <div class="box-control">
+            <div class="box-control-title"><span class="box-color" style="background:var(--primary)"></span> Box 1</div>
+            <div class="float-btns">
+              <button class="float-btn active" data-box="1" data-float="none" onclick="setFloat(1,'none')">none</button>
+              <button class="float-btn" data-box="1" data-float="left" onclick="setFloat(1,'left')">left</button>
+              <button class="float-btn" data-box="1" data-float="right" onclick="setFloat(1,'right')">right</button>
+            </div>
+          </div>
+          <div class="box-control">
+            <div class="box-control-title"><span class="box-color" style="background:var(--success)"></span> Box 2</div>
+            <div class="float-btns">
+              <button class="float-btn active" data-box="2" data-float="none" onclick="setFloat(2,'none')">none</button>
+              <button class="float-btn" data-box="2" data-float="left" onclick="setFloat(2,'left')">left</button>
+              <button class="float-btn" data-box="2" data-float="right" onclick="setFloat(2,'right')">right</button>
+            </div>
+          </div>
+          <div class="box-control">
+            <div class="box-control-title"><span class="box-color" style="background:var(--warning)"></span> Box 3</div>
+            <div class="float-btns">
+              <button class="float-btn active" data-box="3" data-float="none" onclick="setFloat(3,'none')">none</button>
+              <button class="float-btn" data-box="3" data-float="left" onclick="setFloat(3,'left')">left</button>
+              <button class="float-btn" data-box="3" data-float="right" onclick="setFloat(3,'right')">right</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 清除浮动方式 -->
+        <div class="param-section">
+          <div class="param-section-title">清除浮动方式</div>
+          <div class="clearfix-select">
+            <div class="clearfix-option active" data-method="none" onclick="setClearMethod('none')">
+              <div class="opt-icon"></div>
+              <div class="opt-info">
+                <div class="opt-name">不清除</div>
+                <div class="opt-desc">观察高度塌陷现象</div>
+              </div>
+            </div>
+            <div class="clearfix-option" data-method="extra" onclick="setClearMethod('extra')">
+              <div class="opt-icon"></div>
+              <div class="opt-info">
+                <div class="opt-name">额外标签法</div>
+                <div class="opt-desc">加&lt;div clear:both&gt;</div>
+              </div>
+            </div>
+            <div class="clearfix-option" data-method="overflow" onclick="setClearMethod('overflow')">
+              <div class="opt-icon"></div>
+              <div class="opt-info">
+                <div class="opt-name">overflow:hidden</div>
+                <div class="opt-desc">触发BFC，简洁</div>
+              </div>
+            </div>
+            <div class="clearfix-option recommended" data-method="after" onclick="setClearMethod('after')">
+              <div class="opt-icon"></div>
+              <div class="opt-info">
+                <div class="opt-name">after伪元素</div>
+                <div class="opt-desc">无副作用，业界主流</div>
+              </div>
+            </div>
+            <div class="clearfix-option" data-method="br" onclick="setClearMethod('br')">
+              <div class="opt-icon"></div>
+              <div class="opt-info">
+                <div class="opt-name">br clear</div>
+                <div class="opt-desc">已淘汰，了解即可</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④教学提示卡 -->
+  <div class="tip-bar">
+    <div class="tip-card">
+      <div class="tip-title">&#9733; 核心知识点</div>
+      <div class="tip-content">float:left/right/none使元素脱离文档流。3个盒子左浮动可并排排列，但父元素会高度塌陷，必须清除浮动。</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-title">&#9888; 常见错误</div>
+      <div class="tip-content">忘记清除浮动导致后续元素上移；使用overflow:hidden裁剪了溢出内容；额外标签法加错位置。</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-title">&#128161; 拓展思考</div>
+      <div class="tip-content">为什么after伪元素法被推荐？BFC（块级格式化上下文）是什么？overflow:hidden如何触发BFC清除浮动？</div>
+    </div>
+    <div class="tip-card danger">
+      <div class="tip-title">&#9829; 思政小贴士</div>
+      <div class="tip-content">浮动脱离文档流会塌陷，人可以灵活但不能脱离规则，否则会"塌方"。清除浮动就是回归正轨。</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== 状态管理 ==========
+var state={
+  box1:'none',box2:'none',box3:'none',
+  clearMethod:'none'
+};
+
+// ========== 设置浮动 ==========
+function setFloat(boxNum,floatVal){
+  state['box'+boxNum]=floatVal;
+  // 更新按钮状态
+  document.querySelectorAll('.float-btn[data-box="'+boxNum+'"]').forEach(function(b){
+    b.classList.toggle('active',b.dataset.float===floatVal);
+  });
+  // 应用浮动到盒子
+  var box=document.getElementById('box'+boxNum);
+  box.style.float=floatVal;
+  // 如果是right浮动，调整顺序显示
+  updatePreview();
+  updateCode();
+}
+
+// ========== 设置清除浮动方式 ==========
+function setClearMethod(method){
+  state.clearMethod=method;
+  document.querySelectorAll('.clearfix-option').forEach(function(o){
+    o.classList.toggle('active',o.dataset.method===method);
+  });
+  updatePreview();
+  updateCode();
+}
+
+// ========== 更新预览 ==========
+function updatePreview(){
+  var parent=document.getElementById('floatParent');
+  var clearTag=document.getElementById('clearTag');
+  var heightInfo=document.getElementById('heightInfo');
+  var status=document.getElementById('previewStatus');
+  
+  // 清除之前的清除浮动样式
+  parent.style.overflow='';
+  parent.classList.remove('clearfix-after');
+  clearTag.classList.remove('show');
+  
+  // 检查是否有浮动
+  var hasFloat=state.box1!=='none'||state.box2!=='none'||state.box3!=='none';
+  
+  // 应用清除浮动
+  if(hasFloat){
+    switch(state.clearMethod){
+      case 'none':
+        // 不清除，显示塌陷
+        break;
+      case 'extra':
+        clearTag.classList.add('show');
+        clearTag.textContent='额外标签法：<div style="clear:both"></div>';
+        break;
+      case 'overflow':
+        parent.style.overflow='hidden';
+        break;
+      case 'after':
+        // 通过JS模拟after伪元素效果：在末尾插入清除元素
+        clearTag.classList.add('show');
+        clearTag.textContent='after伪元素：.clearfix::after{clear:both}';
+        clearTag.style.background='var(--success)';
+        break;
+      case 'br':
+        clearTag.classList.add('show');
+        clearTag.textContent='br clear法：<br clear="all">';
+        clearTag.style.background='#888780';
+        break;
+    }
+  }
+  
+  // 更新高度信息
+  if(hasFloat && state.clearMethod==='none'){
+    heightInfo.textContent='高度: 塌陷! ⚠';
+    heightInfo.style.color='var(--danger)';
+    heightInfo.style.borderColor='var(--danger)';
+    parent.classList.add('collapsed');
+    status.textContent='高度塌陷！需要清除浮动';
+    status.style.color='var(--danger)';
+  }else if(hasFloat){
+    heightInfo.textContent='高度: 已撑开 ✓';
+    heightInfo.style.color='var(--success)';
+    heightInfo.style.borderColor='var(--success)';
+    parent.classList.remove('collapsed');
+    var methodName={extra:'额外标签法',overflow:'overflow:hidden',after:'after伪元素',br:'br clear法'};
+    status.textContent='已清除浮动（'+methodName[state.clearMethod]+'）';
+    status.style.color='var(--success)';
+  }else{
+    heightInfo.textContent='高度: 自适应';
+    heightInfo.style.color='var(--text-light)';
+    heightInfo.style.borderColor='var(--border)';
+    parent.classList.remove('collapsed');
+    status.textContent='默认状态（无浮动）';
+    status.style.color='';
+  }
+}
+
+// ========== 更新代码 ==========
+function updateCode(){
+  var hasFloat=state.box1!=='none'||state.box2!=='none'||state.box3!=='none';
+  var html='';
+  
+  html+='<span class="code-comment">&lt;!-- HTML结构 --&gt;</span>\n';
+  html+='<span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"parent"</span><span class="code-tag">&gt;</span>\n';
+  html+='  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"box box1"</span><span class="code-tag">&gt;</span>Box 1<span class="code-tag">&lt;/div&gt;</span>\n';
+  html+='  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"box box2"</span><span class="code-tag">&gt;</span>Box 2<span class="code-tag">&lt;/div&gt;</span>\n';
+  html+='  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"box box3"</span><span class="code-tag">&gt;</span>Box 3<span class="code-tag">&lt;/div&gt;</span>\n';
+  
+  // 清除浮动标签
+  if(hasFloat){
+    if(state.clearMethod==='extra'){
+      html+='  <span class="code-tag">&lt;div</span> <span class="code-attr">style</span>=<span class="code-value">"clear:both"</span><span class="code-tag">&gt;&lt;/div&gt;</span>\n';
+    }else if(state.clearMethod==='br'){
+      html+='  <span class="code-tag">&lt;br</span> <span class="code-attr">clear</span>=<span class="code-value">"all"</span><span class="code-tag">&gt;</span>\n';
+    }
+  }
+  html+='<span class="code-tag">&lt;/div&gt;</span>\n';
+  html+='<span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"after-content"</span><span class="code-tag">&gt;</span>后续元素<span class="code-tag">&lt;/div&gt;</span>\n\n';
+  
+  html+='<span class="code-comment">/* CSS样式 */</span>\n';
+  html+='.box{width:120px;height:80px;}\n';
+  
+  // 浮动属性
+  if(state.box1!=='none'){
+    html+='.box1{<span class="code-attr">float</span>:<span class="code-value">'+state.box1+'</span>;background:'+getHexColor(1)+';}\n';
+  }
+  if(state.box2!=='none'){
+    html+='.box2{<span class="code-attr">float</span>:<span class="code-value">'+state.box2+'</span>;background:'+getHexColor(2)+';}\n';
+  }
+  if(state.box3!=='none'){
+    html+='.box3{<span class="code-attr">float</span>:<span class="code-value">'+state.box3+'</span>;background:'+getHexColor(3)+';}\n';
+  }
+  
+  // 清除浮动CSS
+  if(hasFloat){
+    html+='\n<span class="code-comment">/* 清除浮动 */</span>\n';
+    switch(state.clearMethod){
+      case 'none':
+        html+='<span class="code-comment">/* 未清除！父元素高度塌陷 */</span>\n';
+        break;
+      case 'extra':
+        html+='<span class="code-comment">/* 方法1：额外标签法 */</span>\n';
+        html+='<span class="code-comment">/* HTML中加 &lt;div style="clear:both"&gt;&lt;/div&gt; */</span>\n';
+        break;
+      case 'overflow':
+        html+='.parent{<span class="code-attr">overflow</span>:<span class="code-value">hidden</span>;}\n';
+        break;
+      case 'after':
+        html+='.parent::after{\n';
+        html+='  <span class="code-attr">content</span>:<span class="code-value">""</span>;\n';
+        html+='  <span class="code-attr">display</span>:<span class="code-value">block</span>;\n';
+        html+='  <span class="code-attr">clear</span>:<span class="code-value">both</span>;\n';
+        html+='}\n';
+        break;
+      case 'br':
+        html+='<span class="code-comment">/* 方法4：br clear（已淘汰） */</span>\n';
+        html+='<span class="code-comment">/* HTML中加 &lt;br clear="all"&gt; */</span>\n';
+        break;
+    }
+  }
+  
+  // 状态提示
+  html+='\n<span class="code-comment">/* 状态：';
+  if(!hasFloat){
+    html+='无浮动';
+  }else if(state.clearMethod==='none'){
+    html+='高度塌陷! 需清除浮动';
+  }else{
+    html+='已清除浮动';
+  }
+  html+=' */</span>';
+  
+  renderCode(html);
+}
+
+function getHexColor(n){
+  var colors={1:'#185FA5',2:'#0F6E56',3:'#BA7517'};
+  return colors[n];
+}
+
+// ========== 渲染代码 ==========
+function renderCode(htmlStr){
+  var lines=htmlStr.split('\n');
+  var html='';
+  lines.forEach(function(line,i){
+    var cls='code-line';
+    // 高亮包含float的行
+    if(line.indexOf('float')>=0||line.indexOf('float')>=0) cls+=' highlight-float';
+    // 高亮包含clear/after/overflow的行
+    if(line.indexOf('clear')>=0||line.indexOf('overflow')>=0||line.indexOf('::after')>=0) cls+=' highlight-clear';
+    html+='<div class="'+cls+'" data-line="'+i+'" onclick="highlightLine(this)">'+(line||'&nbsp;')+'</div>';
+  });
+  document.getElementById('codeContent').innerHTML=html;
+}
+
+function highlightLine(el){
+  document.querySelectorAll('.code-line').forEach(function(l){l.classList.remove('highlight');});
+  el.classList.add('highlight');
+}
+
+function copyCode(){
+  var text=document.getElementById('codeContent').innerText;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){showCopyTip();});
+  }else{
+    var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showCopyTip();
+  }
+}
+function showCopyTip(){var btn=document.querySelector('.copy-btn');var orig=btn.textContent;btn.textContent='已复制';setTimeout(function(){btn.textContent=orig;},1500);}
+
+// ========== 按钮事件 ==========
+document.getElementById('btnCode').addEventListener('click',function(){
+  var panel=document.getElementById('codePanel');
+  panel.style.display=panel.style.display==='none'?'flex':'none';
+  this.classList.toggle('active');
+});
+document.getElementById('btnExplain').addEventListener('click',function(){
+  document.body.classList.toggle('explain-mode');
+  this.classList.toggle('active');
+  this.textContent=document.body.classList.contains('explain-mode')?'退出讲解':'讲解模式';
+});
+document.getElementById('btnReset').addEventListener('click',function(){
+  state={box1:'none',box2:'none',box3:'none',clearMethod:'none'};
+  document.querySelectorAll('.float-btn').forEach(function(b){b.classList.toggle('active',b.dataset.float==='none');});
+  document.querySelectorAll('.clearfix-option').forEach(function(o){o.classList.toggle('active',o.dataset.method==='none');});
+  document.getElementById('box1').style.float='none';
+  document.getElementById('box2').style.float='none';
+  document.getElementById('box3').style.float='none';
+  document.getElementById('codePanel').style.display='flex';
+  document.getElementById('btnCode').classList.remove('active');
+  document.body.classList.remove('explain-mode');
+  document.getElementById('btnExplain').classList.remove('active');
+  document.getElementById('btnExplain').textContent='讲解模式';
+  updatePreview();
+  updateCode();
+});
+
+// ========== 初始化 ==========
+updatePreview();
+updateCode();
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

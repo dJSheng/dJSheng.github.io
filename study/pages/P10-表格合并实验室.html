@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P10-表格合并实验室</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--main:#185FA5;--main-light:#E8F1FA;--main-dark:#0F4478;--green:#28a745;--red:#dc3545;--bg:#f4f7fb;--card:#fff;--border:#dde5ef;--text:#2c3e50;}
+body{font-family:"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;}
+.navbar{display:flex;align-items:center;justify-content:space-between;background:var(--main);color:#fff;padding:10px 20px;flex-wrap:wrap;gap:8px;}
+.navbar .nav-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.navbar .tag-chapter{background:rgba(255,255,255,.18);padding:3px 10px;border-radius:12px;font-size:12px;}
+.navbar .tag-title{font-weight:bold;font-size:15px;}
+.navbar .tag-knowledge{background:rgba(255,255,255,.25);padding:3px 10px;border-radius:12px;font-size:12px;}
+.navbar .nav-right{display:flex;gap:6px;}
+.navbar button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:.2s;}
+.navbar button:hover{background:rgba(255,255,255,.3);}
+.navbar button.active{background:#fff;color:var(--main);font-weight:bold;}
+.layout{display:flex;gap:12px;padding:12px;height:calc(100vh - 100px);}
+.layout > div{background:var(--card);border-radius:8px;border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;}
+.code-area{flex:0 0 25%;}
+.preview-area{flex:0 0 50%;}
+.param-area{flex:0 0 25%;}
+.area-title{background:var(--main-light);color:var(--main-dark);padding:8px 12px;font-weight:bold;font-size:13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.area-body{flex:1;overflow:auto;padding:10px;}
+.code-content{font-family:Consolas,monospace;font-size:12px;line-height:1.7;white-space:pre-wrap;word-break:break-all;}
+.code-content .tag{color:#e67e22;}
+.code-content .attr{color:#8e44ad;}
+.code-content .str{color:#27ae60;}
+.code-content .cmt{color:#95a5a6;font-style:italic;}
+.code-content .line{padding:2px 6px;border-radius:3px;}
+.code-content .line.highlight{background:#fff3cd;border-left:3px solid #ffc107;}
+.copy-btn{background:var(--main);color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;}
+.copy-btn:hover{background:var(--main-dark);}
+/* 预览表格 */
+.preview-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;}
+.lab-table{border-collapse:collapse;width:90%;max-width:420px;}
+.lab-table td{border:2px solid var(--main);padding:18px;text-align:center;font-weight:bold;font-size:15px;cursor:pointer;background:#fff;transition:.2s;position:relative;}
+.lab-table td:hover{background:var(--main-light);}
+.lab-table td.selected{background:var(--main);color:#fff;outline:3px solid #ffc107;outline-offset:2px;}
+.lab-table td.merged-away{background:#f0f0f0;color:#ccc;text-decoration:line-through;cursor:not-allowed;}
+.lab-table td .cell-id{position:absolute;top:3px;left:5px;font-size:9px;font-weight:normal;opacity:.6;}
+.preview-info{margin-top:12px;font-size:12px;color:#666;text-align:center;}
+/* 参数区 */
+.param-hint{font-size:11px;color:#666;background:#fff8e1;padding:6px 8px;border-radius:4px;margin-bottom:12px;border-left:3px solid #ffc107;}
+.param-group{margin-bottom:14px;}
+.param-group label{display:block;font-weight:bold;margin-bottom:5px;color:var(--main-dark);font-size:13px;}
+.param-group .sel-info{font-size:11px;color:#999;margin-bottom:6px;}
+.btn-group{display:flex;gap:4px;flex-wrap:wrap;}
+.btn-group button{flex:1;min-width:40px;padding:6px;border:1px solid var(--border);background:#fff;cursor:pointer;border-radius:4px;font-size:13px;transition:.2s;}
+.btn-group button.active{background:var(--main);color:#fff;border-color:var(--main);font-weight:bold;}
+.btn-group button:hover:not(.active){background:var(--main-light);}
+.param-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:#f8f9fa;border-radius:4px;margin-bottom:5px;font-size:12px;}
+.no-select{color:#999;font-style:italic;text-align:center;padding:20px;font-size:12px;}
+.reset-btn{width:100%;padding:8px;background:var(--red);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;margin-top:10px;}
+.reset-btn:hover{background:#b02a37;}
+/* 教学提示卡 */
+.tip-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px;background:var(--card);border-top:1px solid var(--border);}
+.tip-card{padding:8px 10px;border-radius:6px;font-size:12px;line-height:1.5;}
+.tip-card h4{font-size:12px;margin-bottom:4px;}
+.tip-knowledge{background:var(--main-light);color:var(--main-dark);}
+.tip-error{background:#fff3cd;color:#856404;}
+.tip-think{background:#e8f5e9;color:#2e7d32;}
+.tip-sizheng{background:#fde8ea;color:var(--red);border:1px solid var(--red);}
+.tip-sizheng h4::before{content:"★ ";}
+.hidden{display:none !important;}
+.explain-mode .layout{height:auto;}
+@media(max-width:900px){.layout{flex-direction:column;height:auto;}.tip-bar{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="nav-left">
+    <span class="tag-chapter">第2章 HTML5标签</span>
+    <span class="tag-title">PPT 2.8.1 表格的相关标签与属性</span>
+    <span class="tag-knowledge">知识点：rowspan/colspan合并</span>
+  </div>
+  <div class="nav-right">
+    <button onclick="toggleCode()">查看代码</button>
+    <button onclick="toggleExplain()">讲解模式</button>
+    <button onclick="resetAll()">重置</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="code-area">
+    <div class="area-title">① 代码原理区 <button class="copy-btn" onclick="copyCode()">复制</button></div>
+    <div class="area-body">
+      <div class="code-content" id="codeContent"></div>
+    </div>
+  </div>
+
+  <div class="preview-area">
+    <div class="area-title">② 实时预览区 <span style="font-size:11px;font-weight:normal;">点击单元格选中后调参</span></div>
+    <div class="area-body">
+      <div class="preview-wrap">
+        <table class="lab-table" id="labTable"></table>
+        <div class="preview-info" id="previewInfo">3行 × 3列，共9个单元格</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="param-area">
+    <div class="area-title">③ 参数调节区</div>
+    <div class="area-body" id="paramBody">
+      <div class="param-hint">💡 先点左侧表格选中一个单元格，再设置合并参数</div>
+      <div class="no-select" id="noSelect">未选中单元格</div>
+      <div id="paramPanel" style="display:none;">
+        <div class="param-group">
+          <label>选中单元格</label>
+          <div class="sel-info" id="selInfo"></div>
+        </div>
+        <div class="param-group">
+          <label>rowspan（跨行往下）</label>
+          <div class="btn-group" id="rowspanBtns">
+            <button data-val="1" class="active">1</button>
+            <button data-val="2">2</button>
+            <button data-val="3">3</button>
+          </div>
+        </div>
+        <div class="param-group">
+          <label>colspan（跨列往右）</label>
+          <div class="btn-group" id="colspanBtns">
+            <button data-val="1" class="active">1</button>
+            <button data-val="2">2</button>
+            <button data-val="3">3</button>
+          </div>
+        </div>
+        <div class="param-group">
+          <label>当前属性</label>
+          <div class="param-row"><span>rowspan</span><span id="curRow">1</span></div>
+          <div class="param-row"><span>colspan</span><span id="curCol">1</span></div>
+        </div>
+        <button class="reset-btn" onclick="resetAll()">重置3×3</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tip-bar">
+  <div class="tip-card tip-knowledge">
+    <h4>核心知识点</h4>
+    rowspan跨行往下、colspan跨列往右；合并后被占的单元格要删除
+  </div>
+  <div class="tip-card tip-error">
+    <h4>常见错误</h4>
+    rowspan和colspan搞反方向；忘记删被跨单元格导致表格错位
+  </div>
+  <div class="tip-card tip-think">
+    <h4>拓展思考</h4>
+    合并后总单元格数怎么算？尝试做"课程分类"分组表
+  </div>
+  <div class="tip-card tip-sizheng">
+    <h4>思政小贴士</h4>
+    表格展示数据要真实准确，做表格如此做学问做人都如此——实事求是
+  </div>
+</div>
+
+<script>
+const ROWS=3, COLS=3;
+let cells=[]; // {r,c,rowspan,colspan,hidden}
+let selected=null;
+
+function initCells(){
+  cells=[];
+  for(let r=0;r<ROWS;r++){
+    let row=[];
+    for(let c=0;c<COLS;c++){
+      row.push({r,c,rowspan:1,colspan:1,hidden:false});
+    }
+    cells.push(row);
+  }
+}
+
+function renderTable(){
+  const t=document.getElementById('labTable');
+  t.innerHTML='';
+  for(let r=0;r<ROWS;r++){
+    let tr=document.createElement('tr');
+    for(let c=0;c<COLS;c++){
+      const cell=cells[r][c];
+      if(cell.hidden)continue;
+      let td=document.createElement('td');
+      td.textContent=`R${r+1}C${c+1}`;
+      td.dataset.r=r;td.dataset.c=c;
+      if(cell.rowspan>1)td.rowSpan=cell.rowspan;
+      if(cell.colspan>1)td.colSpan=cell.colspan;
+      if(selected&&selected.r===r&&selected.c===c)td.classList.add('selected');
+      td.onclick=()=>selectCell(r,c);
+      tr.appendChild(td);
+    }
+    t.appendChild(tr);
+  }
+  // 统计可见单元格
+  const visible=cells.flat().filter(c=>!c.hidden).length;
+  document.getElementById('previewInfo').textContent=`3行 × 3列，当前可见 ${visible} 个单元格`;
+}
+
+function selectCell(r,c){
+  selected={r,c};
+  document.getElementById('noSelect').style.display='none';
+  document.getElementById('paramPanel').style.display='block';
+  document.getElementById('selInfo').textContent=`第${r+1}行 第${c+1}列 (R${r+1}C${c+1})`;
+  const cell=cells[r][c];
+  updateBtnGroup('rowspanBtns',cell.rowspan);
+  updateBtnGroup('colspanBtns',cell.colspan);
+  document.getElementById('curRow').textContent=cell.rowspan;
+  document.getElementById('curCol').textContent=cell.colspan;
+  renderTable();
+  renderCode();
+}
+
+function updateBtnGroup(id,val){
+  document.querySelectorAll('#'+id+' button').forEach(b=>{
+    b.classList.toggle('active',parseInt(b.dataset.val)===val);
+  });
+}
+
+document.getElementById('rowspanBtns').addEventListener('click',e=>{
+  if(!selected||!e.target.dataset.val)return;
+  const v=parseInt(e.target.dataset.val);
+  applyMerge(selected.r,selected.c,'rowspan',v);
+});
+document.getElementById('colspanBtns').addEventListener('click',e=>{
+  if(!selected||!e.target.dataset.val)return;
+  const v=parseInt(e.target.dataset.val);
+  applyMerge(selected.r,selected.c,'colspan',v);
+});
+
+function applyMerge(r,c,type,v){
+  // 先重置该单元格相关合并
+  resetCellMerge(r,c);
+  const cell=cells[r][c];
+  if(type==='rowspan'){
+    cell.rowspan=v;
+    for(let i=1;i<v;i++){
+      if(r+i<ROWS)cells[r+i][c].hidden=true;
+    }
+  }else{
+    cell.colspan=v;
+    for(let i=1;i<v;i++){
+      if(c+i<COLS)cells[r][c+i].hidden=true;
+    }
+  }
+  updateBtnGroup(type==='rowspan'?'rowspanBtns':'colspanBtns',v);
+  document.getElementById('curRow').textContent=cell.rowspan;
+  document.getElementById('curCol').textContent=cell.colspan;
+  renderTable();
+  renderCode();
+}
+
+function resetCellMerge(r,c){
+  const cell=cells[r][c];
+  // 恢复被rowspan隐藏的
+  for(let i=1;i<cell.rowspan;i++){
+    if(r+i<ROWS)cells[r+i][c].hidden=false;
+  }
+  for(let i=1;i<cell.colspan;i++){
+    if(c+i<COLS)cells[r][c+i].hidden=false;
+  }
+  cell.rowspan=1;cell.colspan=1;
+}
+
+function renderCode(){
+  let html='<span class="cmt">&lt;!-- 3×3 表格（修改会高亮） --&gt;</span>\n';
+  html+='<span class="tag">&lt;table&gt;</span>\n';
+  for(let r=0;r<ROWS;r++){
+    html+='  <span class="tag">&lt;tr&gt;</span>\n';
+    for(let c=0;c<COLS;c++){
+      const cell=cells[r][c];
+      if(cell.hidden)continue;
+      let attrs='';
+      let hl=false;
+      if(cell.rowspan>1){attrs+=` <span class="attr">rowspan</span>=<span class="str">"${cell.rowspan}"</span>`;hl=true;}
+      if(cell.colspan>1){attrs+=` <span class="attr">colspan</span>=<span class="str">"${cell.colspan}"</span>`;hl=true;}
+      if(selected&&selected.r===r&&selected.c===c)hl=true;
+      html+=`    <div class="line${hl?' highlight':''}"><span class="tag">&lt;td${attrs.replace(/<[^>]+>/g,'')}&gt;</span>R${r+1}C${c+1}<span class="tag">&lt;/td&gt;</span></div>`;
+      // 重建带span
+      let inner='';
+      if(cell.rowspan>1)inner+=` <span class="attr">rowspan</span>=<span class="str">"${cell.rowspan}"</span>`;
+      if(cell.colspan>1)inner+=` <span class="attr">colspan</span>=<span class="str">"${cell.colspan}"</span>`;
+      html=html.replace(`<span class="tag">&lt;td${attrs.replace(/<[^>]+>/g,'')}&gt;</span>`,`<span class="tag">&lt;td${inner}&gt;</span>`);
+    }
+    html+='  <span class="tag">&lt;/tr&gt;</span>\n';
+  }
+  html+='<span class="tag">&lt;/table&gt;</span>';
+  document.getElementById('codeContent').innerHTML=html;
+}
+
+function copyCode(){
+  let txt='<table>\n';
+  for(let r=0;r<ROWS;r++){
+    txt+='  <tr>\n';
+    for(let c=0;c<COLS;c++){
+      const cell=cells[r][c];
+      if(cell.hidden)continue;
+      let attrs='';
+      if(cell.rowspan>1)attrs+=` rowspan="${cell.rowspan}"`;
+      if(cell.colspan>1)attrs+=` colspan="${cell.colspan}"`;
+      txt+=`    <td${attrs}>R${r+1}C${c+1}</td>\n`;
+    }
+    txt+='  </tr>\n';
+  }
+  txt+='</table>';
+  navigator.clipboard.writeText(txt).then(()=>alert('代码已复制！'));
+}
+
+function resetAll(){
+  initCells();
+  selected=null;
+  document.getElementById('noSelect').style.display='block';
+  document.getElementById('paramPanel').style.display='none';
+  renderTable();
+  renderCode();
+}
+
+let codeVisible=true;
+function toggleCode(){
+  codeVisible=!codeVisible;
+  document.querySelector('.code-area').style.display=codeVisible?'flex':'none';
+  document.querySelector('.preview-area').style.flex=codeVisible?'0 0 50%':'0 0 75%';
+}
+let explainMode=false;
+function toggleExplain(){
+  explainMode=!explainMode;
+  document.body.classList.toggle('explain-mode',explainMode);
+  document.querySelector('.tip-bar').classList.toggle('hidden',explainMode);
+  document.querySelector('.navbar button:nth-child(2)').classList.toggle('active',explainMode);
+}
+
+initCells();
+renderTable();
+renderCode();
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

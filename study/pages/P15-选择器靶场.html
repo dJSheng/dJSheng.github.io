@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P15-选择器靶场 | CSS基础选择器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;}
+:root{--main:#185FA5;--green:#0F6E56;--orange:#BA7517;--gray:#888780;}
+
+.navbar{background:linear-gradient(90deg,#185FA5,#2A7BC8);color:#fff;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.15);position:sticky;top:0;z-index:100;}
+.navbar .left{display:flex;align-items:center;gap:16px;font-size:14px;}
+.navbar .left .chapter{background:rgba(255,255,255,.18);padding:4px 10px;border-radius:4px;font-size:12px;}
+.navbar .left .title{font-size:16px;font-weight:bold;}
+.navbar .left .tag{background:rgba(255,255,255,.12);padding:3px 8px;border-radius:3px;font-size:12px;}
+.navbar .right{display:flex;gap:8px;}
+.navbar .right button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:13px;transition:.2s;}
+.navbar .right button:hover{background:rgba(255,255,255,.3);}
+.navbar .right button.active{background:#fff;color:#185FA5;font-weight:bold;}
+
+.main{display:flex;height:calc(100vh - 56px);}
+.panel{background:#fff;border-right:1px solid #e0e0e0;overflow:auto;}
+.code-panel{width:25%;padding:16px;}
+.preview-panel{width:50%;padding:0;background:#fff;}
+.param-panel{width:25%;padding:16px;border-left:1px solid #e0e0e0;}
+
+.code-title{font-size:14px;font-weight:bold;color:#185FA5;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #185FA5;}
+.code-block{background:#1e1e2e;color:#d4d4d4;padding:14px;border-radius:8px;font-family:"Consolas",monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-all;min-height:180px;}
+.code-block .tag{color:#569cd6;}
+.code-block .attr{color:#0F6E56;}
+.code-block .val{color:#BA7517;}
+.code-block .comment{color:#888780;font-style:italic;}
+.code-block .sel{color:#569cd6;font-weight:bold;background:rgba(255,255,0,.2);border-radius:2px;padding:1px 3px;}
+.copy-btn{margin-top:10px;background:#185FA5;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;}
+
+.preview-header{background:#e8e8e8;padding:8px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #d0d0d0;}
+.preview-header .dots{display:flex;gap:6px;}
+.preview-header .dot{width:12px;height:12px;border-radius:50%;}
+.preview-header .dot.r{background:#ff5f57;}
+.preview-header .dot.y{background:#ffbd2e;}
+.preview-header .dot.g{background:#28c940;}
+.preview-header .url{flex:1;background:#fff;border:1px solid #ccc;border-radius:4px;padding:4px 10px;font-size:12px;color:#666;}
+
+.target-area{padding:20px;font-family:Consolas,monospace;font-size:13px;line-height:1.8;}
+.target-area .elem{padding:4px 8px;margin:4px 0;border-radius:4px;transition:.3s;border:2px solid transparent;display:inline-block;}
+.target-area .elem.hit{background:#fff3cd;border-color:#BA7517;animation:flash .6s ease 3;}
+@keyframes flash{0%,100%{background:#fff3cd;}50%{background:#ffeb3b;}}
+
+.target-area .tag-name{color:#569cd6;font-weight:bold;}
+.target-area .attr-name{color:#0F6E56;}
+.target-area .attr-val{color:#BA7517;}
+.target-area .text{color:#333;font-family:"Microsoft YaHei";}
+
+.param-title{font-size:14px;font-weight:bold;color:#185FA5;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #185FA5;}
+.param-group{margin-bottom:16px;}
+.param-label{font-size:13px;color:#666;margin-bottom:8px;display:block;font-weight:bold;}
+.param-input{width:100%;padding:10px;border:2px solid #185FA5;border-radius:8px;font-size:16px;font-family:Consolas,monospace;outline:none;}
+.param-input:focus{box-shadow:0 0 8px rgba(24,95,165,.3);}
+.fire-btn{width:100%;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;padding:14px;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px;box-shadow:0 4px 12px rgba(231,76,60,.3);}
+.fire-btn:hover{transform:translateY(-2px);}
+
+.result-box{background:#e8f1fa;padding:12px;border-radius:8px;text-align:center;margin-top:12px;}
+.result-box .count{font-size:24px;font-weight:bold;color:#185FA5;}
+.result-box .label{font-size:12px;color:#666;}
+
+.quick-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.quick-btn{background:#f0f2f5;border:1px solid #ddd;padding:8px;border-radius:4px;cursor:pointer;font-family:Consolas,monospace;font-size:13px;text-align:center;transition:.2s;}
+.quick-btn:hover{background:#e8f1fa;border-color:#185FA5;color:#185FA5;}
+
+.challenge{background:#fff8e7;border-left:3px solid #BA7517;padding:10px;border-radius:4px;font-size:12px;margin-top:12px;}
+.challenge .ch-title{font-weight:bold;color:#BA7517;margin-bottom:4px;}
+
+.tip-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px 16px;background:#fff;border-top:2px solid #185FA5;}
+.tip-card{padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.5;}
+.tip-card.knowledge{background:#e8f1fa;border-left:3px solid #185FA5;}
+.tip-card.error{background:#fdf2f2;border-left:3px solid #e74c3c;}
+.tip-card.think{background:#fff8e7;border-left:3px solid #BA7517;}
+.tip-card.sizheng{background:#fff0f0;border-left:3px solid #c0392b;}
+.tip-card .tip-head{font-weight:bold;margin-bottom:4px;font-size:13px;}
+.tip-card.sizheng .tip-head{color:#c0392b;}
+
+.explain-mode .navbar,.explain-mode .param-panel,.explain-mode .code-panel{display:none;}
+.explain-mode .preview-panel{width:100%;}
+body{overflow:auto;}
+.main{height:auto;min-height:calc(100vh - 56px - 130px);}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="left">
+    <span class="chapter">第3章 CSS3</span>
+    <span class="title">P15-选择器靶场</span>
+    <span class="tag">3.2.1 CSS基础选择器</span>
+  </div>
+  <div class="right">
+    <button id="btnCode" onclick="toggleCode()">查看代码</button>
+    <button id="btnExplain" onclick="toggleExplain()">讲解模式</button>
+    <button onclick="resetAll()">重置</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="panel code-panel" id="codePanel">
+    <div class="code-title">① 代码原理区</div>
+    <div class="code-block" id="codeBlock">
+<span class="comment">/* 在右侧输入选择器，点击"命中" */</span>
+<span class="comment">/* 当前输入：暂无 */</span>
+
+<span class="comment">/* 四种基础选择器语法：*/</span>
+<span class="tag">p</span>     <span class="comment">/* 标签选择器 */</span>
+<span class="sel">.box</span>  <span class="comment">/* 类选择器 */</span>
+<span class="sel">#title</span> <span class="comment">/* ID选择器 */</span>
+<span class="tag">*</span>     <span class="comment">/* 通配选择器 */</span>
+    </div>
+    <button class="copy-btn" onclick="copyCode()">复制代码</button>
+  </div>
+
+  <div class="panel preview-panel">
+    <div class="preview-header">
+      <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <div class="url">https://demo.com/selector-target.html</div>
+    </div>
+    <div class="target-area" id="targetArea">
+      <div class="elem" data-tag="h1" data-id="title" data-class="">
+        <span class="tag-name">&lt;h1</span> <span class="attr-name">id</span>=<span class="attr-val">"title"</span><span class="tag-name">&gt;</span><span class="text">商品展示</span><span class="tag-name">&lt;/h1&gt;</span>
+      </div>
+      <div class="elem" data-tag="p" data-id="" data-class="">
+        <span class="tag-name">&lt;p&gt;</span><span class="text">这是一段普通文字。</span><span class="tag-name">&lt;/p&gt;</span>
+      </div>
+      <div class="elem" data-tag="div" data-id="" data-class="box">
+        <span class="tag-name">&lt;div</span> <span class="attr-name">class</span>=<span class="attr-val">"box"</span><span class="tag-name">&gt;</span><span class="text">盒子1</span><span class="tag-name">&lt;/div&gt;</span>
+      </div>
+      <div class="elem" data-tag="div" data-id="" data-class="box">
+        <span class="tag-name">&lt;div</span> <span class="attr-name">class</span>=<span class="attr-val">"box"</span><span class="tag-name">&gt;</span><span class="text">盒子2</span><span class="tag-name">&lt;/div&gt;</span>
+      </div>
+      <div class="elem" data-tag="p" data-id="" data-class="desc">
+        <span class="tag-name">&lt;p</span> <span class="attr-name">class</span>=<span class="attr-val">"desc"</span><span class="tag-name">&gt;</span><span class="text">商品描述段落。</span><span class="tag-name">&lt;/p&gt;</span>
+      </div>
+      <div class="elem" data-tag="span" data-id="" data-class="price">
+        <span class="tag-name">&lt;span</span> <span class="attr-name">class</span>=<span class="attr-val">"price"</span><span class="tag-name">&gt;</span><span class="text">￥99.00</span><span class="tag-name">&lt;/span&gt;</span>
+      </div>
+      <div class="elem" data-tag="p" data-id="" data-class="">
+        <span class="tag-name">&lt;p&gt;</span><span class="text">另一段普通文字。</span><span class="tag-name">&lt;/p&gt;</span>
+      </div>
+      <div class="elem" data-tag="a" data-id="" data-class="link">
+        <span class="tag-name">&lt;a</span> <span class="attr-name">class</span>=<span class="attr-val">"link"</span><span class="tag-name">&gt;</span><span class="text">链接</span><span class="tag-name">&lt;/a&gt;</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="param-panel panel">
+    <div class="param-title">③ 参数调节区</div>
+    <div class="param-group">
+      <label class="param-label">输入选择器</label>
+      <input type="text" class="param-input" id="selInput" placeholder="如 p / .box / #title / *" value="">
+      <button class="fire-btn" onclick="fire()">🎯 命 中</button>
+    </div>
+    <div class="result-box" id="resultBox">
+      <div class="count" id="hitCount">0</div>
+      <div class="label">命中元素数</div>
+    </div>
+    <div class="param-group">
+      <label class="param-label">快速选择</label>
+      <div class="quick-btns">
+        <div class="quick-btn" onclick="quickSel('p')">p</div>
+        <div class="quick-btn" onclick="quickSel('.box')">.box</div>
+        <div class="quick-btn" onclick="quickSel('#title')">#title</div>
+        <div class="quick-btn" onclick="quickSel('*')">*</div>
+        <div class="quick-btn" onclick="quickSel('.desc')">.desc</div>
+        <div class="quick-btn" onclick="quickSel('.price')">.price</div>
+      </div>
+    </div>
+    <div class="challenge">
+      <div class="ch-title">🎯 命中挑战</div>
+      <div>1. 命中所有p标签</div>
+      <div>2. 只命中"盒子"们</div>
+      <div>3. 只命中标题</div>
+      <div>4. 命中全部元素</div>
+    </div>
+  </div>
+</div>
+
+<div class="tip-bar">
+  <div class="tip-card knowledge">
+    <div class="tip-head">核心知识点</div>
+    四种选择器：标签p、类.box、ID#title、通配*。类可重复，ID唯一。
+  </div>
+  <div class="tip-card error">
+    <div class="tip-head">常见错误</div>
+    类选择器忘写点.，ID选择器忘写井#，写成box而不是.box。
+  </div>
+  <div class="tip-card think">
+    <div class="tip-head">拓展思考题</div>
+    通配选择器*命中的是"所有元素"，为什么实际项目要慎用？
+  </div>
+  <div class="tip-card sizheng">
+    <div class="tip-head">思政小贴士</div>
+    选择器要精准命中，不能"大水漫灌"。做事也一样，精准实事求是比"一刀切"强。
+  </div>
+</div>
+
+<script>
+function fire(){
+  var sel = document.getElementById('selInput').value.trim();
+  if(!sel){alert('请输入选择器！');return;}
+  var elems = document.querySelectorAll('#targetArea .elem');
+  elems.forEach(function(e){e.classList.remove('hit');});
+  var hitCount = 0;
+  elems.forEach(function(e){
+    var tag = e.getAttribute('data-tag');
+    var id = e.getAttribute('data-id');
+    var cls = e.getAttribute('data-class');
+    var matched = false;
+    if(sel === '*'){matched = true;}
+    else if(sel.startsWith('#')){
+      if(id === sel.substring(1)){matched = true;}
+    }else if(sel.startsWith('.')){
+      if(cls && cls.split(' ').indexOf(sel.substring(1)) !== -1){matched = true;}
+    }else{
+      if(tag === sel){matched = true;}
+    }
+    if(matched){e.classList.add('hit');hitCount++;}
+  });
+  document.getElementById('hitCount').textContent = hitCount;
+  var codeBlock = document.getElementById('codeBlock');
+  var selDisplay = sel.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  var selClass = sel.startsWith('.')||sel.startsWith('#')?'sel':'tag';
+  codeBlock.innerHTML = '<span class="comment">/* 当前输入 */</span>\n<span class="'+selClass+'">'+selDisplay+'</span> {\n  <span class="attr">color</span>: <span class="val">red</span>;\n}\n\n<span class="comment">/* 命中结果：'+hitCount+' 个元素 */</span>\n<span class="comment">/* 选择器类型：'+getSelType(sel)+' */</span>';
+}
+
+function getSelType(sel){
+  if(sel==='*')return '通配选择器';
+  if(sel.startsWith('.'))return '类选择器';
+  if(sel.startsWith('#'))return 'ID选择器';
+  return '标签选择器';
+}
+
+function quickSel(s){
+  document.getElementById('selInput').value = s;
+  fire();
+}
+
+document.getElementById('selInput').addEventListener('keydown',function(e){if(e.key==='Enter')fire();});
+
+function toggleCode(){
+  var p=document.getElementById('codePanel');
+  var b=document.getElementById('btnCode');
+  p.style.display=p.style.display==='none'?'block':'none';
+  b.classList.toggle('active');
+}
+function toggleExplain(){
+  document.body.classList.toggle('explain-mode');
+  document.getElementById('btnExplain').classList.toggle('active');
+}
+function copyCode(){navigator.clipboard.writeText(document.getElementById('codeBlock').innerText).then(function(){alert('代码已复制！');});}
+function resetAll(){
+  document.getElementById('selInput').value='';
+  document.getElementById('hitCount').textContent='0';
+  document.querySelectorAll('#targetArea .elem').forEach(function(e){e.classList.remove('hit');});
+  document.body.classList.remove('explain-mode');
+  document.getElementById('btnExplain').classList.remove('active');
+  document.getElementById('codePanel').style.display='block';
+  document.getElementById('btnCode').classList.add('active');
+}
+document.getElementById('btnCode').classList.add('active');
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P07-媒体播放器 | 多媒体标签</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
+    background: #E6F1FB;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* 顶部导航条 */
+  .navbar {
+    background: linear-gradient(90deg, #185FA5 0%, #2A7BC4 100%);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(24,95,165,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-section { font-size: 13px; opacity: 0.9; }
+  .nav-title { font-size: 16px; font-weight: 600; }
+  .nav-tag {
+    background: rgba(255,255,255,0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  .nav-spacer { flex: 1; }
+  .nav-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .nav-btn.active { background: #fff; color: #185FA5; }
+
+  /* 主容器 */
+  .container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    gap: 12px;
+    padding: 12px;
+    height: calc(100vh - 60px - 180px);
+    min-height: 500px;
+  }
+  .container.lecture-mode {
+    grid-template-columns: 0 100% 0;
+  }
+  .container.lecture-mode .panel-code,
+  .container.lecture-mode .panel-params { display: none; }
+  .container.code-collapsed {
+    grid-template-columns: 0 75% 25%;
+  }
+  .container.code-collapsed .panel-code { display: none; }
+
+  .panel {
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-header {
+    background: #f5f8fc;
+    padding: 8px 14px;
+    border-bottom: 0.5px solid #d0d7e0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #185FA5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-body {
+    flex: 1;
+    overflow: auto;
+    padding: 12px;
+  }
+
+  /* 代码区 */
+  .code-block {
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .code-line {
+    padding: 2px 6px;
+    margin: 0 -6px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: block;
+    min-height: 1.8em;
+  }
+  .code-line:hover { background: #f0f5fa; }
+  .code-line.highlighted { background: #fff3cd; border-left: 3px solid #BA7517; padding-left: 3px; }
+  .tag { color: #185FA5; }
+  .attr { color: #0F6E56; }
+  .value { color: #BA7517; }
+  .comment { color: #888780; font-style: italic; }
+  .text { color: #333; }
+
+  .copy-btn {
+    background: #185FA5;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: #144a82; }
+
+  /* 预览区 */
+  .browser-bar {
+    background: #e8ecef;
+    padding: 6px 12px;
+    border-bottom: 0.5px solid #d0d7e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+  .browser-url {
+    flex: 1;
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    border: 0.5px solid #d0d7e0;
+  }
+  .preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+  }
+
+  /* 参数调节区 */
+  .param-group { margin-bottom: 16px; }
+  .param-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .param-btn {
+    flex: 1;
+    min-width: 70px;
+    padding: 7px 10px;
+    border: 0.5px solid #185FA5;
+    background: #fff;
+    color: #185FA5;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+  .param-btn:hover { background: #E6F1FB; }
+  .param-btn.active { background: #185FA5; color: #fff; }
+
+  /* 属性开关 */
+  .attr-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border: 0.5px solid #d0d7e0;
+    border-radius: 5px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .attr-switch:hover { background: #f0f5fa; }
+  .attr-switch.on {
+    border-color: #0F6E56;
+    background: #E8F5E9;
+  }
+  .attr-switch .attr-info {
+    flex: 1;
+  }
+  .attr-switch .attr-name {
+    font-family: "Consolas", monospace;
+    font-size: 13px;
+    color: #0F6E56;
+    font-weight: 600;
+  }
+  .attr-switch.on .attr-name { color: #0F6E56; }
+  .attr-switch .attr-desc {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+  }
+  .switch-toggle {
+    width: 36px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .switch-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .attr-switch.on .switch-toggle {
+    background: #0F6E56;
+  }
+  .attr-switch.on .switch-toggle::after {
+    transform: translateX(16px);
+  }
+
+  .info-box {
+    background: #f5f8fc;
+    border: 0.5px solid #d0e0f0;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .warn-box {
+    background: #fff5f5;
+    border: 0.5px solid #c0392b;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #c0392b;
+    margin-top: 6px;
+  }
+
+  /* 教学提示卡 */
+  .tips-card {
+    margin: 0 12px 12px;
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow: hidden;
+  }
+  .tip-col {
+    padding: 12px 14px;
+    border-right: 0.5px solid #e0e7ee;
+  }
+  .tip-col:last-child { border-right: none; }
+  .tip-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #185FA5;
+    margin-bottom: 6px;
+  }
+  .tip-content { font-size: 12px; color: #555; line-height: 1.7; }
+  .tip-sizheng {
+    background: #fff5f5;
+  }
+  .tip-sizheng .tip-title { color: #c0392b; }
+  .tip-sizheng .tip-content { color: #c0392b; }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .container, .container.code-collapsed {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    .panel { min-height: 300px; }
+    .tips-card { grid-template-columns: 1fr 1fr; }
+    .tip-col { border-right: none; border-bottom: 0.5px solid #e0e7ee; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航条 -->
+<div class="navbar">
+  <span class="nav-section">第2章 HTML5标签 · 2.5.1</span>
+  <span class="nav-title">P07 媒体播放器</span>
+  <span class="nav-tag">video</span>
+  <span class="nav-tag">audio</span>
+  <span class="nav-tag">controls</span>
+  <span class="nav-tag">autoplay</span>
+  <span class="nav-tag">loop</span>
+  <span class="nav-tag">muted</span>
+  <span class="nav-spacer"></span>
+  <button class="nav-btn" id="toggleCode" onclick="toggleCode()">查看代码</button>
+  <button class="nav-btn" id="lectureBtn" onclick="toggleLecture()">讲解模式</button>
+  <button class="nav-btn" onclick="resetAll()">重置</button>
+</div>
+
+<!-- 主容器 -->
+<div class="container" id="mainContainer">
+
+  <!-- ① 代码原理区 -->
+  <div class="panel panel-code">
+    <div class="panel-header">
+      <span>① 代码原理区</span>
+      <button class="copy-btn" onclick="copyCode()">复制代码</button>
+    </div>
+    <div class="panel-body">
+      <div class="code-block" id="codeBlock"></div>
+    </div>
+  </div>
+
+  <!-- ② 实时预览区 -->
+  <div class="panel panel-preview">
+    <div class="panel-header">
+      <span>② 实时预览区</span>
+      <span style="font-size:12px;color:#888;" id="previewTip">开关属性，播放器行为实时变化</span>
+    </div>
+    <div class="browser-bar">
+      <span class="browser-dot dot-r"></span>
+      <span class="browser-dot dot-y"></span>
+      <span class="browser-dot dot-g"></span>
+      <div class="browser-url" id="browserUrl">https://localhost/p07-media-player.html</div>
+    </div>
+    <iframe class="preview-frame" id="previewFrame"></iframe>
+  </div>
+
+  <!-- ③ 参数调节区 -->
+  <div class="panel panel-params">
+    <div class="panel-header">
+      <span>③ 参数调节区</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="param-group">
+        <label class="param-label">媒体类型切换</label>
+        <div class="btn-group">
+          <button class="param-btn active" data-media="video" onclick="selectMedia('video')">video 视频</button>
+          <button class="param-btn" data-media="audio" onclick="selectMedia('audio')">audio 音频</button>
+        </div>
+        <div class="info-box" id="mediaInfo">video：嵌入视频播放器，支持画面+声音</div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">属性开关（点击切换）</label>
+
+        <div class="attr-switch on" data-attr="controls" onclick="toggleAttr('controls')">
+          <div class="attr-info">
+            <div class="attr-name">controls</div>
+            <div class="attr-desc">显示播放控制条（推荐开启）</div>
+          </div>
+          <div class="switch-toggle"></div>
+        </div>
+
+        <div class="attr-switch" data-attr="autoplay" onclick="toggleAttr('autoplay')">
+          <div class="attr-info">
+            <div class="attr-name">autoplay</div>
+            <div class="attr-desc">自动播放（慎用！影响体验）</div>
+          </div>
+          <div class="switch-toggle"></div>
+        </div>
+
+        <div class="attr-switch" data-attr="loop" onclick="toggleAttr('loop')">
+          <div class="attr-info">
+            <div class="attr-name">loop</div>
+            <div class="attr-desc">循环播放</div>
+          </div>
+          <div class="switch-toggle"></div>
+        </div>
+
+        <div class="attr-switch" data-attr="muted" onclick="toggleAttr('muted')">
+          <div class="attr-info">
+            <div class="attr-name">muted</div>
+            <div class="attr-desc">静音播放</div>
+          </div>
+          <div class="switch-toggle"></div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">属性说明</label>
+        <div class="info-box" id="attrExplain">
+          <strong>controls</strong>：显示播放/暂停、进度条、音量等控制条<br>
+          建议始终开启，否则用户无法控制播放
+        </div>
+      </div>
+
+      <div class="param-group" id="autoplayWarn" style="display:none;">
+        <div class="warn-box">
+          ⚠ <strong>autoplay 慎用提醒</strong><br>
+          自动播放会打扰用户，多数浏览器已限制自动播放带声音的视频。建议仅在 muted 静音时使用 autoplay。
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ④ 教学提示卡 -->
+<div class="tips-card">
+  <div class="tip-col">
+    <div class="tip-title">★ 核心知识点</div>
+    <div class="tip-content">
+      &lt;video src="x.mp4" controls&gt;&lt;/video&gt;<br>
+      controls 显示控制条（推荐）<br>
+      autoplay 自动播放（慎用）<br>
+      loop 循环 / muted 静音<br>
+      audio 同理，无画面
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">⚠ 常见错误</div>
+    <div class="tip-content">
+      ① 忘记加 controls 用户无法播放<br>
+      ② 滥用 autoplay 打扰用户<br>
+      ③ 视频格式不支持（用source兼容）<br>
+      ④ video 标签未闭合 &lt;/video&gt;
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">? 拓展思考题</div>
+    <div class="tip-content">
+      1. autoplay 为什么常被浏览器拦截？<br>
+      2. video 和 audio 有什么区别？<br>
+      3. 如何让视频兼容所有浏览器？<br>
+      4. muted+autoplay 组合有什么用？
+    </div>
+  </div>
+  <div class="tip-col tip-sizheng">
+    <div class="tip-title">♥ 思政小贴士</div>
+    <div class="tip-content">
+      "网页放视频要合规遵守网络安全法，autoplay别滥用要尊重用户——技术要有人文关怀。"<br>
+      <strong>——内容合规·人文关怀</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 状态
+  let state = {
+    media: 'video',  // video / audio
+    controls: true,
+    autoplay: false,
+    loop: false,
+    muted: false
+  };
+
+  const mediaInfos = {
+    video: 'video：嵌入视频播放器，支持画面+声音',
+    audio: 'audio：嵌入音频播放器，仅声音无画面'
+  };
+
+  const attrExplains = {
+    controls: '<strong>controls</strong>：显示播放/暂停、进度条、音量等控制条<br>建议始终开启，否则用户无法控制播放',
+    autoplay: '<strong>autoplay</strong>：页面加载后自动播放<br>⚠ 慎用！会打扰用户，多数浏览器限制自动播放带声音的内容',
+    loop: '<strong>loop</strong>：播放结束后自动循环重新播放<br>适合背景视频、演示循环场景',
+    muted: '<strong>muted</strong>：静音播放<br>常与 autoplay 配合使用，绕过浏览器自动播放限制'
+  };
+
+  // 选择媒体类型
+  function selectMedia(type) {
+    state.media = type;
+    document.querySelectorAll('[data-media]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.media === type);
+    });
+    document.getElementById('mediaInfo').textContent = mediaInfos[type];
+    updatePreview();
+  }
+
+  // 切换属性
+  function toggleAttr(attr) {
+    state[attr] = !state[attr];
+    const sw = document.querySelector(`[data-attr="${attr}"]`);
+    sw.classList.toggle('on', state[attr]);
+
+    document.getElementById('attrExplain').innerHTML = attrExplains[attr];
+
+    // autoplay警告
+    document.getElementById('autoplayWarn').style.display = state.autoplay ? 'block' : 'none';
+
+    updatePreview();
+  }
+
+  // 生成代码（高亮版）
+  function generateCode() {
+    let lines = [];
+    const tag = state.media;
+
+    lines.push(`<span class="comment">&lt;!-- ${tag === 'video' ? '视频' : '音频'}播放器 --&gt;</span>`);
+
+    // 构建属性字符串
+    let attrs = [];
+    attrs.push(`<span class="attr">src</span>=<span class="value">"./media/activity.${tag === 'video' ? 'mp4' : 'mp3'}"</span>`);
+    if (state.controls) attrs.push('<span class="attr">controls</span>');
+    if (state.autoplay) attrs.push('<span class="attr">autoplay</span>');
+    if (state.loop) attrs.push('<span class="attr">loop</span>');
+    if (state.muted) attrs.push('<span class="attr">muted</span>');
+
+    lines.push(`<span class="tag">&lt;${tag}</span> ${attrs.join(' ')}<span class="tag">&gt;&lt;/${tag}&gt;</span>`);
+
+    lines.push('');
+    lines.push('<span class="comment">&lt;!-- 属性说明 --&gt;</span>');
+    if (state.controls) {
+      lines.push('<span class="comment">✅ controls  显示控制条，用户可操作播放</span>');
+    } else {
+      lines.push('<span class="comment">❌ controls  未开启，用户无法控制播放</span>');
+    }
+    if (state.autoplay) {
+      lines.push('<span class="comment">⚠️ autoplay  自动播放（慎用，打扰用户）</span>');
+    }
+    if (state.loop) {
+      lines.push('<span class="comment">🔄 loop  播放结束后循环</span>');
+    }
+    if (state.muted) {
+      lines.push('<span class="comment">🔇 muted  静音播放</span>');
+    }
+
+    lines.push('');
+    lines.push('<span class="comment">&lt;!-- 多格式兼容写法（推荐） --&gt;</span>');
+    lines.push(`<span class="tag">&lt;${tag}</span> ${state.controls ? '<span class="attr">controls</span>' : ''}${state.autoplay ? ' <span class="attr">autoplay</span>' : ''}${state.loop ? ' <span class="attr">loop</span>' : ''}${state.muted ? ' <span class="attr">muted</span>' : ''}<span class="tag">&gt;`);
+    lines.push(`  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"./media/activity.mp4"</span> <span class="attr">type</span>=<span class="value">"video/mp4"</span><span class="tag">&gt;</span>`);
+    lines.push(`  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"./media/activity.webm"</span> <span class="attr">type</span>=<span class="value">"video/webm"</span><span class="tag">&gt;</span>`);
+    lines.push(`  您的浏览器不支持 ${tag} 标签。`);
+    lines.push(`<span class="tag">&lt;/${tag}&gt;</span>`);
+
+    return lines;
+  }
+
+  // 生成纯代码（复制用）
+  function generatePlainCode() {
+    const tag = state.media;
+    let attrs = [`src="./media/activity.${tag === 'video' ? 'mp4' : 'mp3'}"`];
+    if (state.controls) attrs.push('controls');
+    if (state.autoplay) attrs.push('autoplay');
+    if (state.loop) attrs.push('loop');
+    if (state.muted) attrs.push('muted');
+    return `<${tag} ${attrs.join(' ')}></${tag}>`;
+  }
+
+  // 生成预览HTML
+  function generatePreviewHTML() {
+    const tag = state.media;
+
+    // 生成模拟播放器
+    let playerHTML = '';
+    if (tag === 'video') {
+      playerHTML = `
+        <div class="mock-player" style="width:100%;max-width:500px;background:#000;border-radius:6px;overflow:hidden;position:relative;margin:15px 0;">
+          <div style="height:280px;background:linear-gradient(135deg,#1a3a5c 0%,#185FA5 100%);display:flex;align-items:center;justify-content:center;position:relative;">
+            <div style="text-align:center;color:#fff;">
+              <div style="font-size:48px;opacity:0.8;">▶</div>
+              <div style="font-size:14px;margin-top:8px;opacity:0.9;">技能强国主题教育活动现场</div>
+            </div>
+            ${state.autoplay ? '<div style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:10px;font-size:11px;color:#fff;">自动播放中</div>' : ''}
+          </div>
+          ${state.controls ? `
+          <div style="background:#222;padding:8px 12px;display:flex;align-items:center;gap:10px;color:#fff;font-size:12px;">
+            <span style="cursor:pointer;">▶</span>
+            <span style="flex:1;height:4px;background:#444;border-radius:2px;position:relative;">
+              <span style="position:absolute;left:0;top:0;height:100%;width:30%;background:#185FA5;border-radius:2px;"></span>
+            </span>
+            <span>00:45 / 02:30</span>
+            ${state.muted ? '<span style="color:#888;">🔇</span>' : '<span>🔊</span>'}
+            ${state.loop ? '<span style="color:#185FA5;">🔄</span>' : ''}
+          </div>` : '<div style="background:#222;padding:8px;color:#888;font-size:12px;text-align:center;">无控制条（controls未开启）</div>'}
+        </div>`;
+    } else {
+      playerHTML = `
+        <div class="mock-player" style="width:100%;max-width:500px;background:#f5f5f5;border-radius:6px;overflow:hidden;margin:15px 0;border:1px solid #ddd;">
+          <div style="padding:30px 20px;text-align:center;background:linear-gradient(135deg,#f5f8fc 0%,#E6F1FB 100%);">
+            <div style="font-size:48px;">🎵</div>
+            <div style="font-size:14px;color:#333;margin-top:8px;">校园资讯音频播报</div>
+            ${state.autoplay ? '<div style="font-size:11px;color:#185FA5;margin-top:4px;">自动播放中</div>' : ''}
+          </div>
+          ${state.controls ? `
+          <div style="background:#222;padding:8px 12px;display:flex;align-items:center;gap:10px;color:#fff;font-size:12px;">
+            <span style="cursor:pointer;">▶</span>
+            <span style="flex:1;height:4px;background:#444;border-radius:2px;position:relative;">
+              <span style="position:absolute;left:0;top:0;height:100%;width:30%;background:#0F6E56;border-radius:2px;"></span>
+            </span>
+            <span>00:45 / 02:30</span>
+            ${state.muted ? '<span style="color:#888;">🔇</span>' : '<span>🔊</span>'}
+            ${state.loop ? '<span style="color:#0F6E56;">🔄</span>' : ''}
+          </div>` : '<div style="background:#222;padding:8px;color:#888;font-size:12px;text-align:center;">无控制条（controls未开启）</div>'}
+        </div>`;
+    }
+
+    // 属性状态说明
+    let attrStatus = '';
+    const attrs = [
+      { name: 'controls', on: state.controls },
+      { name: 'autoplay', on: state.autoplay },
+      { name: 'loop', on: state.loop },
+      { name: 'muted', on: state.muted }
+    ];
+    attrStatus = attrs.map(a =>
+      `<span style="display:inline-block;padding:3px 10px;margin:3px;border-radius:12px;font-size:11px;font-family:Consolas,monospace;${a.on ? 'background:#E8F5E9;color:#0F6E56;border:0.5px solid #0F6E56;' : 'background:#f5f5f5;color:#999;border:0.5px solid #ddd;'}">${a.on ? '✅' : '⬜'} ${a.name}</span>`
+    ).join('');
+
+    return `
+      <!DOCTYPE html>
+      <html lang="zh-CN">
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: "Microsoft YaHei", sans-serif; padding: 20px; line-height: 1.8; color: #333; }
+          h1 { color: #185FA5; font-size: 20px; }
+          h2 { color: #185FA5; font-size: 16px; margin-top: 20px; }
+          .code-tag { background: #f0f5fa; padding: 2px 6px; border-radius: 3px; color: #BA7517; font-family: Consolas, monospace; font-size: 12px; }
+          .info { background: #f5f8fc; padding: 10px; border-radius: 4px; border-left: 3px solid #185FA5; font-size: 12px; margin: 10px 0; }
+          .warn { background: #fff5f5; padding: 10px; border-radius: 4px; border-left: 3px solid #c0392b; font-size: 12px; margin: 10px 0; color: #c0392b; }
+        </style>
+      </head>
+      <body>
+        <h1>校园资讯-新闻视频播放器</h1>
+        <p>当前媒体类型：<span class="code-tag">&lt;${tag}&gt;</span></p>
+
+        <h2>播放器预览</h2>
+        ${playerHTML}
+
+        <h2>当前属性状态</h2>
+        <div>${attrStatus}</div>
+
+        ${!state.controls ? '<div class="warn">⚠ controls 未开启：用户无法控制播放，不建议这样使用</div>' : ''}
+
+        ${state.autoplay ? '<div class="warn">⚠ autoplay 已开启：会自动播放，可能打扰用户。多数浏览器限制自动播放带声音的内容，建议配合 muted 使用</div>' : ''}
+
+        ${state.autoplay && state.muted ? '<div class="info">✅ autoplay + muted 组合：静音自动播放，可绕过浏览器限制，常见于背景视频</div>' : ''}
+
+        <div class="info">
+          <strong>属性说明：</strong><br>
+          • controls：显示播放控制条（推荐始终开启）<br>
+          • autoplay：自动播放（慎用，尊重用户）<br>
+          • loop：循环播放<br>
+          • muted：静音播放<br>
+          <br>
+          <strong>合规提醒：</strong>网页视频内容需遵守《网络安全法》，不得传播违规内容
+        </div></body>
+      </html>
+    `;
+  }
+
+  // 更新预览
+  function updatePreview() {
+    // 更新代码区
+    const lines = generateCode();
+    const codeBlock = document.getElementById('codeBlock');
+    codeBlock.innerHTML = lines.map((line, idx) =>
+      `<span class="code-line" data-line="${idx}" onclick="highlightLine(${idx})">${line || ' '}</span>`
+    ).join('');
+
+    // 高亮包含属性的行
+    document.querySelectorAll('.code-line').forEach(line => {
+      const text = line.textContent;
+      if (text.includes(`<${state.media}`) && (text.includes('controls') || text.includes('autoplay') || text.includes('loop') || text.includes('muted'))) {
+        line.classList.add('highlighted');
+      }
+    });
+
+    // 更新预览iframe
+    const previewHTML = generatePreviewHTML();
+    const previewDoc = document.getElementById('previewFrame').contentDocument;
+    previewDoc.open();
+    previewDoc.write(previewHTML);
+    previewDoc.close();
+
+    // 更新地址栏
+    document.getElementById('browserUrl').textContent = `https://localhost/p07-${state.media}-player.html`;
+  }
+
+  // 高亮代码行
+  function highlightLine(idx) {
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlighted'));
+    const line = document.querySelector(`.code-line[data-line="${idx}"]`);
+    if (line) line.classList.add('highlighted');
+  }
+
+  // 复制代码
+  function copyCode() {
+    const plainCode = generatePlainCode();
+    navigator.clipboard.writeText(plainCode).then(() => {
+      const btn = event.target;
+      const oldText = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(() => { btn.textContent = oldText; }, 1500);
+    });
+  }
+
+  // 切换代码显示
+  function toggleCode() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('code-collapsed');
+    const btn = document.getElementById('toggleCode');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('code-collapsed') ? '显示代码' : '查看代码';
+  }
+
+  // 讲解模式
+  function toggleLecture() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('lecture-mode');
+    const btn = document.getElementById('lectureBtn');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('lecture-mode') ? '退出讲解' : '讲解模式';
+  }
+
+  // 重置
+  function resetAll() {
+    state = {
+      media: 'video',
+      controls: true,
+      autoplay: false,
+      loop: false,
+      muted: false
+    };
+    document.querySelectorAll('[data-media]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.media === 'video');
+    });
+    document.querySelectorAll('[data-attr]').forEach(sw => {
+      const attr = sw.dataset.attr;
+      sw.classList.toggle('on', state[attr]);
+    });
+    document.getElementById('mediaInfo').textContent = mediaInfos['video'];
+    document.getElementById('attrExplain').innerHTML = attrExplains['controls'];
+    document.getElementById('autoplayWarn').style.display = 'none';
+    document.getElementById('mainContainer').classList.remove('lecture-mode', 'code-collapsed');
+    document.getElementById('lectureBtn').classList.remove('active');
+    document.getElementById('lectureBtn').textContent = '讲解模式';
+    document.getElementById('toggleCode').classList.remove('active');
+    document.getElementById('toggleCode').textContent = '查看代码';
+    updatePreview();
+  }
+
+  // 初始化
+  updatePreview();
+</script>
+
+
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

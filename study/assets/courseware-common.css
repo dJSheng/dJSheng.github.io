@@ -1,0 +1,97 @@
+/* ==========================================================================
+   交互式课件通用样式 (courseware-common.css)
+   为每个课件页面提供统一的浮动导航条与全局面板
+   ========================================================================== */
+
+/* 全局浮动顶栏 —— 不影响原页面布局，固定在页面顶部之上 */
+#cw-topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:46px;
+  background:linear-gradient(135deg,#0F4378,#185FA5);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  z-index:2147483600;            /* 始终在最顶层 */
+  box-shadow:0 2px 10px rgba(15,67,120,.35);
+  font-family:"Microsoft YaHei","Segoe UI",sans-serif;
+  font-size:13px;
+}
+#cw-topbar *{box-sizing:border-box;}
+
+#cw-topbar .cw-brand{
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+#cw-topbar .cw-brand .cw-logo{
+  width:26px;height:26px;border-radius:6px;
+  background:#fff;color:#185FA5;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:14px;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+#cw-topbar .cw-brand .cw-brand-text{font-weight:600;font-size:14px;letter-spacing:.5px;}
+#cw-topbar .cw-brand .cw-sub{color:rgba(255,255,255,.65);font-size:12px;}
+
+#cw-topbar .cw-breadcrumb{
+  display:flex;align-items:center;gap:8px;
+  flex:1;justify-content:center;
+  min-width:0;
+  overflow:hidden;
+}
+#cw-topbar .cw-chip{
+  background:rgba(255,255,255,.14);
+  padding:3px 10px;border-radius:12px;
+  font-size:12px;white-space:nowrap;
+  max-width:220px;overflow:hidden;text-overflow:ellipsis;
+}
+#cw-topbar .cw-chip strong{font-weight:600;}
+
+#cw-topbar .cw-nav-group{
+  display:flex;align-items:center;gap:6px;
+  flex-shrink:0;
+}
+#cw-topbar .cw-btn{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff;
+  padding:5px 12px;border-radius:6px;
+  cursor:pointer;font-size:12px;
+  display:inline-flex;align-items:center;gap:4px;
+  transition:background .18s,border-color .18s;
+  white-space:nowrap;
+  text-decoration:none;
+}
+#cw-topbar .cw-btn:hover{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.45);}
+#cw-topbar .cw-btn.cw-btn-solid{background:#fff;color:#185FA5;font-weight:600;}
+#cw-topbar .cw-btn.cw-btn-solid:hover{background:#E8F1FA;}
+#cw-topbar .cw-btn[disabled]{opacity:.35;cursor:not-allowed;pointer-events:none;}
+
+#cw-topbar .cw-divider{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 2px;}
+
+/* 进度小球 */
+#cw-progress-dot{
+  width:8px;height:8px;border-radius:50%;background:#28C840;
+  box-shadow:0 0 0 2px rgba(40,200,64,.3);
+}
+
+/* 让原页面整体下移，避免被顶栏遮挡。
+   注意：用 margin 而非 padding —— margin 不会被计入 height:100vh 的盒模型，
+   因此不会撑破依赖 100vh 的全屏课件布局。 */
+body.cw-has-topbar { margin-top: 46px !important; }
+
+/* ============ 移动端适配 ============ */
+@media(max-width:720px){
+  #cw-topbar{padding:0 10px;height:42px;font-size:12px;}
+  #cw-topbar .cw-brand .cw-sub{display:none;}
+  #cw-topbar .cw-breadcrumb{display:none;}
+  #cw-topbar .cw-btn .cw-btn-text{display:none;}
+  #cw-topbar .cw-btn{padding:5px 8px;}
+  body.cw-has-topbar{margin-top:42px !important;}
+}
+
+/* ============ 滚动条美化（可选，轻量） ============ */
+#cw-topbar ::-webkit-scrollbar{width:6px;height:6px;}

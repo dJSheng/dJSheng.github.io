@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P12-表单控件大全</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--main:#185FA5;--main-light:#E8F1FA;--main-dark:#0F4478;--green:#28a745;--red:#dc3545;--bg:#f4f7fb;--card:#fff;--border:#dde5ef;--text:#2c3e50;}
+body{font-family:"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;}
+.navbar{display:flex;align-items:center;justify-content:space-between;background:var(--main);color:#fff;padding:10px 20px;flex-wrap:wrap;gap:8px;}
+.navbar .nav-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.navbar .tag-chapter{background:rgba(255,255,255,.18);padding:3px 10px;border-radius:12px;font-size:12px;}
+.navbar .tag-title{font-weight:bold;font-size:15px;}
+.navbar .tag-knowledge{background:rgba(255,255,255,.25);padding:3px 10px;border-radius:12px;font-size:12px;}
+.navbar .nav-right{display:flex;gap:6px;}
+.navbar button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:.2s;}
+.navbar button:hover{background:rgba(255,255,255,.3);}
+.navbar button.active{background:#fff;color:var(--main);font-weight:bold;}
+.layout{display:flex;gap:12px;padding:12px;height:calc(100vh - 100px);}
+.layout > div{background:var(--card);border-radius:8px;border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;}
+.code-area{flex:0 0 25%;}
+.preview-area{flex:0 0 50%;}
+.param-area{flex:0 0 25%;}
+.area-title{background:var(--main-light);color:var(--main-dark);padding:8px 12px;font-weight:bold;font-size:13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.area-body{flex:1;overflow:auto;padding:10px;}
+.code-content{font-family:Consolas,monospace;font-size:12px;line-height:1.8;white-space:pre-wrap;word-break:break-all;}
+.code-content .tag{color:#e67e22;}
+.code-content .attr{color:#8e44ad;}
+.code-content .str{color:#27ae60;}
+.code-content .cmt{color:#95a5a6;font-style:italic;}
+.code-content .line{padding:2px 6px;border-radius:3px;}
+.code-content .line.highlight{background:#fff3cd;border-left:3px solid #ffc107;}
+.copy-btn{background:var(--main);color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;}
+.copy-btn:hover{background:var(--main-dark);}
+/* 预览表单 */
+.form-preview{background:#fff;padding:16px;border-radius:8px;border:1px solid var(--border);max-width:520px;margin:0 auto;}
+.form-preview h3{color:var(--main-dark);margin-bottom:12px;text-align:center;font-size:15px;}
+.form-item{margin-bottom:12px;}
+.form-item label{display:block;font-size:12px;color:#555;margin-bottom:4px;font-weight:bold;}
+.form-item input,.form-item select,.form-item textarea{width:100%;padding:7px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit;}
+.form-item input[type=radio],.form-item input[type=checkbox]{width:auto;margin-right:4px;}
+.form-item .radio-group,.form-item .checkbox-group{display:flex;gap:12px;flex-wrap:wrap;}
+.form-item .radio-group label,.form-item .checkbox-group label{font-weight:normal;display:flex;align-items:center;margin:0;font-size:13px;}
+.form-item textarea{resize:vertical;min-height:60px;}
+.form-item .submit-btn{background:var(--main);color:#fff;border:none;padding:9px;border-radius:4px;cursor:pointer;font-size:14px;width:100%;}
+.form-item .submit-btn:hover{background:var(--main-dark);}
+.empty-hint{text-align:center;color:#999;padding:40px 20px;font-style:italic;}
+/* 参数区 */
+.param-hint{font-size:11px;color:#666;background:#fff8e1;padding:6px 8px;border-radius:4px;margin-bottom:10px;border-left:3px solid #ffc107;}
+.param-group{margin-bottom:14px;}
+.param-group label{display:block;font-weight:bold;margin-bottom:5px;color:var(--main-dark);font-size:13px;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.type-grid button{padding:6px 4px;border:1px solid var(--border);background:#fff;cursor:pointer;border-radius:4px;font-size:11px;transition:.2s;}
+.type-grid button.active{background:var(--main);color:#fff;border-color:var(--main);font-weight:bold;}
+.type-grid button:hover:not(.active){background:var(--main-light);}
+.attr-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:12px;}
+.attr-row label{flex:0 0 90px;font-weight:normal;color:#555;}
+.attr-row input[type=text]{flex:1;padding:5px;border:1px solid var(--border);border-radius:4px;font-size:12px;}
+.attr-row input[type=checkbox]{width:auto;}
+.attr-row select{flex:1;padding:5px;border:1px solid var(--border);border-radius:4px;font-size:12px;}
+.add-btn{width:100%;padding:8px;background:var(--green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;margin-top:6px;font-weight:bold;}
+.add-btn:hover{background:#218838;}
+.del-btn{background:var(--red);color:#fff;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:11px;margin-left:6px;}
+.control-list{max-height:160px;overflow-y:auto;}
+.control-item{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:#f8f9fa;border-radius:4px;margin-bottom:4px;font-size:12px;}
+.control-item .ci-type{font-weight:bold;color:var(--main-dark);}
+.note-box{background:var(--main-light);padding:8px;border-radius:6px;font-size:11px;color:var(--main-dark);margin-top:10px;line-height:1.6;}
+/* 教学提示卡 */
+.tip-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px;background:var(--card);border-top:1px solid var(--border);}
+.tip-card{padding:8px 10px;border-radius:6px;font-size:12px;line-height:1.5;}
+.tip-card h4{font-size:12px;margin-bottom:4px;}
+.tip-knowledge{background:var(--main-light);color:var(--main-dark);}
+.tip-error{background:#fff3cd;color:#856404;}
+.tip-think{background:#e8f5e9;color:#2e7d32;}
+.tip-sizheng{background:#fde8ea;color:var(--red);border:1px solid var(--red);}
+.tip-sizheng h4::before{content:"★ ";}
+.hidden{display:none !important;}
+.explain-mode .layout{height:auto;}
+@media(max-width:900px){.layout{flex-direction:column;height:auto;}.tip-bar{grid-template-columns:repeat(2,1fr);}.type-grid{grid-template-columns:1fr 1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="nav-left">
+    <span class="tag-chapter">第2章 HTML5标签</span>
+    <span class="tag-title">PPT 2.10.1 表单标签</span>
+    <span class="tag-knowledge">知识点：form/input/select/textarea</span>
+  </div>
+  <div class="nav-right">
+    <button onclick="toggleCode()">查看代码</button>
+    <button onclick="toggleExplain()">讲解模式</button>
+    <button onclick="resetAll()">重置</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="code-area">
+    <div class="area-title">① 代码原理区 <button class="copy-btn" onclick="copyCode()">复制</button></div>
+    <div class="area-body">
+      <div class="code-content" id="codeContent"></div>
+    </div>
+  </div>
+
+  <div class="preview-area">
+    <div class="area-title">② 实时预览区 <span style="font-size:11px;font-weight:normal;">生成的表单</span></div>
+    <div class="area-body">
+      <div class="form-preview" id="formPreview">
+        <div class="empty-hint">从右侧选择控件类型并配置属性，点击"添加控件"生成表单</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="param-area">
+    <div class="area-title">③ 参数调节区</div>
+    <div class="area-body">
+      <div class="param-hint">💡 选控件类型→配属性→添加，左侧实时生成代码与预览</div>
+      <div class="param-group">
+        <label>控件类型</label>
+        <div class="type-grid" id="typeGrid">
+          <button data-type="text" class="active">text 文本</button>
+          <button data-type="password">password 密码</button>
+          <button data-type="radio">radio 单选</button>
+          <button data-type="checkbox">checkbox 多选</button>
+          <button data-type="file">file 文件</button>
+          <button data-type="date">date 日期</button>
+          <button data-type="email">email 邮箱</button>
+          <button data-type="submit">submit 提交</button>
+          <button data-type="textarea">textarea 文本域</button>
+          <button data-type="select">select 下拉</button>
+        </div>
+      </div>
+      <div class="param-group">
+        <label>属性配置</label>
+        <div class="attr-row"><label>name：</label><input type="text" id="attrName" value="user"></div>
+        <div class="attr-row"><label>placeholder：</label><input type="text" id="attrPlaceholder" value="请输入"></div>
+        <div class="attr-row"><label>value：</label><input type="text" id="attrValue" value=""></div>
+        <div class="attr-row"><label>required：</label><input type="checkbox" id="attrRequired"></div>
+        <div class="attr-row" id="labelRow"><label>显示标签：</label><input type="text" id="attrLabel" value="用户名"></div>
+      </div>
+      <button class="add-btn" onclick="addControl()">+ 添加控件</button>
+      <div class="param-group" style="margin-top:14px;">
+        <label>已添加控件</label>
+        <div class="control-list" id="controlList"></div>
+      </div>
+      <div class="note-box">
+        <b>type 取值：</b>text/password/radio/checkbox/file/date/email/submit<br>
+        <b>required：</b>必填属性，提交时校验<br>
+        <b>radio/checkbox：</b>同name为一组
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tip-bar">
+  <div class="tip-card tip-knowledge">
+    <h4>核心知识点</h4>
+    form表单域+input各type+select下拉+textarea文本域；required必填；name分组
+  </div>
+  <div class="tip-card tip-error">
+    <h4>常见错误</h4>
+    radio没设同name导致都能选；password用于普通文本；忘记label导致可用性差
+  </div>
+  <div class="tip-card tip-think">
+    <h4>拓展思考</h4>
+    HTML5新增的number/range/color/tel/url类型怎么用？表单验证怎么做？
+  </div>
+  <div class="tip-card tip-sizheng">
+    <h4>思政小贴士</h4>
+    表单收集用户信息要保护隐私，password隐藏是基本安全，遵循《个人信息保护法》
+  </div>
+</div>
+
+<script>
+let currentType='text';
+let controls=[];
+
+document.getElementById('typeGrid').addEventListener('click',e=>{
+  if(!e.target.dataset.type)return;
+  currentType=e.target.dataset.type;
+  document.querySelectorAll('#typeGrid button').forEach(b=>b.classList.toggle('active',b.dataset.type===currentType));
+  // 根据类型调整默认值
+  const defaults={
+    text:{name:'user',placeholder:'请输入',label:'用户名',value:''},
+    password:{name:'pwd',placeholder:'请输入密码',label:'密码',value:''},
+    radio:{name:'sex',placeholder:'',label:'性别',value:'male'},
+    checkbox:{name:'hobby',placeholder:'',label:'爱好',value:'reading'},
+    file:{name:'avatar',placeholder:'',label:'头像',value:''},
+    date:{name:'birthday',placeholder:'',label:'生日',value:''},
+    email:{name:'email',placeholder:'请输入邮箱',label:'邮箱',value:''},
+    submit:{name:'',placeholder:'',label:'提交按钮',value:'提交'},
+    textarea:{name:'comment',placeholder:'请输入留言',label:'留言',value:''},
+    select:{name:'city',placeholder:'',label:'城市',value:'beijing'}
+  };
+  const d=defaults[currentType];
+  document.getElementById('attrName').value=d.name;
+  document.getElementById('attrPlaceholder').value=d.placeholder;
+  document.getElementById('attrValue').value=d.value;
+  document.getElementById('attrLabel').value=d.label;
+});
+
+function addControl(){
+  const c={
+    type:currentType,
+    name:document.getElementById('attrName').value,
+    placeholder:document.getElementById('attrPlaceholder').value,
+    value:document.getElementById('attrValue').value,
+    required:document.getElementById('attrRequired').checked,
+    label:document.getElementById('attrLabel').value,
+    id:Date.now()
+  };
+  controls.push(c);
+  document.getElementById('attrRequired').checked=false;
+  renderAll();
+}
+
+function delControl(id){
+  controls=controls.filter(c=>c.id!==id);
+  renderAll();
+}
+
+function renderAll(){
+  renderList();
+  renderPreview();
+  renderCode();
+}
+
+function renderList(){
+  const el=document.getElementById('controlList');
+  if(controls.length===0){el.innerHTML='<div style="color:#999;font-size:11px;text-align:center;padding:8px;">暂无控件</div>';return;}
+  el.innerHTML=controls.map(c=>
+    `<div class="control-item"><span class="ci-type">${c.type}</span><span style="color:#666;font-size:11px;">${c.label||c.name}</span><button class="del-btn" onclick="delControl(${c.id})">删</button></div>`
+  ).join('');
+}
+
+function renderPreview(){
+  const el=document.getElementById('formPreview');
+  if(controls.length===0){
+    el.innerHTML='<div class="empty-hint">从右侧选择控件类型并配置属性，点击"添加控件"生成表单</div>';
+    return;
+  }
+  let html='<h3>留言表单</h3><form action="#" method="post">';
+  controls.forEach(c=>{
+    html+='<div class="form-item">';
+    if(c.type!=='submit')html+=`<label>${c.label}</label>`;
+    const req=c.required?' required':'';
+    if(c.type==='textarea'){
+      html+=`<textarea name="${c.name}" placeholder="${c.placeholder}"${req}></textarea>`;
+    }else if(c.type==='select'){
+      html+=`<select name="${c.name}"${req}><option value="">请选择</option><option value="beijing">北京</option><option value="shanghai">上海</option><option value="guangzhou">广州</option></select>`;
+    }else if(c.type==='radio'){
+      html+=`<div class="radio-group"><label><input type="radio" name="${c.name}" value="${c.value}"${req}>选项A</label><label><input type="radio" name="${c.name}" value="other"${req}>选项B</label></div>`;
+    }else if(c.type==='checkbox'){
+      html+=`<div class="checkbox-group"><label><input type="checkbox" name="${c.name}" value="${c.value}"${req}>选项A</label><label><input type="checkbox" name="${c.name}" value="other"${req}>选项B</label></div>`;
+    }else if(c.type==='submit'){
+      html+=`<input type="submit" value="${c.value||'提交'}" class="submit-btn">`;
+    }else{
+      html+=`<input type="${c.type}" name="${c.name}" placeholder="${c.placeholder}"${c.value?` value="${c.value}"`:''}${req}>`;
+    }
+    html+='</div>';
+  });
+  html+='</form>';
+  el.innerHTML=html;
+}
+
+function renderCode(){
+  const el=document.getElementById('codeContent');
+  if(controls.length===0){
+    el.innerHTML='<span class="cmt">// 添加控件后此处生成代码</span>';
+    return;
+  }
+  let html='<span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="str">"#"</span> <span class="attr">method</span>=<span class="str">"post"</span><span class="tag">&gt;</span>\n';
+  controls.forEach(c=>{
+    const req=c.required?' <span class="attr">required</span>':'';
+    if(c.type==='textarea'){
+      html+=`  <div class="line"><span class="tag">&lt;label&gt;</span>${c.label}<span class="tag">&lt;/label&gt;</span></div>\n`;
+      html+=`  <div class="line"><span class="tag">&lt;textarea</span> <span class="attr">name</span>=<span class="str">"${c.name}"</span> <span class="attr">placeholder</span>=<span class="str">"${c.placeholder}"</span>${req}<span class="tag">&gt;&lt;/textarea&gt;</span></div>\n`;
+    }else if(c.type==='select'){
+      html+=`  <div class="line"><span class="tag">&lt;label&gt;</span>${c.label}<span class="tag">&lt;/label&gt;</span></div>\n`;
+      html+=`  <div class="line"><span class="tag">&lt;select</span> <span class="attr">name</span>=<span class="str">"${c.name}"</span>${req}<span class="tag">&gt;</span></div>\n`;
+      html+=`  <div class="line">  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">""</span><span class="tag">&gt;</span>请选择<span class="tag">&lt;/option&gt;</span></div>\n`;
+      html+=`  <div class="line">  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"beijing"</span><span class="tag">&gt;</span>北京<span class="tag">&lt;/option&gt;</span></div>\n`;
+      html+=`  <div class="line"><span class="tag">&lt;/select&gt;</span></div>\n`;
+    }else if(c.type==='radio'||c.type==='checkbox'){
+      html+=`  <div class="line"><span class="tag">&lt;label&gt;</span><span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"${c.type}"</span> <span class="attr">name</span>=<span class="str">"${c.name}"</span> <span class="attr">value</span>=<span class="str">"${c.value}"</span>${req}<span class="tag">&gt;</span>选项A<span class="tag">&lt;/label&gt;</span></div>\n`;
+    }else if(c.type==='submit'){
+      html+=`  <div class="line"><span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="attr">value</span>=<span class="str">"${c.value||'提交'}"</span><span class="tag">&gt;</span></div>\n`;
+    }else{
+      const val=c.value?` <span class="attr">value</span>=<span class="str">"${c.value}"</span>`:'';
+      html+=`  <div class="line"><span class="tag">&lt;label&gt;</span>${c.label}<span class="tag">&lt;/label&gt;</span></div>\n`;
+      html+=`  <div class="line highlight"><span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"${c.type}"</span> <span class="attr">name</span>=<span class="str">"${c.name}"</span> <span class="attr">placeholder</span>=<span class="str">"${c.placeholder}"</span>${val}${req}<span class="tag">&gt;</span></div>\n`;
+    }
+  });
+  html+='<span class="tag">&lt;/form&gt;</span>';
+  el.innerHTML=html;
+}
+
+function copyCode(){
+  if(controls.length===0){alert('请先添加控件');return;}
+  let txt='<form action="#" method="post">\n';
+  controls.forEach(c=>{
+    const req=c.required?' required':'';
+    if(c.type==='textarea'){
+      txt+=`  <label>${c.label}</label>\n  <textarea name="${c.name}" placeholder="${c.placeholder}"${req}></textarea>\n`;
+    }else if(c.type==='select'){
+      txt+=`  <label>${c.label}</label>\n  <select name="${c.name}"${req}>\n    <option value="">请选择</option>\n    <option value="beijing">北京</option>\n  </select>\n`;
+    }else if(c.type==='radio'||c.type==='checkbox'){
+      txt+=`  <label><input type="${c.type}" name="${c.name}" value="${c.value}"${req}>选项A</label>\n`;
+    }else if(c.type==='submit'){
+      txt+=`  <input type="submit" value="${c.value||'提交'}">\n`;
+    }else{
+      const val=c.value?` value="${c.value}"`:'';
+      txt+=`  <label>${c.label}</label>\n  <input type="${c.type}" name="${c.name}" placeholder="${c.placeholder}"${val}${req}>\n`;
+    }
+  });
+  txt+='</form>';
+  navigator.clipboard.writeText(txt).then(()=>alert('代码已复制！'));
+}
+
+function resetAll(){
+  controls=[];
+  currentType='text';
+  document.querySelectorAll('#typeGrid button').forEach(b=>b.classList.toggle('active',b.dataset.type==='text'));
+  document.getElementById('attrName').value='user';
+  document.getElementById('attrPlaceholder').value='请输入';
+  document.getElementById('attrValue').value='';
+  document.getElementById('attrLabel').value='用户名';
+  document.getElementById('attrRequired').checked=false;
+  renderAll();
+}
+
+let codeVisible=true;
+function toggleCode(){
+  codeVisible=!codeVisible;
+  document.querySelector('.code-area').style.display=codeVisible?'flex':'none';
+  document.querySelector('.preview-area').style.flex=codeVisible?'0 0 50%':'0 0 75%';
+}
+let explainMode=false;
+function toggleExplain(){
+  explainMode=!explainMode;
+  document.body.classList.toggle('explain-mode',explainMode);
+  document.querySelector('.tip-bar').classList.toggle('hidden',explainMode);
+  document.querySelector('.navbar button:nth-child(2)').classList.toggle('active',explainMode);
+}
+
+renderAll();
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

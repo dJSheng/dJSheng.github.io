@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P08-容器嵌套可视化 | div与span标签</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
+    background: #E6F1FB;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* 顶部导航条 */
+  .navbar {
+    background: linear-gradient(90deg, #185FA5 0%, #2A7BC4 100%);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(24,95,165,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-section { font-size: 13px; opacity: 0.9; }
+  .nav-title { font-size: 16px; font-weight: 600; }
+  .nav-tag {
+    background: rgba(255,255,255,0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  .nav-spacer { flex: 1; }
+  .nav-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .nav-btn.active { background: #fff; color: #185FA5; }
+
+  /* 主容器 */
+  .container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    gap: 12px;
+    padding: 12px;
+    height: calc(100vh - 60px - 180px);
+    min-height: 500px;
+  }
+  .container.lecture-mode {
+    grid-template-columns: 0 100% 0;
+  }
+  .container.lecture-mode .panel-code,
+  .container.lecture-mode .panel-params { display: none; }
+  .container.code-collapsed {
+    grid-template-columns: 0 75% 25%;
+  }
+  .container.code-collapsed .panel-code { display: none; }
+
+  .panel {
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-header {
+    background: #f5f8fc;
+    padding: 8px 14px;
+    border-bottom: 0.5px solid #d0d7e0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #185FA5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-body {
+    flex: 1;
+    overflow: auto;
+    padding: 12px;
+  }
+
+  /* 代码区 */
+  .code-block {
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .code-line {
+    padding: 2px 6px;
+    margin: 0 -6px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: block;
+    min-height: 1.8em;
+  }
+  .code-line:hover { background: #f0f5fa; }
+  .code-line.highlighted { background: #fff3cd; border-left: 3px solid #BA7517; padding-left: 3px; }
+  .tag { color: #185FA5; }
+  .attr { color: #0F6E56; }
+  .value { color: #BA7517; }
+  .comment { color: #888780; font-style: italic; }
+  .text { color: #333; }
+
+  .copy-btn {
+    background: #185FA5;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: #144a82; }
+
+  /* 预览区 - 布局区 */
+  .layout-area {
+    width: 100%;
+    min-height: 100%;
+    background: #fff;
+    border: 2px dashed #d0d7e0;
+    border-radius: 6px;
+    padding: 10px;
+    overflow: auto;
+    position: relative;
+  }
+  .layout-area.drag-over {
+    border-color: #185FA5;
+    background: #E6F1FB;
+  }
+  .layout-empty {
+    text-align: center;
+    color: #aaa;
+    padding: 40px 20px;
+    font-size: 13px;
+  }
+
+  .preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+  }
+
+  /* 预览区浏览器栏 */
+  .browser-bar {
+    background: #e8ecef;
+    padding: 6px 12px;
+    border-bottom: 0.5px solid #d0d7e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+  .browser-url {
+    flex: 1;
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    border: 0.5px solid #d0d7e0;
+  }
+
+  /* 拖拽卡片样式 - 在预览区渲染的元素 */
+  .rendered-div {
+    border: 2px solid #185FA5;
+    background: #E6F1FB;
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    font-family: "Consolas", monospace;
+    font-size: 12px;
+    color: #185FA5;
+    min-height: 36px;
+    position: relative;
+  }
+  .rendered-div::before {
+    content: 'div (块级·独占一行)';
+    position: absolute;
+    top: -8px;
+    left: 8px;
+    background: #185FA5;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: "Microsoft YaHei", sans-serif;
+  }
+  .rendered-span {
+    display: inline-block;
+    border: 2px solid #0F6E56;
+    background: #E8F5E9;
+    border-radius: 5px;
+    padding: 4px 10px;
+    margin: 3px 4px;
+    font-family: "Consolas", monospace;
+    font-size: 12px;
+    color: #0F6E56;
+    position: relative;
+  }
+  .rendered-span::after {
+    content: 'span';
+    position: absolute;
+    top: -8px;
+    right: -2px;
+    background: #0F6E56;
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: "Microsoft YaHei", sans-serif;
+  }
+  .delete-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    display: none;
+    z-index: 5;
+  }
+  .rendered-div:hover .delete-btn,
+  .rendered-span:hover .delete-btn {
+    display: block;
+  }
+
+  /* 参数调节区 - 拖拽卡片源 */
+  .drag-card {
+    padding: 12px;
+    border: 2px solid;
+    border-radius: 6px;
+    cursor: grab;
+    text-align: center;
+    font-family: "Consolas", monospace;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .drag-card:active { cursor: grabbing; }
+  .drag-card.div-card {
+    border-color: #185FA5;
+    background: #E6F1FB;
+    color: #185FA5;
+  }
+  .drag-card.div-card:hover {
+    background: #d0e5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(24,95,165,0.2);
+  }
+  .drag-card.span-card {
+    border-color: #0F6E56;
+    background: #E8F5E9;
+    color: #0F6E56;
+    display: inline-block;
+    width: auto;
+    padding: 10px 20px;
+  }
+  .drag-card.span-card:hover {
+    background: #d0ebe0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(15,110,86,0.2);
+  }
+
+  .card-desc {
+    font-size: 11px;
+    font-weight: normal;
+    font-family: "Microsoft YaHei", sans-serif;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+
+  .param-group { margin-bottom: 16px; }
+  .param-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .info-box {
+    background: #f5f8fc;
+    border: 0.5px solid #d0e0f0;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .compare-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .compare-item {
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .compare-item.div {
+    background: #E6F1FB;
+    border: 0.5px solid #185FA5;
+    color: #185FA5;
+  }
+  .compare-item.span {
+    background: #E8F5E9;
+    border: 0.5px solid #0F6E56;
+    color: #0F6E56;
+  }
+  .compare-item strong { display: block; font-size: 13px; margin-bottom: 3px; }
+
+  .clear-btn {
+    width: 100%;
+    padding: 8px;
+    background: #fff;
+    border: 0.5px solid #c0392b;
+    color: #c0392b;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+  .clear-btn:hover { background: #fff5f5; }
+
+  /* 教学提示卡 */
+  .tips-card {
+    margin: 0 12px 12px;
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow: hidden;
+  }
+  .tip-col {
+    padding: 12px 14px;
+    border-right: 0.5px solid #e0e7ee;
+  }
+  .tip-col:last-child { border-right: none; }
+  .tip-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #185FA5;
+    margin-bottom: 6px;
+  }
+  .tip-content { font-size: 12px; color: #555; line-height: 1.7; }
+  .tip-sizheng {
+    background: #fff5f5;
+  }
+  .tip-sizheng .tip-title { color: #c0392b; }
+  .tip-sizheng .tip-content { color: #c0392b; }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .container, .container.code-collapsed {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    .panel { min-height: 300px; }
+    .tips-card { grid-template-columns: 1fr 1fr; }
+    .tip-col { border-right: none; border-bottom: 0.5px solid #e0e7ee; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航条 -->
+<div class="navbar">
+  <span class="nav-section">第2章 HTML5标签 · 2.6.1</span>
+  <span class="nav-title">P08 容器嵌套可视化</span>
+  <span class="nav-tag">div块级</span>
+  <span class="nav-tag">span行内</span>
+  <span class="nav-tag">容器嵌套</span>
+  <span class="nav-spacer"></span>
+  <button class="nav-btn" id="toggleCode" onclick="toggleCode()">查看代码</button>
+  <button class="nav-btn" id="lectureBtn" onclick="toggleLecture()">讲解模式</button>
+  <button class="nav-btn" onclick="resetAll()">重置</button>
+</div>
+
+<!-- 主容器 -->
+<div class="container" id="mainContainer">
+
+  <!-- ① 代码原理区 -->
+  <div class="panel panel-code">
+    <div class="panel-header">
+      <span>① 代码原理区</span>
+      <button class="copy-btn" onclick="copyCode()">复制代码</button>
+    </div>
+    <div class="panel-body">
+      <div class="code-block" id="codeBlock"></div>
+    </div>
+  </div>
+
+  <!-- ② 实时预览区 -->
+  <div class="panel panel-preview">
+    <div class="panel-header">
+      <span>② 布局区（拖拽到此）</span>
+      <span style="font-size:12px;color:#888;">div独占一行 · span共处一行</span>
+    </div>
+    <div class="browser-bar">
+      <span class="browser-dot dot-r"></span>
+      <span class="browser-dot dot-y"></span>
+      <span class="browser-dot dot-g"></span>
+      <div class="browser-url" id="browserUrl">https://localhost/p08-container.html</div>
+    </div>
+    <div class="layout-area" id="layoutArea">
+      <div class="layout-empty" id="layoutEmpty">
+        从右侧拖拽 div 或 span 卡片到此区域<br>
+        <span style="font-size:12px;color:#bbb;">div 独占一行 · span 共处一行</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 参数调节区 -->
+  <div class="panel panel-params">
+    <div class="panel-header">
+      <span>③ 卡片区（拖拽源）</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="param-group">
+        <label class="param-label">拖拽卡片到左侧布局区</label>
+
+        <div class="drag-card div-card" draggable="true" data-type="div" ondragstart="dragStart(event)">
+          &lt;div&gt;
+          <div class="card-desc">块级标签 · 独占一行</div>
+        </div>
+
+        <div style="text-align:center;margin-bottom:8px;">
+          <span class="drag-card span-card" draggable="true" data-type="span" ondragstart="dragStart(event)">
+            &lt;span&gt;
+          </span>
+        </div>
+        <div style="font-size:11px;color:#888;text-align:center;margin-bottom:12px;">行内标签 · 共处一行</div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">div vs span 对比</label>
+        <div class="compare-box">
+          <div class="compare-item div">
+            <strong>div</strong>
+            块级<br>
+            独占一行<br>
+            可设宽高
+          </div>
+          <div class="compare-item span">
+            <strong>span</strong>
+            行内<br>
+            共处一行<br>
+            宽高随内容
+          </div>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">操作说明</label>
+        <div class="info-box">
+          • 拖拽 div/span 卡片到布局区<br>
+          • div 独占一行，span 共处一行<br>
+          • hover 显示删除按钮可移除<br>
+          • 代码区实时生成嵌套代码
+        </div>
+      </div>
+
+      <div class="param-group">
+        <button class="clear-btn" onclick="clearLayout()">清空布局区</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ④ 教学提示卡 -->
+<div class="tips-card">
+  <div class="tip-col">
+    <div class="tip-title">★ 核心知识点</div>
+    <div class="tip-content">
+      div 块级标签，独占一行<br>
+      span 行内标签，共处一行<br>
+      div 可嵌套 div/span<br>
+      页面区块划分用 div
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">⚠ 常见错误</div>
+    <div class="tip-content">
+      ① 用 span 做布局容器（无法设宽高）<br>
+      ② div 嵌套层级混乱不缩进<br>
+      ③ div/span 标签未闭合<br>
+      ④ 所有元素都用 div 缺乏语义
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">? 拓展思考题</div>
+    <div class="tip-content">
+      1. div 和 span 本质区别是什么？<br>
+      2. 什么时候用 div 什么时候用 span？<br>
+      3. div 嵌套最多几层合适？<br>
+      4. HTML5 语义标签如何替代 div？
+    </div>
+  </div>
+  <div class="tip-col tip-sizheng">
+    <div class="tip-title">♥ 思政小贴士</div>
+    <div class="tip-content">
+      "div独占一行span共处一行，各守其位。人也是，守规矩才能和谐共处。"<br>
+      <strong>——规矩意识·各守其位</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 布局区元素列表
+  let layoutElements = [];
+  let elementIdCounter = 0;
+
+  // 拖拽开始
+  function dragStart(event) {
+    event.dataTransfer.setData('text/plain', event.target.dataset.type);
+    event.dataTransfer.effectAllowed = 'copy';
+  }
+
+  // 拖拽悬停
+  const layoutArea = document.getElementById('layoutArea');
+  layoutArea.addEventListener('dragover', function(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    this.classList.add('drag-over');
+  });
+  layoutArea.addEventListener('dragleave', function(event) {
+    if (event.target === this) {
+      this.classList.remove('drag-over');
+    }
+  });
+  layoutArea.addEventListener('drop', function(event) {
+    event.preventDefault();
+    this.classList.remove('drag-over');
+    const type = event.dataTransfer.getData('text/plain');
+    if (type === 'div' || type === 'span') {
+      addElement(type);
+    }
+  });
+
+  // 添加元素
+  function addElement(type) {
+    const id = ++elementIdCounter;
+    const element = {
+      id: id,
+      type: type,
+      content: type === 'div' ? `区块${id}` : `行内${id}`
+    };
+    layoutElements.push(element);
+    renderLayout();
+    updatePreview();
+  }
+
+  // 删除元素
+  function removeElement(id) {
+    layoutElements = layoutElements.filter(el => el.id !== id);
+    renderLayout();
+    updatePreview();
+  }
+
+  // 渲染布局区
+  function renderLayout() {
+    const layoutArea = document.getElementById('layoutArea');
+    const empty = document.getElementById('layoutEmpty');
+
+    if (layoutElements.length === 0) {
+      if (!empty) {
+        layoutArea.innerHTML = `
+          <div class="layout-empty" id="layoutEmpty">
+            从右侧拖拽 div 或 span 卡片到此区域<br>
+            <span style="font-size:12px;color:#bbb;">div 独占一行 · span 共处一行</span>
+          </div>`;
+      }
+      return;
+    }
+
+    let html = '';
+    layoutElements.forEach(el => {
+      if (el.type === 'div') {
+        html += `
+          <div class="rendered-div" data-id="${el.id}">
+            <button class="delete-btn" onclick="removeElement(${el.id})">×</button>
+            ${el.content} · 独占一行
+          </div>`;
+      } else {
+        html += `
+          <span class="rendered-span" data-id="${el.id}">
+            <button class="delete-btn" onclick="removeElement(${el.id})">×</button>
+            ${el.content}
+          </span>`;
+      }
+    });
+
+    layoutArea.innerHTML = html;
+  }
+
+  // 生成代码（高亮版）
+  function generateCode() {
+    let lines = [];
+
+    if (layoutElements.length === 0) {
+      lines.push('<span class="comment">&lt;!-- 拖拽 div 或 span 卡片到布局区 --&gt;</span>');
+      lines.push('<span class="comment">&lt;!-- 代码将实时生成 --&gt;</span>');
+      return lines;
+    }
+
+    lines.push('<span class="comment">&lt;!-- 容器嵌套结构 --&gt;</span>');
+    lines.push('<span class="tag">&lt;body&gt;</span>');
+
+    // 分析元素，连续的span放一行
+    let i = 0;
+    while (i < layoutElements.length) {
+      const el = layoutElements[i];
+      if (el.type === 'div') {
+        lines.push(`  <span class="tag">&lt;div&gt;</span><span class="text">${el.content} · 独占一行</span><span class="tag">&lt;/div&gt;</span>`);
+        i++;
+      } else {
+        // 收集连续的span
+        let spans = [];
+        while (i < layoutElements.length && layoutElements[i].type === 'span') {
+          spans.push(layoutElements[i]);
+          i++;
+        }
+        if (spans.length === 1) {
+          lines.push(`  <span class="tag">&lt;span&gt;</span><span class="text">${spans[0].content}</span><span class="tag">&lt;/span&gt;</span>`);
+        } else {
+          lines.push('  <span class="comment">&lt;!-- 多个span共处一行 --&gt;</span>');
+          let spanLine = '  ';
+          spans.forEach(s => {
+            spanLine += `<span class="tag">&lt;span&gt;</span><span class="text">${s.content}</span><span class="tag">&lt;/span&gt;</span> `;
+          });
+          lines.push(spanLine.trim());
+        }
+      }
+    }
+
+    lines.push('<span class="tag">&lt;/body&gt;</span>');
+
+    // 添加说明
+    lines.push('');
+    lines.push('<span class="comment">&lt;!-- 规律说明 --&gt;</span>');
+    const divCount = layoutElements.filter(el => el.type === 'div').length;
+    const spanCount = layoutElements.filter(el => el.type === 'span').length;
+    lines.push(`<span class="comment">共 ${divCount} 个 div（块级·独占一行）</span>`);
+    lines.push(`<span class="comment">共 ${spanCount} 个 span（行内·共处一行）</span>`);
+
+    return lines;
+  }
+
+  // 生成纯代码（复制用）
+  function generatePlainCode() {
+    if (layoutElements.length === 0) return '';
+
+    let html = '<body>\n';
+    let i = 0;
+    while (i < layoutElements.length) {
+      const el = layoutElements[i];
+      if (el.type === 'div') {
+        html += `  <div>${el.content} · 独占一行</div>\n`;
+        i++;
+      } else {
+        let spans = [];
+        while (i < layoutElements.length && layoutElements[i].type === 'span') {
+          spans.push(layoutElements[i]);
+          i++;
+        }
+        let line = '  ';
+        spans.forEach(s => {
+          line += `<span>${s.content}</span> `;
+        });
+        html += line.trim() + '\n';
+      }
+    }
+    html += '</body>';
+    return html;
+  }
+
+  // 更新预览（代码区）
+  function updatePreview() {
+    const lines = generateCode();
+    const codeBlock = document.getElementById('codeBlock');
+    codeBlock.innerHTML = lines.map((line, idx) =>
+      `<span class="code-line" data-line="${idx}" onclick="highlightLine(${idx})">${line || ' '}</span>`
+    ).join('');
+
+    // 高亮标签行
+    document.querySelectorAll('.code-line').forEach(line => {
+      const text = line.textContent;
+      if (text.includes('<div') || text.includes('<span')) {
+        line.classList.add('highlighted');
+      }
+    });
+  }
+
+  // 高亮代码行
+  function highlightLine(idx) {
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlighted'));
+    const line = document.querySelector(`.code-line[data-line="${idx}"]`);
+    if (line) line.classList.add('highlighted');
+  }
+
+  // 复制代码
+  function copyCode() {
+    const plainCode = generatePlainCode();
+    if (!plainCode) {
+      alert('请先拖拽元素到布局区');
+      return;
+    }
+    navigator.clipboard.writeText(plainCode).then(() => {
+      const btn = event.target;
+      const oldText = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(() => { btn.textContent = oldText; }, 1500);
+    });
+  }
+
+  // 清空布局
+  function clearLayout() {
+    layoutElements = [];
+    elementIdCounter = 0;
+    renderLayout();
+    updatePreview();
+  }
+
+  // 切换代码显示
+  function toggleCode() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('code-collapsed');
+    const btn = document.getElementById('toggleCode');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('code-collapsed') ? '显示代码' : '查看代码';
+  }
+
+  // 讲解模式
+  function toggleLecture() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('lecture-mode');
+    const btn = document.getElementById('lectureBtn');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('lecture-mode') ? '退出讲解' : '讲解模式';
+  }
+
+  // 重置
+  function resetAll() {
+    layoutElements = [];
+    elementIdCounter = 0;
+    renderLayout();
+    updatePreview();
+    document.getElementById('mainContainer').classList.remove('lecture-mode', 'code-collapsed');
+    document.getElementById('lectureBtn').classList.remove('active');
+    document.getElementById('lectureBtn').textContent = '讲解模式';
+    document.getElementById('toggleCode').classList.remove('active');
+    document.getElementById('toggleCode').textContent = '查看代码';
+  }
+
+  // 初始化
+  updatePreview();
+</script>
+
+
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

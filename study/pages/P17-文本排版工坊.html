@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P17-文本排版工坊 | 文本外观属性</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;}
+:root{--main:#185FA5;--green:#0F6E56;--orange:#BA7517;--gray:#888780;}
+
+.navbar{background:linear-gradient(90deg,#185FA5,#2A7BC8);color:#fff;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.15);position:sticky;top:0;z-index:100;}
+.navbar .left{display:flex;align-items:center;gap:16px;font-size:14px;}
+.navbar .left .chapter{background:rgba(255,255,255,.18);padding:4px 10px;border-radius:4px;font-size:12px;}
+.navbar .left .title{font-size:16px;font-weight:bold;}
+.navbar .left .tag{background:rgba(255,255,255,.12);padding:3px 8px;border-radius:3px;font-size:12px;}
+.navbar .right{display:flex;gap:8px;}
+.navbar .right button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:13px;transition:.2s;}
+.navbar .right button:hover{background:rgba(255,255,255,.3);}
+.navbar .right button.active{background:#fff;color:#185FA5;font-weight:bold;}
+
+.main{display:flex;height:calc(100vh - 56px);}
+.panel{background:#fff;border-right:1px solid #e0e0e0;overflow:auto;}
+.code-panel{width:25%;padding:16px;}
+.preview-panel{width:50%;padding:0;background:#fff;}
+.param-panel{width:25%;padding:16px;border-left:1px solid #e0e0e0;}
+
+.code-title{font-size:14px;font-weight:bold;color:#185FA5;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #185FA5;}
+.code-block{background:#1e1e2e;color:#d4d4d4;padding:14px;border-radius:8px;font-family:"Consolas",monospace;font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-all;}
+.code-block .tag{color:#569cd6;}
+.code-block .attr{color:#0F6E56;font-weight:bold;}
+.code-block .val{color:#BA7517;}
+.code-block .comment{color:#888780;font-style:italic;}
+.copy-btn{margin-top:10px;background:#185FA5;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;}
+
+.preview-header{background:#e8e8e8;padding:8px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #d0d0d0;}
+.preview-header .dots{display:flex;gap:6px;}
+.preview-header .dot{width:12px;height:12px;border-radius:50%;}
+.preview-header .dot.r{background:#ff5f57;}
+.preview-header .dot.y{background:#ffbd2e;}
+.preview-header .dot.g{background:#28c940;}
+.preview-header .url{flex:1;background:#fff;border:1px solid #ccc;border-radius:4px;padding:4px 10px;font-size:12px;color:#666;}
+.preview-container{padding:40px;height:calc(100% - 40px);overflow:auto;background:#fff;}
+.demo-text{transition:.3s;font-size:16px;}
+.demo-text h2{margin-bottom:16px;}
+.demo-text .old-price{font-size:14px;margin-bottom:8px;}
+.demo-text p{margin-bottom:12px;}
+
+.param-title{font-size:14px;font-weight:bold;color:#185FA5;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #185FA5;}
+.param-group{margin-bottom:18px;}
+.param-label{font-size:13px;color:#666;margin-bottom:6px;display:block;font-weight:bold;}
+.color-input{width:100%;height:40px;border:2px solid #e0e0e0;border-radius:6px;cursor:pointer;}
+.slider-val{display:inline-block;background:#185FA5;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-left:8px;}
+.param-slider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:#e0e0e0;outline:none;}
+.param-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#185FA5;cursor:pointer;box-shadow:0 2px 6px rgba(24,95,165,.4);}
+.btn-group{display:flex;gap:6px;flex-wrap:wrap;}
+.btn-group button{flex:1;padding:8px 4px;border:2px solid #e0e0e0;background:#fff;border-radius:6px;cursor:pointer;font-size:12px;transition:.2s;min-width:60px;}
+.btn-group button.active{background:#185FA5;color:#fff;border-color:#185FA5;font-weight:bold;}
+.btn-group button:hover{border-color:#185FA5;}
+
+.tip-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px 16px;background:#fff;border-top:2px solid #185FA5;}
+.tip-card{padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.5;}
+.tip-card.knowledge{background:#e8f1fa;border-left:3px solid #185FA5;}
+.tip-card.error{background:#fdf2f2;border-left:3px solid #e74c3c;}
+.tip-card.think{background:#fff8e7;border-left:3px solid #BA7517;}
+.tip-card.sizheng{background:#fff0f0;border-left:3px solid #c0392b;}
+.tip-card .tip-head{font-weight:bold;margin-bottom:4px;font-size:13px;}
+.tip-card.sizheng .tip-head{color:#c0392b;}
+
+.explain-mode .navbar,.explain-mode .param-panel,.explain-mode .code-panel{display:none;}
+.explain-mode .preview-panel{width:100%;}
+body{overflow:auto;}
+.main{height:auto;min-height:calc(100vh - 56px - 130px);}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="left">
+    <span class="chapter">第3章 CSS3</span>
+    <span class="title">P17-文本排版工坊</span>
+    <span class="tag">3.3.3 文本外观属性</span>
+  </div>
+  <div class="right">
+    <button id="btnCode" onclick="toggleCode()">查看代码</button>
+    <button id="btnExplain" onclick="toggleExplain()">讲解模式</button>
+    <button onclick="resetAll()">重置</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="panel code-panel" id="codePanel">
+    <div class="code-title">① 代码原理区</div>
+    <div class="code-block" id="codeBlock">
+<span class="comment">/* 文本外观属性实时代码 */</span>
+<span class="tag">.demo-text</span> {
+  <span class="attr">color</span>: <span class="val">#333333</span>;
+  <span class="attr">text-align</span>: <span class="val">left</span>;
+  <span class="attr">line-height</span>: <span class="val">1.6</span>;
+  <span class="attr">text-indent</span>: <span class="val">0px</span>;
+  <span class="attr">text-decoration</span>: <span class="val">none</span>;
+}
+    </div>
+    <button class="copy-btn" onclick="copyCode()">复制代码</button>
+  </div>
+
+  <div class="panel preview-panel">
+    <div class="preview-header">
+      <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <div class="url">https://demo.com/text-layout.html</div>
+    </div>
+    <div class="preview-container">
+      <div class="demo-text" id="demoText">
+        <h2>商品详情</h2>
+        <div class="old-price" id="oldPrice">原价：￥12999.00</div>
+        <p>华为 MateBook X Pro 采用14英寸2.8K触控屏，搭载第13代英特尔酷睿处理器，轻薄机身蕴含强大性能。无论是办公文档处理，还是视频剪辑创作，都能流畅应对。</p>
+        <p>整机重量仅1.26kg，厚度14.5mm，随身携带毫不费力。超长续航支撑全天工作，让您灵感不断电。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="param-panel panel">
+    <div class="param-title">③ 参数调节区</div>
+
+    <div class="param-group">
+      <label class="param-label">color 文本颜色</label>
+      <input type="color" class="color-input" id="colorVal" value="#333333" oninput="update()">
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">text-align 对齐方式</label>
+      <div class="btn-group" id="alignGroup">
+        <button class="active" data-val="left" onclick="setBtn(this,'align')">left</button>
+        <button data-val="center" onclick="setBtn(this,'align')">center</button>
+        <button data-val="right" onclick="setBtn(this,'align')">right</button>
+        <button data-val="justify" onclick="setBtn(this,'align')">justify</button>
+      </div>
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">line-height 行高 <span class="slider-val" id="lhVal">1.6</span></label>
+      <input type="range" class="param-slider" id="lineHeight" min="10" max="30" value="16" oninput="update()">
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">text-indent 首行缩进 <span class="slider-val" id="tiVal">0px</span></label>
+      <input type="range" class="param-slider" id="textIndent" min="0" max="50" value="0" oninput="update()">
+    </div>
+
+    <div class="param-group">
+      <label class="param-label">text-decoration 文本修饰</label>
+      <div class="btn-group" id="decorGroup">
+        <button class="active" data-val="none" onclick="setBtn(this,'decor')">none</button>
+        <button data-val="underline" onclick="setBtn(this,'decor')">underline</button>
+        <button data-val="line-through" onclick="setBtn(this,'decor')">line-through</button>
+        <button data-val="overline" onclick="setBtn(this,'decor')">overline</button>
+      </div>
+      <p style="font-size:11px;color:#888;margin-top:4px;">提示：line-through常用于原价删除线</p>
+    </div>
+  </div>
+</div>
+
+<div class="tip-bar">
+  <div class="tip-card knowledge">
+    <div class="tip-head">核心知识点</div>
+    文本五件套：color、text-align、line-height、text-indent、text-decoration。
+  </div>
+  <div class="tip-card error">
+    <div class="tip-head">常见错误</div>
+    text-indent用px而非em，字号变化时缩进不变。推荐用2em（随字号缩放）。
+  </div>
+  <div class="tip-card think">
+    <div class="tip-head">拓展思考题</div>
+    行距1.5和2.0哪个更舒适？为什么网页推荐1.5-1.8？
+  </div>
+  <div class="tip-card sizheng">
+    <div class="tip-head">思政小贴士</div>
+    行距缩进影响阅读体验，好的排版"以人为本"。中文首行缩进两字是我们的书写传统，要传承。
+  </div>
+</div>
+
+<script>
+var alignVal='left',decorVal='none';
+
+function update(){
+  var color=document.getElementById('colorVal').value;
+  var lh=document.getElementById('lineHeight').value/10;
+  var ti=document.getElementById('textIndent').value;
+  var demo=document.getElementById('demoText');
+  demo.style.color=color;
+  demo.style.textAlign=alignVal;
+  demo.style.lineHeight=lh;
+  demo.style.textIndent=ti+'px';
+  demo.style.textDecoration=decorVal;
+  document.getElementById('lhVal').textContent=lh.toFixed(1);
+  document.getElementById('tiVal').textContent=ti+'px';
+  var code='<span class="comment">/* 文本外观属性实时代码 */</span>\n<span class="tag">.demo-text</span> {\n  <span class="attr">color</span>: <span class="val">'+color+'</span>;\n  <span class="attr">text-align</span>: <span class="val">'+alignVal+'</span>;\n  <span class="attr">line-height</span>: <span class="val">'+lh.toFixed(1)+'</span>;\n  <span class="attr">text-indent</span>: <span class="val">'+ti+'px</span>;\n  <span class="attr">text-decoration</span>: <span class="val">'+decorVal+'</span>;\n}';
+  document.getElementById('codeBlock').innerHTML=code;
+}
+
+function setBtn(btn,type){
+  var group=type==='align'?'alignGroup':'decorGroup';
+  document.querySelectorAll('#'+group+' button').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  if(type==='align'){alignVal=btn.getAttribute('data-val');}
+  else{decorVal=btn.getAttribute('data-val');}
+  update();
+}
+
+function toggleCode(){
+  var p=document.getElementById('codePanel');var b=document.getElementById('btnCode');
+  p.style.display=p.style.display==='none'?'block':'none';b.classList.toggle('active');
+}
+function toggleExplain(){
+  document.body.classList.toggle('explain-mode');
+  document.getElementById('btnExplain').classList.toggle('active');
+}
+function copyCode(){navigator.clipboard.writeText(document.getElementById('codeBlock').innerText).then(function(){alert('代码已复制！');});}
+function resetAll(){
+  document.getElementById('colorVal').value='#333333';
+  document.getElementById('lineHeight').value=16;
+  document.getElementById('textIndent').value=0;
+  document.querySelectorAll('#alignGroup button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-val')==='left');});
+  document.querySelectorAll('#decorGroup button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-val')==='none');});
+  alignVal='left';decorVal='none';
+  update();
+  document.body.classList.remove('explain-mode');
+  document.getElementById('btnExplain').classList.remove('active');
+  document.getElementById('codePanel').style.display='block';
+  document.getElementById('btnCode').classList.add('active');
+}
+document.getElementById('btnCode').classList.add('active');
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P30-绝对固定定位演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", "Segoe UI", sans-serif; background: #f0f4f8; color: #333; }
+
+  /* 顶部导航条 */
+  .navbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #185FA5, #1a6fb8);
+    color: #fff; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    position: sticky; top: 0; z-index: 1000;
+  }
+  .navbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .navbar-title { font-size: 16px; font-weight: 700; }
+  .navbar-tag {
+    background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 12px;
+    font-size: 12px;
+  }
+  .navbar-right { display: flex; align-items: center; gap: 8px; }
+  .nav-btn {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .nav-btn.active { background: #fff; color: #185FA5; font-weight: 700; }
+
+  /* 主体布局 */
+  .main { display: flex; height: calc(100vh - 56px); }
+  .main.lecture-mode .param-panel,
+  .main.lecture-mode .tip-card { display: none; }
+  .main.lecture-mode .code-panel { width: 30%; }
+  .main.lecture-mode .preview-panel { width: 70%; }
+  .main.hide-code .code-panel { display: none; }
+  .main.hide-code .preview-panel { width: 75%; }
+
+  /* 代码区 */
+  .code-panel {
+    width: 25%; background: #1e1e2e; overflow-y: auto; border-right: 1px solid #2a2a3a;
+  }
+  .code-header {
+    background: #2a2a3a; color: #aaa; padding: 8px 12px;
+    font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 2;
+  }
+  .copy-btn {
+    background: #185FA5; color: #fff; border: none; padding: 3px 8px;
+    border-radius: 4px; cursor: pointer; font-size: 11px;
+  }
+  .copy-btn:hover { background: #1a6fb8; }
+  .code-body { font-family: "Consolas", "Courier New", monospace; font-size: 13px; line-height: 1.7; }
+  .code-line {
+    padding: 2px 12px; cursor: pointer; transition: background 0.15s; white-space: pre;
+  }
+  .code-line:hover { background: rgba(255,255,255,0.05); }
+  .code-line.highlighted { background: rgba(24,95,165,0.3); border-left: 3px solid #185FA5; }
+  .tag { color: #185FA5; }
+  .attr { color: #0F6E56; }
+  .val { color: #BA7517; }
+  .comment { color: #888780; font-style: italic; }
+  .sel { color: #d19a66; }
+
+  /* 预览区 */
+  .preview-panel { width: 50%; background: #fff; display: flex; flex-direction: column; }
+  .preview-header {
+    background: #e8eef5; padding: 8px 14px; font-size: 12px; color: #555;
+    border-bottom: 1px solid #d0d8e0; font-weight: 700;
+  }
+  .preview-frame-wrap { flex: 1; overflow: hidden; }
+  #previewFrame { width: 100%; height: 100%; border: none; }
+
+  /* 参数区 */
+  .param-panel {
+    width: 25%; background: #fff; border-left: 1px solid #e0e6ed; overflow-y: auto; padding: 14px;
+  }
+  .param-section { margin-bottom: 18px; }
+  .param-title {
+    font-size: 13px; font-weight: 700; color: #185FA5; margin-bottom: 8px;
+    padding-bottom: 5px; border-bottom: 2px solid #e8eef5;
+  }
+  .param-group { margin-bottom: 10px; }
+  .param-label {
+    display: flex; justify-content: space-between; font-size: 12px; color: #555; margin-bottom: 4px;
+  }
+  .param-label span:last-child { color: #185FA5; font-weight: 700; }
+  .param-slider {
+    width: 100%; -webkit-appearance: none; height: 6px; border-radius: 3px;
+    background: #d0d8e0; outline: none;
+  }
+  .param-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: #185FA5; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .toggle-group { display: flex; gap: 6px; margin-bottom: 8px; }
+  .toggle-btn {
+    flex: 1; padding: 8px; border: 2px solid #d0d8e0; background: #fff; color: #555;
+    border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.2s;
+  }
+  .toggle-btn.active { border-color: #185FA5; background: #185FA5; color: #fff; }
+
+  /* 教学提示卡 */
+  .tip-card {
+    position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
+    border-top: 2px solid #185FA5; display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 500;
+  }
+  .tip-item { padding: 10px 14px; background: #f8fafc; }
+  .tip-item.ideology { background: #fff0f0; }
+  .tip-icon { font-size: 18px; margin-bottom: 4px; }
+  .tip-label { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 3px; }
+  .tip-item.ideology .tip-label { color: #d32f2f; }
+  .tip-text { font-size: 12px; color: #444; line-height: 1.5; }
+  .tip-item.ideology .tip-text { color: #c62828; font-weight: 600; }
+
+  /* 预览区遮罩间距 */
+  .preview-frame-wrap { padding-bottom: 0; }
+  .main { padding-bottom: 90px; }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航条 -->
+<div class="navbar">
+  <div class="navbar-left">
+    <span class="navbar-title">第5章 · 5.3.3 绝对定位与固定定位</span>
+    <span class="navbar-tag">PPT 5.3.3</span>
+    <span class="navbar-tag">知识点：absolute / fixed</span>
+    <span class="navbar-tag">项目⑤任务4</span>
+  </div>
+  <div class="navbar-right">
+    <button class="nav-btn" id="btnCode">查看代码</button>
+    <button class="nav-btn" id="btnLecture">讲解模式</button>
+    <button class="nav-btn" id="btnReset">重置</button>
+  </div>
+</div>
+
+<!-- 主体 -->
+<div class="main" id="main">
+
+  <!-- ① 代码原理区 -->
+  <div class="code-panel">
+    <div class="code-header">
+      <span>CSS 代码 · 点击行高亮</span>
+      <button class="copy-btn" id="btnCopy">复制</button>
+    </div>
+    <div class="code-body" id="codeBody">
+      <div class="code-line" data-line="1"><span class="comment">/* 父盒子：定位参照 */</span></div>
+      <div class="code-line" data-line="2"><span class="sel">.parent</span> {</div>
+      <div class="code-line" data-line="3">  <span class="attr">position</span>: <span class="val" id="codeParentPos">static</span>;</div>
+      <div class="code-line" data-line="4">  <span class="attr">width</span>: <span class="val">300px</span>;</div>
+      <div class="code-line" data-line="5">  <span class="attr">height</span>: <span class="val">200px</span>;</div>
+      <div class="code-line" data-line="6">  <span class="attr">border</span>: <span class="val">2px solid #185FA5</span>;</div>
+      <div class="code-line" data-line="7">}</div>
+      <div class="code-line" data-line="8">&nbsp;</div>
+      <div class="code-line" data-line="9"><span class="comment">/* 定位盒子 */</span></div>
+      <div class="code-line" data-line="10"><span class="sel">.box</span> {</div>
+      <div class="code-line" data-line="11">  <span class="attr">position</span>: <span class="val" id="codePos">absolute</span>;</div>
+      <div class="code-line" data-line="12">  <span class="attr">top</span>: <span class="val" id="codeTop">50px</span>;</div>
+      <div class="code-line" data-line="13">  <span class="attr">left</span>: <span class="val" id="codeLeft">50px</span>;</div>
+      <div class="code-line" data-line="14">  <span class="attr">right</span>: <span class="val" id="codeRight">auto</span>;</div>
+      <div class="code-line" data-line="15">  <span class="attr">bottom</span>: <span class="val" id="codeBottom">auto</span>;</div>
+      <div class="code-line" data-line="16">  <span class="attr">width</span>: <span class="val">80px</span>;</div>
+      <div class="code-line" data-line="17">  <span class="attr">height</span>: <span class="val">80px</span>;</div>
+      <div class="code-line" data-line="18">  <span class="attr">background</span>: <span class="val">#185FA5</span>;</div>
+      <div class="code-line" data-line="19">}</div>
+    </div>
+  </div>
+
+  <!-- ② 实时预览区 -->
+  <div class="preview-panel">
+    <div class="preview-header">实时预览 · 滚动页面观察 fixed 固定效果</div>
+    <div class="preview-frame-wrap">
+      <iframe id="previewFrame"></iframe>
+    </div>
+  </div>
+
+  <!-- ③ 参数调节区 -->
+  <div class="param-panel">
+    <div class="param-section">
+      <div class="param-title">定位模式切换</div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-pos="absolute">absolute 绝对定位</button>
+        <button class="toggle-btn" data-pos="fixed">fixed 固定定位</button>
+      </div>
+    </div>
+
+    <div class="param-section">
+      <div class="param-title">子绝父相演示</div>
+      <div class="param-group">
+        <div class="param-label"><span>父盒子是否设 relative</span></div>
+        <div class="toggle-group">
+          <button class="toggle-btn" data-parent="static">不设（static）</button>
+          <button class="toggle-btn active" data-parent="relative">设 relative</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="param-section">
+      <div class="param-title">偏移调节</div>
+      <div class="param-group">
+        <div class="param-label"><span>top 偏移</span><span id="topVal">50px</span></div>
+        <input type="range" class="param-slider" id="sliderTop" min="0" max="300" value="50">
+      </div>
+      <div class="param-group">
+        <div class="param-label"><span>left 偏移</span><span id="leftVal">50px</span></div>
+        <input type="range" class="param-slider" id="sliderLeft" min="0" max="300" value="50">
+      </div>
+      <div class="param-group">
+        <div class="param-label"><span>right 偏移</span><span id="rightVal">0px</span></div>
+        <input type="range" class="param-slider" id="sliderRight" min="0" max="300" value="0">
+      </div>
+      <div class="param-group">
+        <div class="param-label"><span>bottom 偏移</span><span id="bottomVal">0px</span></div>
+        <input type="range" class="param-slider" id="sliderBottom" min="0" max="300" value="0">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ 教学提示卡 -->
+<div class="tip-card">
+  <div class="tip-item">
+    <div class="tip-icon">📌</div>
+    <div class="tip-label">核心知识点</div>
+    <div class="tip-text">absolute 相对最近定位祖先定位，fixed 相对浏览器视口定位，都脱离文档流</div>
+  </div>
+  <div class="tip-item">
+    <div class="tip-icon">⚠️</div>
+    <div class="tip-label">常见错误</div>
+    <div class="tip-text">父盒子未设 relative，absolute 子元素会相对 body 定位，导致位置跑偏</div>
+  </div>
+  <div class="tip-item">
+    <div class="tip-icon">💡</div>
+    <div class="tip-label">拓展思考</div>
+    <div class="tip-text">回到顶部按钮用 fixed，广告悬浮窗用 fixed，子菜单精确定位用"子绝父相"</div>
+  </div>
+  <div class="tip-item ideology">
+    <div class="tip-icon">❤</div>
+    <div class="tip-label">思政小贴士</div>
+    <div class="tip-text">absolute找最近定位祖先fixed找浏览器。做事要找准参照物，参照对了方向才对</div>
+  </div>
+</div>
+
+<script>
+  // 状态
+  var state = {
+    pos: 'absolute',
+    parentPos: 'relative',
+    top: 50, left: 50, right: 0, bottom: 0
+  };
+
+  // 更新预览
+  function updatePreview() {
+    var doc = document.getElementById('previewFrame').contentDocument;
+    var rightCss = state.right > 0 ? state.right + 'px' : 'auto';
+    var bottomCss = state.bottom > 0 ? state.bottom + 'px' : 'auto';
+    var leftCss = state.left > 0 ? state.left + 'px' : 'auto';
+    var topCss = state.top > 0 ? state.top + 'px' : 'auto';
+
+    // fixed 模式下忽略父 relative
+    var parentPosCss = state.pos === 'fixed' ? 'static' : state.parentPos;
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>' +
+      'body { margin:0; font-family:"Microsoft YaHei",sans-serif; }' +
+      '.scroll-page { height: 1500px; background: linear-gradient(180deg, #e8f0ff 0%, #fff 100%); padding: 20px; }' +
+      '.hint { color:#888; font-size:13px; margin-bottom:15px; }' +
+      '.parent { ' +
+        'position:' + parentPosCss + ';' +
+        'width:300px; height:200px; border:2px dashed #185FA5; ' +
+        'margin:20px; background:#f0f7ff; border-radius:8px; ' +
+      '}' +
+      '.parent-label { position:absolute; top:5px; left:10px; font-size:12px; color:#185FA5; font-weight:700; }' +
+      '.box { ' +
+        'position:' + state.pos + ';' +
+        'top:' + topCss + ';' +
+        'left:' + leftCss + ';' +
+        'right:' + rightCss + ';' +
+        'bottom:' + bottomCss + ';' +
+        'width:80px; height:80px; background:#185FA5; border-radius:8px; ' +
+        'color:#fff; display:flex; align-items:center; justify-content:center; ' +
+        'font-size:12px; font-weight:700; box-shadow:0 4px 12px rgba(24,95,165,0.4);' +
+        'transition: all 0.3s;' +
+      '}' +
+      '.page-content { padding:20px; }' +
+      '.page-content p { margin:10px 0; color:#555; line-height:1.8; }' +
+      '.scroll-hint { position:fixed; bottom:10px; right:10px; background:#fff; padding:8px 12px; border-radius:6px; font-size:12px; color:#185FA5; box-shadow:0 2px 6px rgba(0,0,0,0.1); z-index:1; }' +
+    '</style></head><body>' +
+      '<div class="scroll-page">' +
+        '<div class="hint">👇 滚动页面观察定位盒子的行为（fixed模式下盒子固定不动）</div>' +
+        '<div class="parent">' +
+          '<span class="parent-label">父盒子（' + (state.parentPos === 'relative' ? 'relative' : 'static') + '）</span>' +
+          '<div class="box">' + state.pos + '</div>' +
+        '</div>' +
+        '<div class="page-content">' +
+          '<p>这是页面内容区域，用于产生滚动条。</p>' +
+          '<p>当前定位模式：<strong style="color:#185FA5">' + state.pos + '</strong></p>' +
+          '<p>absolute 模式：盒子相对父盒子（设relative时）或 body 定位，随页面滚动。</p>' +
+          '<p>fixed 模式：盒子相对浏览器视口定位，无论怎么滚动都固定不动。</p>' +
+          '<p>这就是为什么"回到顶部"按钮要用 fixed —— 它必须始终可见。</p>' +
+          '<p>滚动观察 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+          '<p>继续滚动 ↓↓↓</p>' +
+        '</div>' +
+        '<div class="scroll-hint">滚动至此处 ↑</div>' +
+      '</div>' +
+    '</body></html>';
+
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    // 更新代码显示
+    document.getElementById('codePos').textContent = state.pos;
+    document.getElementById('codeParentPos').textContent = state.parentPos;
+    document.getElementById('codeTop').textContent = topCss;
+    document.getElementById('codeLeft').textContent = leftCss;
+    document.getElementById('codeRight').textContent = rightCss;
+    document.getElementById('codeBottom').textContent = bottomCss;
+  }
+
+  // 定位模式切换
+  document.querySelectorAll('[data-pos]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('[data-pos]').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      state.pos = this.dataset.pos;
+      updatePreview();
+      highlightLines();
+    });
+  });
+
+  // 父盒子 relative 切换
+  document.querySelectorAll('[data-parent]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('[data-parent]').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      state.parentPos = this.dataset.parent;
+      updatePreview();
+      highlightLines();
+    });
+  });
+
+  // 偏移滑块
+  ['Top','Left','Right','Bottom'].forEach(function(dir) {
+    var slider = document.getElementById('slider' + dir);
+    var val = document.getElementById(dir.toLowerCase() + 'Val');
+    slider.addEventListener('input', function() {
+      state[dir.toLowerCase()] = parseInt(this.value);
+      val.textContent = this.value + 'px';
+      updatePreview();
+      highlightLines();
+    });
+  });
+
+  // 代码行高亮
+  function highlightLines() {
+    document.querySelectorAll('.code-line').forEach(function(l){ l.classList.remove('highlighted'); });
+    // 高亮 position 行和当前偏移行
+    document.querySelector('[data-line="11"]').classList.add('highlighted');
+    document.querySelector('[data-line="3"]').classList.add('highlighted');
+    if (state.top > 0) document.querySelector('[data-line="12"]').classList.add('highlighted');
+    if (state.left > 0) document.querySelector('[data-line="13"]').classList.add('highlighted');
+    if (state.right > 0) document.querySelector('[data-line="14"]').classList.add('highlighted');
+    if (state.bottom > 0) document.querySelector('[data-line="15"]').classList.add('highlighted');
+  }
+
+  document.querySelectorAll('.code-line').forEach(function(line) {
+    line.addEventListener('click', function() {
+      document.querySelectorAll('.code-line').forEach(function(l){ l.classList.remove('highlighted'); });
+      this.classList.add('highlighted');
+    });
+  });
+
+  // 导航按钮
+  document.getElementById('btnCode').addEventListener('click', function() {
+    var main = document.getElementById('main');
+    main.classList.toggle('hide-code');
+    this.classList.toggle('active');
+  });
+  document.getElementById('btnLecture').addEventListener('click', function() {
+    var main = document.getElementById('main');
+    main.classList.toggle('lecture-mode');
+    this.classList.toggle('active');
+  });
+  document.getElementById('btnReset').addEventListener('click', function() {
+    state = { pos: 'absolute', parentPos: 'relative', top: 50, left: 50, right: 0, bottom: 0 };
+    document.getElementById('sliderTop').value = 50;
+    document.getElementById('sliderLeft').value = 50;
+    document.getElementById('sliderRight').value = 0;
+    document.getElementById('sliderBottom').value = 0;
+    document.getElementById('topVal').textContent = '50px';
+    document.getElementById('leftVal').textContent = '50px';
+    document.getElementById('rightVal').textContent = '0px';
+    document.getElementById('bottomVal').textContent = '0px';
+    document.querySelectorAll('[data-pos]').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelector('[data-pos="absolute"]').classList.add('active');
+    document.querySelectorAll('[data-parent]').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelector('[data-parent="relative"]').classList.add('active');
+    updatePreview();
+    highlightLines();
+  });
+
+  // 复制
+  document.getElementById('btnCopy').addEventListener('click', function() {
+    var code = '.parent {\n  position: ' + state.parentPos + ';\n  width: 300px;\n  height: 200px;\n  border: 2px solid #185FA5;\n}\n\n.box {\n  position: ' + state.pos + ';\n  top: ' + (state.top>0?state.top+'px':'auto') + ';\n  left: ' + (state.left>0?state.left+'px':'auto') + ';\n  right: ' + (state.right>0?state.right+'px':'auto') + ';\n  bottom: ' + (state.bottom>0?state.bottom+'px':'auto') + ';\n  width: 80px;\n  height: 80px;\n  background: #185FA5;\n}';
+    navigator.clipboard.writeText(code).then(function(){
+      var btn = document.getElementById('btnCopy');
+      btn.textContent = '已复制';
+      setTimeout(function(){ btn.textContent = '复制'; }, 1500);
+    });
+  });
+
+  // 初始化
+  updatePreview();
+  highlightLines();
+</script>
+
+
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

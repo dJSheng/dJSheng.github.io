@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P19-优先级计算器 | CSS高级特性</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;}
+:root{--main:#185FA5;--green:#0F6E56;--orange:#BA7517;--gray:#888780;}
+
+.navbar{background:linear-gradient(90deg,#185FA5,#2A7BC8);color:#fff;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.15);position:sticky;top:0;z-index:100;}
+.navbar .left{display:flex;align-items:center;gap:16px;font-size:14px;}
+.navbar .left .chapter{background:rgba(255,255,255,.18);padding:4px 10px;border-radius:4px;font-size:12px;}
+.navbar .left .title{font-size:16px;font-weight:bold;}
+.navbar .left .tag{background:rgba(255,255,255,.12);padding:3px 8px;border-radius:3px;font-size:12px;}
+.navbar .right{display:flex;gap:8px;}
+.navbar .right button{background:rgba(255,255,255,.15);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:13px;transition:.2s;}
+.navbar .right button:hover{background:rgba(255,255,255,.3);}
+.navbar .right button.active{background:#fff;color:#185FA5;font-weight:bold;}
+
+.main{display:flex;height:calc(100vh - 56px);}
+.panel{background:#fff;border-right:1px solid #e0e0e0;overflow:auto;}
+.code-panel{width:25%;padding:16px;}
+.preview-panel{width:50%;padding:0;background:#fff;}
+.param-panel{width:25%;padding:16px;border-left:1px solid #e0e0e0;}
+
+.code-title{font-size:14px;font-weight:bold;color:#185FA5;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #185FA5;}
+.code-block{background:#1e1e2e;color:#d4d4d4;padding:14px;border-radius:8px;font-family:"Consolas",monospace;font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-all;min-height:200px;}
+.code-block .tag{color:#569cd6;}
+.code-block .attr{color:#0F6E56;font-weight:bold;}
+.code-block .val{color:#BA7517;}
+.code-block .comment{color:#888780;font-style:italic;}
+.code-block .sel{color:#569cd6;font-weight:bold;}
+.copy-btn{margin-top:10px;background:#185FA5;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;}
+
+.preview-header{background:#e8e8e8;padding:8px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #d0d0d0;}
+.preview-header .dots{display:flex;gap:6px;}
+.preview-header .dot{width:12px;height:12px;border-radius:50%;}
+.preview-header .dot.r{background:#ff5f57;}
+.preview-header .dot.y{background:#ffbd2e;}
+.preview-header .dot.g{background:#28c940;}
+.preview-header .url{flex:1;background:#fff;border:1px solid #ccc;border-radius:4px;padding:4px 10px;font-size:12px;color:#666;}
+
+.preview-container{padding:24px;height:calc(100% - 40px);overflow:auto;background:#fff;}
+.preview-container h2{margin-bottom:16px;}
+.target-element{padding:20px;border:2px dashed #ccc;border-radius:8px;text-align:center;font-size:20px;margin-bottom:20px;transition:.3s;}
+.target-element .te-label{font-size:11px;color:#888;margin-top:8px;}
+.target-element.winner{border-color:#27ae60;background:#eafaf1;}
+
+.rules-list{display:flex;flex-direction:column;gap:10px;}
+.rule-card{padding:12px;border-radius:8px;border:2px solid #e0e0e0;background:#fafafa;transition:.3s;}
+.rule-card.winner{border-color:#27ae60;background:#eafaf1;box-shadow:0 2px 8px rgba(39,174,96,.2);}
+.rule-card .rc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.rule-card .rc-sel{font-family:Consolas,monospace;font-size:14px;font-weight:bold;color:#185FA5;}
+.rule-card .rc-weight{background:#185FA5;color:#fff;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:bold;}
+.rule-card.winner .rc-weight{background:#27ae60;}
+.rule-card .rc-code{font-family:Consolas,monospace;font-size:11px;color:#666;background:#fff;padding:6px;border-radius:4px;}
+.rule-card .rc-calc{font-size:11px;color:#888;margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;}
+.rc-calc .calc-item{background:#eee;padding:2px 6px;border-radius:3px;}
+.rc-calc .calc-id{background:#ffcccc;color:#c0392b;}
+.rc-calc .calc-class{background:#ffe0b2;color:#BA7517;}
+.rc-calc .calc-tag{background:#c8e6c9;color:#0F6E56;}
+
+.param-title{font-size:14px;font-weight:bold;color:#185FA5;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #185FA5;}
+.param-group{margin-bottom:16px;}
+.param-label{font-size:13px;color:#666;margin-bottom:8px;display:block;font-weight:bold;}
+.rule-input-row{display:flex;gap:6px;margin-bottom:8px;align-items:center;}
+.rule-input-row input{flex:1;padding:8px;border:2px solid #e0e0e0;border-radius:6px;font-family:Consolas,monospace;font-size:13px;outline:none;}
+.rule-input-row input:focus{border-color:#185FA5;}
+.rule-input-row .del-btn{background:#e74c3c;color:#fff;border:none;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;}
+.add-btn{width:100%;background:#e8f1fa;color:#185FA5;border:2px dashed #185FA5;padding:8px;border-radius:6px;cursor:pointer;font-size:13px;}
+.calc-btn{width:100%;background:linear-gradient(135deg,#185FA5,#2A7BC8);color:#fff;border:none;padding:12px;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:10px;}
+.imp-check{display:flex;align-items:center;gap:6px;font-size:12px;color:#666;margin-top:4px;}
+.imp-check input{cursor:pointer;}
+
+.winner-banner{background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;padding:12px;border-radius:8px;text-align:center;margin-bottom:16px;font-weight:bold;font-size:15px;display:none;}
+.winner-banner.show{display:block;}
+
+.tip-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px 16px;background:#fff;border-top:2px solid #185FA5;}
+.tip-card{padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.5;}
+.tip-card.knowledge{background:#e8f1fa;border-left:3px solid #185FA5;}
+.tip-card.error{background:#fdf2f2;border-left:3px solid #e74c3c;}
+.tip-card.think{background:#fff8e7;border-left:3px solid #BA7517;}
+.tip-card.sizheng{background:#fff0f0;border-left:3px solid #c0392b;}
+.tip-card .tip-head{font-weight:bold;margin-bottom:4px;font-size:13px;}
+.tip-card.sizheng .tip-head{color:#c0392b;}
+
+.explain-mode .navbar,.explain-mode .param-panel,.explain-mode .code-panel{display:none;}
+.explain-mode .preview-panel{width:100%;}
+body{overflow:auto;}
+.main{height:auto;min-height:calc(100vh - 56px - 130px);}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="left">
+    <span class="chapter">第3章 CSS3</span>
+    <span class="title">P19-优先级计算器</span>
+    <span class="tag">3.4.3 继承·层叠·优先级</span>
+  </div>
+  <div class="right">
+    <button id="btnCode" onclick="toggleCode()">查看代码</button>
+    <button id="btnExplain" onclick="toggleExplain()">讲解模式</button>
+    <button onclick="resetAll()">重置</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="panel code-panel" id="codePanel">
+    <div class="code-title">① 代码原理区</div>
+    <div class="code-block" id="codeBlock">
+<span class="comment">/* 优先级权值计算规则 */</span>
+<span class="attr">ID选择器</span>     = <span class="val">100</span>   <span class="comment">如 #title</span>
+<span class="attr">类选择器</span>     = <span class="val">10</span>    <span class="comment">如 .box</span>
+<span class="attr">标签选择器</span>   = <span class="val">1</span>     <span class="comment">如 p</span>
+<span class="attr">!important</span>   = <span class="val">∞</span>     <span class="comment">慎用！</span>
+
+<span class="comment">/* 计算示例：*/</span>
+<span class="sel">#title</span>          <span class="comment">// 100</span>
+<span class="sel">.box .price</span>    <span class="comment">// 10+10=20</span>
+<span class="sel">div p span</span>     <span class="comment">// 1+1+1=3</span>
+<span class="sel">#nav .item a</span>   <span class="comment">// 100+10+1=111</span>
+
+<span class="comment">/* 胜出者：权值最大的规则 */</span>
+    </div>
+    <button class="copy-btn" onclick="copyCode()">复制代码</button>
+  </div>
+
+  <div class="panel preview-panel">
+    <div class="preview-header">
+      <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <div class="url">https://demo.com/specificity.html</div>
+    </div>
+    <div class="preview-container">
+      <div class="winner-banner" id="winnerBanner">
+        🏆 胜出规则：<span id="winnerText">-</span>（权值最高）
+      </div>
+      <h2>目标元素预览</h2>
+      <div class="target-element" id="targetElement">
+        <div>我是被多条规则作用的元素</div>
+        <div class="te-label" id="teLabel">当前生效：无</div>
+      </div>
+      <h2>规则列表（权值排序）</h2>
+      <div class="rules-list" id="rulesList">
+        <div class="rule-card">
+          <div class="rc-head">
+            <span class="rc-sel">#title</span>
+            <span class="rc-weight">100</span>
+          </div>
+          <div class="rc-code">color: blue;</div>
+          <div class="rc-calc"><span class="calc-item calc-id">ID ×1 = 100</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="param-panel panel">
+    <div class="param-title">③ 参数调节区</div>
+    <div class="param-group">
+      <label class="param-label">输入多条CSS规则（选择器）</label>
+      <div id="ruleInputs">
+        <div class="rule-input-row">
+          <input type="text" class="rule-sel" value="#title" placeholder="如 #title">
+          <input type="text" class="rule-color" value="blue" placeholder="颜色" style="flex:0.6;">
+          <button class="del-btn" onclick="delRule(this)">×</button>
+        </div>
+        <div class="rule-input-row">
+          <input type="text" class="rule-sel" value=".box" placeholder="如 .box">
+          <input type="text" class="rule-color" value="green" placeholder="颜色" style="flex:0.6;">
+          <button class="del-btn" onclick="delRule(this)">×</button>
+        </div>
+        <div class="rule-input-row">
+          <input type="text" class="rule-sel" value="p" placeholder="如 p">
+          <input type="text" class="rule-color" value="orange" placeholder="颜色" style="flex:0.6;">
+          <button class="del-btn" onclick="delRule(this)">×</button>
+        </div>
+      </div>
+      <button class="add-btn" onclick="addRule()">+ 添加规则</button>
+    </div>
+    <div class="param-group">
+      <label class="param-label">!important 测试</label>
+      <div class="imp-check">
+        <input type="checkbox" id="impCheck" onchange="calc()">
+        <span>给最后一条规则加 !important</span>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calc()">⚖ 计算优先级</button>
+    <div style="background:#f8f9fa;padding:10px;border-radius:8px;margin-top:12px;font-size:11px;color:#666;line-height:1.6;">
+      <b style="color:#185FA5;">权值对照：</b><br>
+      <span style="color:#c0392b;">ID = 100</span> | <span style="color:#BA7517;">类 = 10</span> | <span style="color:#0F6E56;">标签 = 1</span>
+    </div>
+  </div>
+</div>
+
+<div class="tip-bar">
+  <div class="tip-card knowledge">
+    <div class="tip-head">核心知识点</div>
+    优先级权值：ID=100 > 类=10 > 标签=1，!important打破一切规则。
+  </div>
+  <div class="tip-card error">
+    <div class="tip-head">常见错误</div>
+    以为后写的规则一定生效——其实权值高的先生效，与书写顺序无关。
+  </div>
+  <div class="tip-card think">
+    <div class="tip-head">拓展思考题</div>
+    11个类选择器（权值110）能胜过1个ID选择器（权值100）吗？
+  </div>
+  <div class="tip-card sizheng">
+    <div class="tip-head">思政小贴士</div>
+    CSS优先级有规则，ID大于类大于标签。规则让样式井然有序，社会也靠规则运行。
+  </div>
+</div>
+
+<script>
+function calcWeight(sel){
+  var idCount=(sel.match(/#/g)||[]).length;
+  var classCount=(sel.match(/\./g)||[]).length;
+  var tagCount=sel.replace(/#[\w-]+/g,'').replace(/\.[\w-]+/g,'').split(/\s+/).filter(function(s){return s&&!s.startsWith(':');}).length;
+  return{id:idCount,cls:classCount,tag:tagCount,total:idCount*100+classCount*10+tagCount};
+}
+
+function calc(){
+  var rows=document.querySelectorAll('#ruleInputs .rule-input-row');
+  var rules=[];
+  var imp=document.getElementById('impCheck').checked;
+  rows.forEach(function(row,i){
+    var sel=row.querySelector('.rule-sel').value.trim();
+    var color=row.querySelector('.rule-color').value.trim();
+    if(!sel)return;
+    var w=calcWeight(sel);
+    var isImp=imp&&(i===rows.length-1);
+    if(isImp)w.total=9999;
+    rules.push({sel:sel,color:color||'gray',weight:w,isImp:isImp});
+  });
+  if(rules.length===0)return;
+  rules.sort(function(a,b){return b.weight.total-a.weight.total;});
+  var winner=rules[0];
+  var list=document.getElementById('rulesList');
+  list.innerHTML='';
+  rules.forEach(function(r){
+    var card=document.createElement('div');
+    card.className='rule-card'+(r===winner?' winner':'');
+    var calcHtml='';
+    if(r.weight.id>0)calcHtml+='<span class="calc-item calc-id">ID ×'+r.weight.id+' = '+(r.weight.id*100)+'</span>';
+    if(r.weight.cls>0)calcHtml+='<span class="calc-item calc-class">类 ×'+r.weight.cls+' = '+(r.weight.cls*10)+'</span>';
+    if(r.weight.tag>0)calcHtml+='<span class="calc-item calc-tag">标签 ×'+r.weight.tag+' = '+r.weight.tag+'</span>';
+    if(r.isImp)calcHtml+='<span class="calc-item" style="background:#ffcccc;color:#c0392b;">!important = ∞</span>';
+    card.innerHTML='<div class="rc-head"><span class="rc-sel">'+r.sel+'</span><span class="rc-weight">'+(r.isImp?'∞':r.weight.total)+'</span></div><div class="rc-code">color: '+r.color+';'+(r.isImp?' !important':'')+'</div><div class="rc-calc">'+calcHtml+'</div>';
+    list.appendChild(card);
+  });
+  var te=document.getElementById('targetElement');
+  te.style.color=winner.color;
+  te.classList.add('winner');
+  document.getElementById('teLabel').textContent='当前生效：'+winner.sel+' { color: '+winner.color+(winner.isImp?' !important':'')+' }';
+  var banner=document.getElementById('winnerBanner');
+  banner.classList.add('show');
+  document.getElementById('winnerText').textContent=winner.sel+'（权值'+(winner.isImp?'∞':winner.weight.total)+'）';
+}
+
+function addRule(){
+  var div=document.createElement('div');
+  div.className='rule-input-row';
+  div.innerHTML='<input type="text" class="rule-sel" placeholder="如 .new" value=""><input type="text" class="rule-color" placeholder="颜色" value="red" style="flex:0.6;"><button class="del-btn" onclick="delRule(this)">×</button>';
+  document.getElementById('ruleInputs').appendChild(div);
+}
+
+function delRule(btn){
+  if(document.querySelectorAll('#ruleInputs .rule-input-row').length<=1)return;
+  btn.parentElement.remove();
+  calc();
+}
+
+function toggleCode(){var p=document.getElementById('codePanel');var b=document.getElementById('btnCode');p.style.display=p.style.display==='none'?'block':'none';b.classList.toggle('active');}
+function toggleExplain(){document.body.classList.toggle('explain-mode');document.getElementById('btnExplain').classList.toggle('active');}
+function copyCode(){navigator.clipboard.writeText(document.getElementById('codeBlock').innerText).then(function(){alert('代码已复制！');});}
+function resetAll(){
+  document.body.classList.remove('explain-mode');
+  document.getElementById('btnExplain').classList.remove('active');
+  document.getElementById('codePanel').style.display='block';
+  document.getElementById('btnCode').classList.add('active');
+  document.getElementById('impCheck').checked=false;
+  calc();
+}
+document.getElementById('btnCode').classList.add('active');
+calc();
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>
