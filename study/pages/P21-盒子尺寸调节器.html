@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P21-盒子尺寸调节器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", sans-serif; background: #f4f7fb; color: #333; height: 100vh; display: flex; flex-direction: column; }
+  /* 顶部导航 */
+  .navbar { background: #185FA5; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .navbar .chapter { font-weight: bold; font-size: 15px; }
+  .navbar .ppt-title { font-size: 14px; opacity: 0.9; }
+  .navbar .tag { background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+  .navbar .spacer { flex: 1; }
+  .navbar button { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .navbar button:hover { background: rgba(255,255,255,0.3); }
+  .navbar button.active { background: #fff; color: #185FA5; }
+  /* 主体三栏 */
+  .main { flex: 1; display: flex; overflow: hidden; }
+  .panel { padding: 14px; overflow: auto; }
+  .code-area { width: 25%; background: #1e2b38; color: #e0e6ed; }
+  .preview-area { width: 50%; background: #fff; display: flex; flex-direction: column; }
+  .param-area { width: 25%; background: #fff; border-left: 1px solid #e0e6ed; }
+  /* 代码区 */
+  .code-area h3 { color: #7fb4e8; font-size: 13px; margin-bottom: 10px; border-bottom: 1px solid #2d3e50; padding-bottom: 6px; }
+  .code-block { font-family: "Consolas", monospace; font-size: 13px; line-height: 1.7; }
+  .code-line { padding: 2px 8px; border-radius: 3px; transition: background 0.3s; }
+  .code-line.highlight { background: #3a5a7a; box-shadow: inset 3px 0 0 #ffd700; }
+  .sel { color: #5fa8e8; }
+  .prop { color: #4ec9b0; }
+  .val { color: #ce9178; }
+  .comment { color: #6a9955; }
+  .copy-btn { margin-top: 10px; background: #185FA5; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; width: 100%; }
+  /* 预览区 */
+  .browser-bar { background: #e8eef5; padding: 8px 12px; border-bottom: 1px solid #d0d9e5; font-size: 12px; color: #666; }
+  .browser-bar .url { background: #fff; padding: 4px 10px; border-radius: 10px; border: 1px solid #ccc; display: inline-block; min-width: 300px; }
+  .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; background: #fafcfe; background-image: linear-gradient(#e8eef5 1px, transparent 1px), linear-gradient(90deg, #e8eef5 1px, transparent 1px); background-size: 20px 20px; }
+  .demo-box { background: linear-gradient(135deg, #7fb4e8, #185FA5); color: #fff; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; transition: all 0.3s; }
+  .size-info { margin-top: 24px; padding: 12px 20px; background: #185FA5; color: #fff; border-radius: 8px; font-size: 13px; text-align: center; }
+  .size-info .formula { font-family: Consolas; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; margin-top: 6px; display: inline-block; }
+  /* 参数区 */
+  .param-area h3 { color: #185FA5; font-size: 14px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #185FA5; }
+  .param-group { margin-bottom: 14px; }
+  .param-group label { display: flex; justify-content: space-between; font-size: 12px; color: #555; margin-bottom: 6px; }
+  .param-group label .val-show { color: #185FA5; font-weight: bold; font-family: Consolas; }
+  .param-group input[type=range] { width: 100%; accent-color: #185FA5; cursor: pointer; }
+  .param-group select { width: 100%; padding: 6px; border: 1px solid #d0d9e5; border-radius: 6px; font-size: 12px; }
+  .reset-btn { margin-top: 8px; width: 100%; padding: 8px; background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 12px; color: #666; }
+  .reset-btn:hover { border-color: #185FA5; color: #185FA5; }
+  /* 教学提示卡 */
+  .tips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 12px; background: #fff; border-top: 2px solid #185FA5; }
+  .tip-card { padding: 10px; border-radius: 8px; font-size: 12px; line-height: 1.6; }
+  .tip-card h4 { font-size: 12px; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px dashed #ccc; }
+  .tip-core { background: #e8f4ff; }
+  .tip-core h4 { color: #185FA5; }
+  .tip-error { background: #fff4e8; }
+  .tip-error h4 { color: #BA7517; }
+  .tip-think { background: #e8fff4; }
+  .tip-think h4 { color: #0F6E56; }
+  .tip-sizheng { background: #ffe8e8; border: 1px solid #ff6666; }
+  .tip-sizheng h4 { color: #cc0000; }
+  /* 讲解模式 */
+  body.lecture .navbar, body.lecture .tips { display: none; }
+  body.lecture .code-area { width: 30%; }
+  body.lecture .preview-area { width: 70%; }
+  body.lecture .param-area { width: 0; display: none; }
+  @media (max-width: 900px) {
+    .main { flex-direction: column; }
+    .code-area, .preview-area, .param-area { width: 100%; }
+    .tips { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span class="tag">参数调节</span>
+  <span class="spacer"></span>
+  <button id="codeToggle">查看代码</button>
+  <button id="lectureBtn">讲解模式</button>
+  <button id="resetBtn">重置</button>
+</div>
+
+<div class="main">
+  <!-- 代码原理区 -->
+  <div class="panel code-area">
+    <h3>代码原理区 · 实时CSS</h3>
+    <div class="code-block" id="codeBlock">
+      <div><span class="sel">.box</span> {</div>
+      <div class="code-line" data-prop="width">  <span class="prop">width</span>: <span class="val" id="c-width">200px</span>;</div>
+      <div class="code-line" data-prop="height">  <span class="prop">height</span>: <span class="val" id="c-height">120px</span>;</div>
+      <div class="code-line" data-prop="padding">  <span class="prop">padding</span>: <span class="val" id="c-padding">20px</span>;</div>
+      <div class="code-line" data-prop="border">  <span class="prop">border</span>: <span class="val" id="c-border">2px solid #BA7517</span>;</div>
+      <div class="code-line" data-prop="margin">  <span class="prop">margin</span>: <span class="val" id="c-margin">20px</span>;</div>
+      <div>}</div>
+      <br>
+      <div class="comment">/* border-style 取值 */</div>
+      <div class="comment">/* solid 实线 */</div>
+      <div class="comment">/* dashed 虚线 */</div>
+      <div class="comment">/* dotted 点线 */</div>
+      <div class="comment">/* double 双线 */</div>
+      <br>
+      <div class="comment">/* 总尺寸公式 */</div>
+      <div class="comment">/* 总宽=width+padding×2+border×2 */</div>
+    </div>
+    <button class="copy-btn" onclick="copyCode()">复制代码</button>
+  </div>
+
+  <!-- 实时预览区 -->
+  <div class="preview-area">
+    <div class="browser-bar">
+      <span>🌐</span> <span class="url">file:///box-size-tuner.html</span>
+    </div>
+    <div class="stage">
+      <div class="demo-box" id="demoBox">
+        商品卡片<br>content内容区
+      </div>
+      <div class="size-info">
+        盒子总尺寸：<strong id="totalW">244</strong> × <strong id="totalH">164</strong> px
+        <div class="formula">总宽 = width(<span id="fw">200</span>) + padding×2(<span id="fp">40</span>) + border×2(<span id="fb">4</span>)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 参数调节区 -->
+  <div class="panel param-area">
+    <h3>参数调节区</h3>
+    <div class="param-group">
+      <label>width 宽度 <span class="val-show" id="v-width">200px</span></label>
+      <input type="range" id="r-width" min="100" max="400" value="200">
+    </div>
+    <div class="param-group">
+      <label>height 高度 <span class="val-show" id="v-height">120px</span></label>
+      <input type="range" id="r-height" min="50" max="200" value="120">
+    </div>
+    <div class="param-group">
+      <label>padding 内边距 <span class="val-show" id="v-padding">20px</span></label>
+      <input type="range" id="r-padding" min="0" max="50" value="20">
+    </div>
+    <div class="param-group">
+      <label>border 边框宽度 <span class="val-show" id="v-border">2px</span></label>
+      <input type="range" id="r-border" min="0" max="20" value="2">
+    </div>
+    <div class="param-group">
+      <label>margin 外边距 <span class="val-show" id="v-margin">20px</span></label>
+      <input type="range" id="r-margin" min="0" max="50" value="20">
+    </div>
+    <div class="param-group">
+      <label>border-style 边框样式</label>
+      <select id="s-style">
+        <option value="solid">solid 实线</option>
+        <option value="dashed">dashed 虚线</option>
+        <option value="dotted">dotted 点线</option>
+        <option value="double">double 双线</option>
+      </select>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">重置参数</button>
+  </div>
+</div>
+
+<!-- 教学提示卡 -->
+<div class="tips">
+  <div class="tip-card tip-core">
+    <h4>核心知识点</h4>
+    盒子5大属性：width/height定义内容区，padding内边距，border边框，margin外边距。总尺寸=width+padding×2+border×2。
+  </div>
+  <div class="tip-card tip-error">
+    <h4>常见错误</h4>
+    ① 以为设了width盒子就那么宽（实际还要加padding和border）；② border忘记写style只写宽度不显示。
+  </div>
+  <div class="tip-card tip-think">
+    <h4>拓展思考题</h4>
+    把padding和margin都设为0，盒子总尺寸和width/height什么关系？为什么实际开发常觉得盒子"变大"了？
+  </div>
+  <div class="tip-card tip-sizheng">
+    <h4>思政小贴士</h4>
+    margin是元素和他人的距离。人际交往也是，太近了挤太远了疏，恰当的边界感很重要。
+  </div>
+</div>
+
+<script>
+  const state = { width:200, height:120, padding:20, border:2, margin:20, style:'solid' };
+  const defaults = {...state};
+
+  function update() {
+    const box = document.getElementById('demoBox');
+    box.style.width = state.width + 'px';
+    box.style.height = state.height + 'px';
+    box.style.padding = state.padding + 'px';
+    box.style.border = `${state.border}px ${state.style} #BA7517`;
+    box.style.margin = state.margin + 'px';
+
+    // 代码区更新
+    document.getElementById('c-width').textContent = state.width + 'px';
+    document.getElementById('c-height').textContent = state.height + 'px';
+    document.getElementById('c-padding').textContent = state.padding + 'px';
+    document.getElementById('c-border').textContent = `${state.border}px ${state.style} #BA7517`;
+    document.getElementById('c-margin').textContent = state.margin + 'px';
+
+    // 参数区数值
+    document.getElementById('v-width').textContent = state.width + 'px';
+    document.getElementById('v-height').textContent = state.height + 'px';
+    document.getElementById('v-padding').textContent = state.padding + 'px';
+    document.getElementById('v-border').textContent = state.border + 'px';
+    document.getElementById('v-margin').textContent = state.margin + 'px';
+
+    // 总尺寸
+    const totalW = state.width + state.padding*2 + state.border*2;
+    const totalH = state.height + state.padding*2 + state.border*2;
+    document.getElementById('totalW').textContent = totalW;
+    document.getElementById('totalH').textContent = totalH;
+    document.getElementById('fw').textContent = state.width;
+    document.getElementById('fp').textContent = state.padding*2;
+    document.getElementById('fb').textContent = state.border*2;
+  }
+
+  function highlightProp(prop) {
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlight'));
+    if (prop) {
+      const line = document.querySelector(`.code-line[data-prop="${prop}"]`);
+      if (line) line.classList.add('highlight');
+    }
+  }
+
+  // 绑定滑块
+  ['width','height','padding','border','margin'].forEach(prop => {
+    const slider = document.getElementById('r-'+prop);
+    slider.addEventListener('input', () => {
+      state[prop] = parseInt(slider.value);
+      update();
+      highlightProp(prop);
+    });
+    slider.addEventListener('change', () => setTimeout(() => highlightProp(null), 1000));
+  });
+
+  document.getElementById('s-style').addEventListener('change', function() {
+    state.style = this.value;
+    update();
+    highlightProp('border');
+    setTimeout(() => highlightProp(null), 1000);
+  });
+
+  function resetAll() {
+    Object.assign(state, defaults);
+    document.getElementById('r-width').value = state.width;
+    document.getElementById('r-height').value = state.height;
+    document.getElementById('r-padding').value = state.padding;
+    document.getElementById('r-border').value = state.border;
+    document.getElementById('r-margin').value = state.margin;
+    document.getElementById('s-style').value = state.style;
+    update();
+    highlightProp(null);
+  }
+
+  function copyCode() {
+    const text = `.box {
+  width: ${state.width}px;
+  height: ${state.height}px;
+  padding: ${state.padding}px;
+  border: ${state.border}px ${state.style} #BA7517;
+  margin: ${state.margin}px;
+}`;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '已复制 ✓';
+      setTimeout(() => btn.textContent = '复制代码', 1500);
+    });
+  }
+
+  let codeVisible = true;
+  document.getElementById('codeToggle').addEventListener('click', function() {
+    codeVisible = !codeVisible;
+    document.querySelector('.code-area').style.display = codeVisible ? '' : 'none';
+    document.querySelector('.preview-area').style.width = codeVisible ? '50%' : '75%';
+    this.classList.toggle('active', !codeVisible);
+  });
+
+  document.getElementById('lectureBtn').addEventListener('click', function() {
+    document.body.classList.toggle('lecture');
+    this.classList.toggle('active');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+  update();
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

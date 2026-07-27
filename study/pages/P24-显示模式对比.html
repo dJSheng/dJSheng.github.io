@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P24-显示模式对比</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", sans-serif; background: #f4f7fb; color: #333; height: 100vh; display: flex; flex-direction: column; }
+  .navbar { background: #185FA5; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .navbar .chapter { font-weight: bold; font-size: 15px; }
+  .navbar .ppt-title { font-size: 14px; opacity: 0.9; }
+  .navbar .tag { background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+  .navbar .spacer { flex: 1; }
+  .navbar button { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .navbar button:hover { background: rgba(255,255,255,0.3); }
+  .navbar button.active { background: #fff; color: #185FA5; }
+  .main { flex: 1; display: flex; overflow: hidden; }
+  .panel { padding: 14px; overflow: auto; }
+  .code-area { width: 25%; background: #1e2b38; color: #e0e6ed; }
+  .preview-area { width: 50%; background: #fff; display: flex; flex-direction: column; }
+  .param-area { width: 25%; background: #fff; border-left: 1px solid #e0e6ed; }
+  .code-area h3 { color: #7fb4e8; font-size: 13px; margin-bottom: 10px; border-bottom: 1px solid #2d3e50; padding-bottom: 6px; }
+  .code-block { font-family: "Consolas", monospace; font-size: 13px; line-height: 1.7; }
+  .code-line { padding: 2px 8px; border-radius: 3px; transition: background 0.3s; }
+  .code-line.highlight { background: #3a5a7a; box-shadow: inset 3px 0 0 #ffd700; }
+  .sel { color: #5fa8e8; }
+  .prop { color: #4ec9b0; }
+  .val { color: #ce9178; }
+  .comment { color: #6a9955; }
+  .copy-btn { margin-top: 10px; background: #185FA5; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; width: 100%; }
+  .browser-bar { background: #e8eef5; padding: 8px 12px; border-bottom: 1px solid #d0d9e5; font-size: 12px; color: #666; }
+  .browser-bar .url { background: #fff; padding: 4px 10px; border-radius: 10px; border: 1px solid #ccc; display: inline-block; min-width: 300px; }
+  .stage { flex: 1; padding: 24px; background: #fafcfe; overflow: auto; }
+  .compare-row { margin-bottom: 20px; background: #fff; border: 1px solid #e0e6ed; border-radius: 8px; padding: 16px; }
+  .compare-row h4 { color: #185FA5; font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .tag-label { background: #185FA5; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: Consolas; }
+  .default-mode { font-size: 11px; color: #888; }
+  .elements-wrap { border: 1px dashed #aaa; padding: 12px; min-height: 60px; background: #fafafa; }
+  .demo-div, .demo-span, .demo-a { padding: 8px 14px; margin: 4px; border: 2px solid #BA7517; background: #fff4e8; color: #333; font-size: 13px; transition: all 0.3s; }
+  .demo-span { border-color: #0F6E56; background: #e8fff4; }
+  .demo-a { border-color: #185FA5; background: #e8f4ff; text-decoration: none; color: #185FA5; }
+  .observe { margin-top: 10px; font-size: 12px; color: #555; }
+  .observe .yes { color: #0F6E56; font-weight: bold; }
+  .observe .no { color: #cc0000; font-weight: bold; }
+  .param-area h3 { color: #185FA5; font-size: 14px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #185FA5; }
+  .display-btn { display: block; width: 100%; margin-bottom: 10px; padding: 12px; border: 1px solid #d0d9e5; background: #fff; border-radius: 8px; cursor: pointer; text-align: left; font-size: 13px; transition: all 0.3s; }
+  .display-btn:hover { border-color: #185FA5; box-shadow: 0 2px 8px rgba(24,95,165,0.15); }
+  .display-btn.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+  .display-btn .val { font-family: Consolas; font-size: 12px; }
+  .display-btn .desc { font-size: 11px; opacity: 0.8; display: block; margin-top: 4px; }
+  .compare-table { margin-top: 12px; font-size: 11px; width: 100%; border-collapse: collapse; }
+  .compare-table th, .compare-table td { border: 1px solid #e0e6ed; padding: 6px; text-align: center; }
+  .compare-table th { background: #185FA5; color: #fff; }
+  .compare-table .yes { color: #0F6E56; }
+  .compare-table .no { color: #cc0000; }
+  .reset-btn { margin-top: 10px; width: 100%; padding: 8px; background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 12px; color: #666; }
+  .tips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 12px; background: #fff; border-top: 2px solid #185FA5; }
+  .tip-card { padding: 10px; border-radius: 8px; font-size: 12px; line-height: 1.6; }
+  .tip-card h4 { font-size: 12px; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px dashed #ccc; }
+  .tip-core { background: #e8f4ff; }
+  .tip-core h4 { color: #185FA5; }
+  .tip-error { background: #fff4e8; }
+  .tip-error h4 { color: #BA7517; }
+  .tip-think { background: #e8fff4; }
+  .tip-think h4 { color: #0F6E56; }
+  .tip-sizheng { background: #ffe8e8; border: 1px solid #ff6666; }
+  .tip-sizheng h4 { color: #cc0000; }
+  body.lecture .navbar, body.lecture .tips { display: none; }
+  body.lecture .code-area { width: 30%; }
+  body.lecture .preview-area { width: 70%; }
+  body.lecture .param-area { width: 0; display: none; }
+  @media (max-width: 900px) {
+    .main { flex-direction: column; }
+    .code-area, .preview-area, .param-area { width: 100%; }
+    .tips { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span class="tag">对比演示</span>
+  <span class="spacer"></span>
+  <button id="codeToggle">查看代码</button>
+  <button id="lectureBtn">讲解模式</button>
+  <button id="resetBtn">重置</button>
+</div>
+
+<div class="main">
+  <div class="panel code-area">
+    <h3>代码原理区 · CSS</h3>
+    <div class="code-block">
+      <div class="comment">/* 三种显示模式 */</div>
+      <div class="code-line" data-prop="block"><span class="sel">.block-demo</span> {</div>
+      <div class="code-line" data-prop="block">  <span class="prop">display</span>: <span class="val" id="c-block">block</span>;</div>
+      <div class="code-line" data-prop="block">}</div>
+      <br>
+      <div class="code-line" data-prop="inline"><span class="sel">.inline-demo</span> {</div>
+      <div class="code-line" data-prop="inline">  <span class="prop">display</span>: <span class="val" id="c-inline">inline</span>;</div>
+      <div class="code-line" data-prop="inline">}</div>
+      <br>
+      <div class="code-line" data-prop="inline-block"><span class="sel">.ib-demo</span> {</div>
+      <div class="code-line" data-prop="inline-block">  <span class="prop">display</span>: <span class="val" id="c-ib">inline-block</span>;</div>
+      <div class="code-line" data-prop="inline-block">}</div>
+      <br>
+      <div class="comment">/* 隐藏元素 */</div>
+      <div class="comment">/* display: none; */</div>
+      <br>
+      <div class="comment">★ block 独占一行 能设宽高</div>
+      <div class="comment">★ inline 不独占 不能设宽高</div>
+      <div class="comment">★ inline-block 不独占 能设宽高</div>
+    </div>
+    <button class="copy-btn" onclick="copyCode()">复制代码</button>
+  </div>
+
+  <div class="preview-area">
+    <div class="browser-bar">
+      <span>🌐</span> <span class="url">file:///display-compare.html</span>
+    </div>
+    <div class="stage">
+      <div class="compare-row">
+        <h4><span class="tag-label">&lt;div&gt;</span> 块级元素 <span class="default-mode">（默认 display:block）</span></h4>
+        <div class="elements-wrap" id="wrap-div">
+          <div class="demo-div" id="el-div" style="width:200px;height:50px;">div元素1</div>
+          <div class="demo-div" id="el-div2" style="width:200px;height:50px;">div元素2</div>
+        </div>
+        <div class="observe">独占一行：<span id="o-div-line" class="yes">是</span> ｜ 能否设宽高：<span id="o-div-wh" class="yes">能</span></div>
+      </div>
+
+      <div class="compare-row">
+        <h4><span class="tag-label">&lt;span&gt;</span> 行内元素 <span class="default-mode">（默认 display:inline）</span></h4>
+        <div class="elements-wrap" id="wrap-span">
+          <span class="demo-span" id="el-span" style="width:200px;height:50px;">span元素1</span>
+          <span class="demo-span" id="el-span2" style="width:200px;height:50px;">span元素2</span>
+        </div>
+        <div class="observe">独占一行：<span id="o-span-line" class="no">否</span> ｜ 能否设宽高：<span id="o-span-wh" class="no">不能</span></div>
+      </div>
+
+      <div class="compare-row">
+        <h4><span class="tag-label">&lt;a&gt;</span> 行内元素 <span class="default-mode">（默认 display:inline）</span></h4>
+        <div class="elements-wrap" id="wrap-a">
+          <a href="#" class="demo-a" id="el-a" style="width:200px;height:50px;">a元素1</a>
+          <a href="#" class="demo-a" id="el-a2" style="width:200px;height:50px;">a元素2</a>
+        </div>
+        <div class="observe">独占一行：<span id="o-a-line" class="no">否</span> ｜ 能否设宽高：<span id="o-a-wh" class="no">不能</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel param-area">
+    <h3>display 切换对比</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:12px;">点击切换 display 值，观察三种元素的表现差异。</p>
+    <button class="display-btn active" data-val="default">
+      <span class="val">默认模式</span>
+      <span class="desc">div=block / span,a=inline</span>
+    </button>
+    <button class="display-btn" data-val="block">
+      <span class="val">display: block</span>
+      <span class="desc">全部设为块级</span>
+    </button>
+    <button class="display-btn" data-val="inline">
+      <span class="val">display: inline</span>
+      <span class="desc">全部设为行内</span>
+    </button>
+    <button class="display-btn" data-val="inline-block">
+      <span class="val">display: inline-block</span>
+      <span class="desc">全部设为行内块</span>
+    </button>
+    <button class="display-btn" data-val="none">
+      <span class="val">display: none</span>
+      <span class="desc">全部隐藏</span>
+    </button>
+
+    <table class="compare-table">
+      <tr><th>模式</th><th>独占一行</th><th>设宽高</th></tr>
+      <tr><td>block</td><td class="yes">是</td><td class="yes">能</td></tr>
+      <tr><td>inline</td><td class="no">否</td><td class="no">不能</td></tr>
+      <tr><td>inline-block</td><td class="no">否</td><td class="yes">能</td></tr>
+    </table>
+    <button class="reset-btn" onclick="resetAll()">重置</button>
+  </div>
+</div>
+
+<div class="tips">
+  <div class="tip-card tip-core">
+    <h4>核心知识点</h4>
+    block块级独占一行能设宽高；inline行内不独占不能设宽高；inline-block行内块不独占能设宽高。display属性可切换。
+  </div>
+  <div class="tip-card tip-error">
+    <h4>常见错误</h4>
+    ① 给span设width不生效（inline不能设宽高）；② 想让a标签变按钮但没转display导致宽高无效；③ inline-block元素间有空白。
+  </div>
+  <div class="tip-card tip-think">
+    <h4>拓展思考题</h4>
+    img是inline-block，为什么它能在行内又能设宽高？inline-block元素间的空白间距怎么来的？
+  </div>
+  <div class="tip-card tip-sizheng">
+    <h4>思政小贴士</h4>
+    块级独占一行、行内共处一行，各司其职。团队也是，每个人守好岗位才能协作好。
+  </div>
+</div>
+
+<script>
+  let currentMode = 'default';
+
+  function applyMode(mode) {
+    currentMode = mode;
+    const divs = document.querySelectorAll('.demo-div');
+    const spans = document.querySelectorAll('.demo-span');
+    const as = document.querySelectorAll('.demo-a');
+
+    let divDisplay = 'block', spanDisplay = 'inline', aDisplay = 'inline';
+    if (mode === 'block') { divDisplay = spanDisplay = aDisplay = 'block'; }
+    else if (mode === 'inline') { divDisplay = spanDisplay = aDisplay = 'inline'; }
+    else if (mode === 'inline-block') { divDisplay = spanDisplay = aDisplay = 'inline-block'; }
+    else if (mode === 'none') { divDisplay = spanDisplay = aDisplay = 'none'; }
+    // default: 保持各自默认
+
+    divs.forEach(el => el.style.display = divDisplay);
+    spans.forEach(el => el.style.display = spanDisplay);
+    as.forEach(el => el.style.display = aDisplay);
+
+    // 代码区更新
+    document.getElementById('c-block').textContent = divDisplay;
+    document.getElementById('c-inline').textContent = spanDisplay;
+    document.getElementById('c-ib').textContent = aDisplay;
+
+    // 观察结论更新
+    updateObserve('div', divDisplay);
+    updateObserve('span', spanDisplay);
+    updateObserve('a', aDisplay);
+
+    // 高亮
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlight'));
+    let prop = mode === 'default' ? null : mode;
+    if (prop) {
+      document.querySelectorAll(`.code-line[data-prop="${prop}"]`).forEach(l => l.classList.add('highlight'));
+    }
+  }
+
+  function updateObserve(type, display) {
+    const lineEl = document.getElementById('o-'+type+'-line');
+    const whEl = document.getElementById('o-'+type+'-wh');
+    const line = (display === 'block');
+    const wh = (display === 'block' || display === 'inline-block');
+    lineEl.textContent = line ? '是' : (display === 'none' ? '隐藏' : '否');
+    lineEl.className = line ? 'yes' : (display === 'none' ? '' : 'no');
+    whEl.textContent = wh ? '能' : (display === 'none' ? '隐藏' : '不能');
+    whEl.className = wh ? 'yes' : (display === 'none' ? '' : 'no');
+  }
+
+  document.querySelectorAll('.display-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.display-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyMode(btn.dataset.val);
+    });
+  });
+
+  function resetAll() {
+    document.querySelectorAll('.display-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-val="default"]').classList.add('active');
+    applyMode('default');
+  }
+
+  function copyCode() {
+    const text = `/* 三种显示模式 */
+.block-demo { display: block; }
+.inline-demo { display: inline; }
+.ib-demo { display: inline-block; }
+.hide { display: none; }`;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '已复制 ✓';
+      setTimeout(() => btn.textContent = '复制代码', 1500);
+    });
+  }
+
+  let codeVisible = true;
+  document.getElementById('codeToggle').addEventListener('click', function() {
+    codeVisible = !codeVisible;
+    document.querySelector('.code-area').style.display = codeVisible ? '' : 'none';
+    document.querySelector('.preview-area').style.width = codeVisible ? '50%' : '75%';
+    this.classList.toggle('active', !codeVisible);
+  });
+  document.getElementById('lectureBtn').addEventListener('click', function() {
+    document.body.classList.toggle('lecture');
+    this.classList.toggle('active');
+  });
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+  applyMode('default');
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P34 居中方案大全 | 5.6.1 元素水平垂直居中</title>
+<style>
+  /* ============ 全局重置与主题变量 ============ */
+  :root{
+    --primary:#185FA5;        /* 海洋蓝主色 */
+    --primary-light:#2E7BC9;
+    --primary-dark:#0F4378;
+    --accent:#F0A500;          /* 强调橙 */
+    --bg:#F4F8FC;
+    --card:#FFFFFF;
+    --text:#22303C;
+    --text-light:#5C6B7A;
+    --border:#D9E4EF;
+    --code-bg:#1E2A38;
+    --danger:#D9534F;
+    --success:#2E9E5B;
+    --shadow:0 2px 10px rgba(24,95,165,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC",Segoe UI,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* ============ 顶部导航条 ============ */
+  .topbar{
+    height:56px;
+    background:linear-gradient(90deg,var(--primary-dark),var(--primary));
+    color:#fff;
+    display:flex;
+    align-items:center;
+    padding:0 20px;
+    gap:16px;
+    flex-shrink:0;
+    box-shadow:0 2px 8px rgba(15,67,120,.3);
+  }
+  .topbar .chapter{
+    font-weight:700;
+    font-size:15px;
+    background:rgba(255,255,255,.15);
+    padding:5px 12px;
+    border-radius:4px;
+    letter-spacing:1px;
+  }
+  .topbar .section{
+    font-size:15px;
+    font-weight:600;
+  }
+  .topbar .section::before{content:"›";margin-right:8px;opacity:.7;}
+  .topbar .tag{
+    font-size:12px;
+    background:rgba(255,255,255,.18);
+    padding:4px 10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.25);
+  }
+  .topbar .spacer{flex:1;}
+  .topbar .btn{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.3);
+    color:#fff;
+    padding:7px 14px;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:13px;
+    transition:all .2s;
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+  .topbar .btn:hover{background:rgba(255,255,255,.25);}
+  .topbar .btn.active{background:var(--accent);border-color:var(--accent);}
+  .topbar .btn.reset{background:rgba(217,83,79,.7);}
+
+  /* ============ 主体三栏 ============ */
+  .main{
+    flex:1;
+    display:flex;
+    gap:12px;
+    padding:12px;
+    overflow:hidden;
+    min-height:0;
+  }
+
+  /* ① 代码原理区 */
+  .panel-code{
+    width:25%;
+    background:var(--card);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .panel-head{
+    padding:10px 14px;
+    background:var(--primary);
+    color:#fff;
+    font-size:13px;
+    font-weight:600;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .panel-head .badge{
+    background:rgba(255,255,255,.2);
+    padding:2px 8px;
+    border-radius:10px;
+    font-size:11px;
+    font-weight:400;
+  }
+  .code-area{
+    flex:1;
+    background:var(--code-bg);
+    color:#E6EAF0;
+    font-family:"Consolas","Courier New",monospace;
+    font-size:13px;
+    line-height:1.7;
+    padding:14px;
+    overflow:auto;
+    white-space:pre;
+  }
+  .code-area .ln{display:block;cursor:pointer;padding:0 6px;border-radius:3px;transition:background .15s;}
+  .code-area .ln:hover{background:rgba(255,255,255,.06);}
+  .code-area .ln.hl{background:rgba(240,165,0,.22);box-shadow:inset 3px 0 0 var(--accent);}
+  .tk-sel{color:#569CD6;}      /* 选择器 */
+  .tk-prop{color:#9CDCFE;}     /* 属性 */
+  .tk-val{color:#CE9178;}      /* 值 */
+  .tk-com{color:#6A9955;}      /* 注释 */
+  .tk-num{color:#B5CEA8;}      /* 数字 */
+  .tk-key{color:#C586C0;}      /* 关键字 */
+
+  /* ② 实时预览区 */
+  .panel-preview{
+    width:50%;
+    background:var(--card);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .preview-stage{
+    flex:1;
+    background:
+      linear-gradient(45deg,#E8EFF6 25%,transparent 25%),
+      linear-gradient(-45deg,#E8EFF6 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#E8EFF6 75%),
+      linear-gradient(-45deg,transparent 75%,#E8EFF6 75%);
+    background-size:20px 20px;
+    background-position:0 0,0 10px,10px -10px,-10px 0;
+    background-color:#F8FBFE;
+    position:relative;
+    overflow:hidden;
+  }
+  .preview-stage .label-tag{
+    position:absolute;
+    top:10px;left:10px;
+    background:rgba(24,95,165,.85);
+    color:#fff;
+    padding:3px 10px;
+    border-radius:4px;
+    font-size:11px;
+    z-index:5;
+  }
+  .preview-stage .parent-box{
+    width:80%;
+    height:70%;
+    background:#DCE9F5;
+    border:2px dashed var(--primary);
+    border-radius:8px;
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+  }
+  .preview-stage .child-box{
+    width:120px;
+    height:80px;
+    background:linear-gradient(135deg,var(--primary),var(--primary-light));
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    border-radius:6px;
+    box-shadow:0 4px 12px rgba(24,95,165,.35);
+  }
+  .preview-info{
+    padding:8px 14px;
+    background:#EEF4FA;
+    border-top:1px solid var(--border);
+    font-size:12px;
+    color:var(--text-light);
+    display:flex;
+    justify-content:space-between;
+  }
+  .preview-info .dim{color:var(--primary);font-weight:600;}
+
+  /* ③ 参数调节区 */
+  .panel-params{
+    width:25%;
+    background:var(--card);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .params-body{
+    flex:1;
+    padding:12px;
+    overflow-y:auto;
+  }
+  .scheme-btn{
+    width:100%;
+    text-align:left;
+    background:#EEF4FA;
+    border:1.5px solid var(--border);
+    border-left:4px solid transparent;
+    border-radius:8px;
+    padding:10px 12px;
+    margin-bottom:9px;
+    cursor:pointer;
+    transition:all .2s;
+    font-size:13px;
+  }
+  .scheme-btn:hover{border-color:var(--primary-light);transform:translateX(2px);}
+  .scheme-btn.active{
+    background:var(--primary);
+    color:#fff;
+    border-left-color:var(--accent);
+    box-shadow:0 3px 10px rgba(24,95,165,.3);
+  }
+  .scheme-btn .num{
+    display:inline-block;
+    width:22px;height:22px;
+    line-height:22px;
+    text-align:center;
+    background:rgba(24,95,165,.15);
+    color:var(--primary);
+    border-radius:50%;
+    font-size:12px;
+    font-weight:700;
+    margin-right:8px;
+  }
+  .scheme-btn.active .num{background:rgba(255,255,255,.25);color:#fff;}
+  .scheme-btn .title{font-weight:600;font-size:13px;}
+  .scheme-btn .desc{display:block;font-size:11px;opacity:.8;margin-top:3px;margin-left:30px;}
+
+  .params-section{
+    margin-top:14px;
+    background:#F8FBFE;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px;
+  }
+  .params-section h4{
+    font-size:12px;color:var(--primary);
+    margin-bottom:8px;
+    display:flex;align-items:center;gap:5px;
+  }
+  .params-section h4::before{content:"◆";color:var(--accent);}
+  .params-section p{font-size:12px;color:var(--text-light);line-height:1.7;}
+  .params-section .tag-mini{
+    display:inline-block;
+    background:var(--primary-light);
+    color:#fff;
+    font-size:10px;
+    padding:2px 7px;
+    border-radius:3px;
+    margin:2px 3px 2px 0;
+  }
+  .params-section .tag-mini.warn{background:var(--accent);}
+  .params-section .tag-mini.danger{background:var(--danger);}
+
+  /* ============ ④ 教学提示卡 ============ */
+  .tipbar{
+    flex-shrink:0;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    padding:0 12px 12px;
+  }
+  .tip-card{
+    background:var(--card);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:12px 14px;
+    border-top:3px solid var(--primary);
+    font-size:12.5px;
+    line-height:1.65;
+  }
+  .tip-card .tip-title{
+    font-weight:700;
+    color:var(--primary);
+    font-size:13px;
+    margin-bottom:6px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .tip-card .tip-title .ico{
+    width:18px;height:18px;
+    line-height:18px;text-align:center;
+    background:var(--primary);color:#fff;
+    border-radius:50%;font-size:11px;
+  }
+  .tip-card.tip-core{border-top-color:var(--primary);}
+  .tip-card.tip-error{border-top-color:var(--accent);}
+  .tip-card.tip-error .tip-title{color:var(--accent);}
+  .tip-card.tip-error .tip-title .ico{background:var(--accent);}
+  .tip-card.tip-think{border-top-color:var(--success);}
+  .tip-card.tip-think .tip-title{color:var(--success);}
+  .tip-card.tip-think .tip-title .ico{background:var(--success);}
+  .tip-card.tip-sizheng{
+    border-top-color:var(--danger);
+    background:linear-gradient(180deg,#FFF5F5,#fff);
+  }
+  .tip-card.tip-sizheng .tip-title{color:var(--danger);}
+  .tip-card.tip-sizheng .tip-title .ico{background:var(--danger);}
+  .tip-card.tip-sizheng .quote{
+    font-style:italic;
+    color:#9B3535;
+    background:rgba(217,83,79,.06);
+    padding:5px 8px;
+    border-radius:4px;
+    border-left:2px solid var(--danger);
+    display:block;
+    margin-top:4px;
+  }
+
+  /* ============ 讲解模式样式 ============ */
+  body.lecture .panel-code{width:35%;}
+  body.lecture .panel-preview{width:45%;}
+  body.lecture .panel-params{width:20%;}
+  body.lecture .tipbar{display:none;}
+  body.lecture .main{flex:1;}
+
+  /* 滚动条 */
+  ::-webkit-scrollbar{width:7px;height:7px;}
+  ::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:4px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+</style>
+</head>
+<body>
+
+<!-- ============ 顶部导航条 ============ -->
+<div class="topbar">
+  <span class="tag">知识点</span>
+  <span class="spacer"></span>
+  <button class="btn" id="btnCode" onclick="toggleCode()">👁 查看代码</button>
+  <button class="btn" id="btnLecture" onclick="toggleLecture()">🎤 讲解模式</button>
+  <button class="btn reset" onclick="resetAll()">↻ 重置</button>
+</div>
+
+<!-- ============ 主体三栏 ============ -->
+<div class="main">
+
+  <!-- ① 代码原理区 -->
+  <div class="panel-code">
+    <div class="panel-head">
+      <span>① 代码原理区</span>
+      <span class="badge" id="schemeBadge">方案1 margin负值</span>
+    </div>
+    <div class="code-area" id="codeArea"></div>
+  </div>
+
+  <!-- ② 实时预览区 -->
+  <div class="panel-preview">
+    <div class="panel-head">
+      <span>② 实时预览区</span>
+      <span class="badge" id="previewBadge">点击代码行可高亮元素</span>
+    </div>
+    <div class="preview-stage" id="previewStage">
+      <span class="label-tag" id="stageLabel">父盒子（position:relative）</span>
+      <div class="parent-box" id="parentBox">
+        <div class="child-box" id="childBox">子盒子<br>居中显示</div>
+      </div>
+    </div>
+    <div class="preview-info">
+      <span>父盒：<span class="dim" id="pSize">560×350</span></span>
+      <span>子盒：<span class="dim" id="cSize">120×80</span></span>
+      <span>方案：<span class="dim" id="curScheme">margin负值法</span></span>
+    </div>
+  </div>
+
+  <!-- ③ 参数调节区 -->
+  <div class="panel-params">
+    <div class="panel-head">
+      <span>③ 参数调节区</span>
+      <span class="badge">5种方案</span>
+    </div>
+    <div class="params-body">
+
+      <button class="scheme-btn active" data-scheme="1" onclick="switchScheme(1)">
+        <span class="num">1</span><span class="title">margin负值法</span>
+        <span class="desc">absolute + 已知宽高 + 负边距</span>
+      </button>
+
+      <button class="scheme-btn" data-scheme="2" onclick="switchScheme(2)">
+        <span class="num">2</span><span class="title">transform法</span>
+        <span class="desc">absolute + translate(-50%,-50%)</span>
+      </button>
+
+      <button class="scheme-btn" data-scheme="3" onclick="switchScheme(3)">
+        <span class="num">3</span><span class="title">flex法</span>
+        <span class="desc">父设 flex + justify + align</span>
+      </button>
+
+      <button class="scheme-btn" data-scheme="4" onclick="switchScheme(4)">
+        <span class="num">4</span><span class="title">margin:auto法</span>
+        <span class="desc">absolute + 四方向0 + auto</span>
+      </button>
+
+      <button class="scheme-btn" data-scheme="5" onclick="switchScheme(5)">
+        <span class="num">5</span><span class="title">line-height法</span>
+        <span class="desc">单行文本垂直居中</span>
+      </button>
+
+      <div class="params-section">
+        <h4>方案特点</h4>
+        <p id="schemeFeature">必须知道子元素宽高；兼容性最好；老项目常用。</p>
+      </div>
+
+      <div class="params-section">
+        <h4>适用场景</h4>
+        <p id="schemeScene">固定尺寸弹窗、图标盒子的居中定位。</p>
+      </div>
+
+      <div class="params-section">
+        <h4>关键词</h4>
+        <div id="schemeTags">
+          <span class="tag-mini">absolute</span>
+          <span class="tag-mini">margin负值</span>
+          <span class="tag-mini warn">需知宽高</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ④ 教学提示卡 ============ -->
+<div class="tipbar">
+  <div class="tip-card tip-core">
+    <div class="tip-title"><span class="ico">i</span>核心知识点</div>
+    5种居中方案各有适用场景：margin负值与margin:auto需定位配合；transform未知宽高也行；flex最现代；line-height仅限单行文本。
+  </div>
+  <div class="tip-card tip-error">
+    <div class="tip-title"><span class="ico">!</span>常见错误</div>
+    忘记给父元素设 <code>position:relative</code>，导致绝对定位的子元素参照 body 定位而"飞出"父盒子。记住口诀"<b>子绝父相</b>"。
+  </div>
+  <div class="tip-card tip-think">
+    <div class="tip-title"><span class="ico">?</span>拓展思考</div>
+    哪种方案最适合响应式布局？提示：元素宽高随屏幕变化时，方案2(transform)和方案3(flex)无需写死尺寸，自适应能力更强。
+  </div>
+  <div class="tip-card tip-sizheng">
+    <div class="tip-title"><span class="ico">♥</span>思政小贴士</div>
+    居中是平衡之美，中华文化讲"中庸"不偏不倚。多种居中方案因地制宜，也是中庸智慧——<span class="quote">不偏之为中，不易之为常；因地制宜，方得圆满。</span>
+  </div>
+</div>
+
+<script>
+/* ============ 5种居中方案数据 ============ */
+const schemes = {
+  1:{
+    name:"margin负值法",
+    code:[
+      {ln:".parent{",                 tag:"sel"},
+      {ln:"  position:relative;        /* 父元素相对定位 */", tag:"com", focus:"parentBox"},
+      {ln:"  width:560px; height:350px;", tag:"prop"},
+      {ln:"}",                         tag:"sel"},
+      {ln:".child{",                   tag:"sel"},
+      {ln:"  position:absolute;        /* 子元素绝对定位 */", tag:"com", focus:"childBox"},
+      {ln:"  top:50%; left:50%;        /* 先到左上角中点 */", tag:"com", focus:"childBox"},
+      {ln:"  width:120px; height:80px; /* 必须已知宽高 */", tag:"com", focus:"childBox"},
+      {ln:"  margin-top:-40px;         /* 高度的一半负值 */", tag:"val", focus:"childBox"},
+      {ln:"  margin-left:-60px;        /* 宽度的一半负值 */", tag:"val", focus:"childBox"},
+      {ln:"}",                         tag:"sel"}
+    ],
+    feature:"必须知道子元素宽高；兼容性最好（IE6+）；老项目常用。缺点是宽高写死后不灵活。",
+    scene:"固定尺寸弹窗、Logo图标、固定大小按钮的居中定位。",
+    tags:['<span class="tag-mini">absolute</span>','<span class="tag-mini">margin负值</span>','<span class="tag-mini warn">需知宽高</span>','<span class="tag-mini">兼容好</span>'],
+    apply:function(){
+      parentBox.style.position="relative";
+      childBox.style.cssText="width:120px;height:80px;background:linear-gradient(135deg,#185FA5,#2E7BC9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:6px;position:absolute;top:50%;left:50%;margin-top:-40px;margin-left:-60px;box-shadow:0 4px 12px rgba(24,95,165,.35);";
+    }
+  },
+  2:{
+    name:"transform法",
+    code:[
+      {ln:".parent{",                          tag:"sel"},
+      {ln:"  position:relative;",              tag:"com", focus:"parentBox"},
+      {ln:"  width:560px; height:350px;",      tag:"prop"},
+      {ln:"}",                                  tag:"sel"},
+      {ln:".child{",                            tag:"sel"},
+      {ln:"  position:absolute;",              tag:"com", focus:"childBox"},
+      {ln:"  top:50%; left:50%;",              tag:"val", focus:"childBox"},
+      {ln:"  transform:translate(-50%,-50%);   /* 自身偏移一半 */", tag:"key", focus:"childBox"},
+      {ln:"  /* 无需知道宽高，推荐 */",          tag:"com"},
+      {ln:"}",                                  tag:"sel"}
+    ],
+    feature:"无需知道子元素宽高，transform按自身尺寸偏移；现代项目首选。缺点是IE9以下不支持。",
+    scene:"响应式弹窗、内容不固定宽高的居中元素、移动端弹层。",
+    tags:['<span class="tag-mini">absolute</span>','<span class="tag-mini">transform</span>','<span class="tag-mini">未知宽高</span>','<span class="tag-mini warn">推荐</span>'],
+    apply:function(){
+      parentBox.style.position="relative";
+      childBox.style.cssText="width:120px;height:80px;background:linear-gradient(135deg,#185FA5,#2E7BC9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:6px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 4px 12px rgba(24,95,165,.35);";
+    }
+  },
+  3:{
+    name:"flex法",
+    code:[
+      {ln:".parent{",                          tag:"sel"},
+      {ln:"  display:flex;                     /* 弹性布局 */", tag:"key", focus:"parentBox"},
+      {ln:"  justify-content:center;           /* 水平居中 */", tag:"key", focus:"parentBox"},
+      {ln:"  align-items:center;               /* 垂直居中 */", tag:"key", focus:"parentBox"},
+      {ln:"  width:560px; height:350px;",      tag:"prop"},
+      {ln:"}",                                  tag:"sel"},
+      {ln:".child{",                            tag:"sel"},
+      {ln:"  /* 子元素无需任何定位 */",          tag:"com", focus:"childBox"},
+      {ln:"  width:120px; height:80px;",       tag:"prop"},
+      {ln:"}",                                  tag:"sel"}
+    ],
+    feature:"最现代最简洁；父元素三行搞定；子元素无需定位。适合新项目，响应式友好。",
+    scene:"导航栏图标居中、卡片内容居中、整页布局，现代Web开发首选。",
+    tags:['<span class="tag-mini">flex</span>','<span class="tag-mini">justify-content</span>','<span class="tag-mini">align-items</span>','<span class="tag-mini warn">最推荐</span>','<span class="tag-mini">未知宽高</span>'],
+    apply:function(){
+      parentBox.style.position="relative";
+      parentBox.style.display="flex";
+      parentBox.style.justifyContent="center";
+      parentBox.style.alignItems="center";
+      childBox.style.cssText="width:120px;height:80px;background:linear-gradient(135deg,#185FA5,#2E7BC9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:6px;box-shadow:0 4px 12px rgba(24,95,165,.35);";
+    }
+  },
+  4:{
+    name:"margin:auto法",
+    code:[
+      {ln:".parent{",                          tag:"sel"},
+      {ln:"  position:relative;",              tag:"com", focus:"parentBox"},
+      {ln:"  width:560px; height:350px;",      tag:"prop"},
+      {ln:"}",                                  tag:"sel"},
+      {ln:".child{",                            tag:"sel"},
+      {ln:"  position:absolute;",              tag:"com", focus:"childBox"},
+      {ln:"  top:0; left:0; right:0; bottom:0; /* 四方向归零 */", tag:"val", focus:"childBox"},
+      {ln:"  margin:auto;                       /* 自动分配空间 */", tag:"key", focus:"childBox"},
+      {ln:"  width:120px; height:80px;",       tag:"prop"},
+      {ln:"}",                                  tag:"sel"}
+    ],
+    feature:"利用绝对定位+四方向0+margin:auto自动分配；需已知宽高；兼容性好。CSS3经典技巧。",
+    scene:"已知宽高的弹窗、固定尺寸卡片居中。",
+    tags:['<span class="tag-mini">absolute</span>','<span class="tag-mini">margin:auto</span>','<span class="tag-mini warn">需知宽高</span>','<span class="tag-mini">经典技巧</span>'],
+    apply:function(){
+      parentBox.style.position="relative";
+      parentBox.style.display="";
+      parentBox.style.justifyContent="";
+      parentBox.style.alignItems="";
+      childBox.style.cssText="width:120px;height:80px;background:linear-gradient(135deg,#185FA5,#2E7BC9);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:6px;position:absolute;top:0;left:0;right:0;bottom:0;margin:auto;box-shadow:0 4px 12px rgba(24,95,165,.35);";
+    }
+  },
+  5:{
+    name:"line-height法",
+    code:[
+      {ln:".parent{",                          tag:"sel"},
+      {ln:"  height:80px;                      /* 固定高度 */", tag:"prop", focus:"parentBox"},
+      {ln:"  line-height:80px;                 /* 等于高度 */", tag:"key", focus:"parentBox"},
+      {ln:"  text-align:center;                /* 水平居中 */", tag:"key", focus:"parentBox"},
+      {ln:"  width:560px;",                    tag:"prop"},
+      {ln:"}",                                  tag:"sel"},
+      {ln:".child{",                            tag:"sel"},
+      {ln:"  /* 单行文本自动垂直居中 */",        tag:"com", focus:"childBox"},
+      {ln:"  /* 仅适用单行文本！ */",            tag:"com"},
+      {ln:"}",                                  tag:"sel"}
+    ],
+    feature:"仅适用单行文本垂直居中；line-height等于父元素height即可。简单高效但局限大。",
+    scene:"按钮文字、导航菜单项、单行标题的垂直居中。",
+    tags:['<span class="tag-mini">line-height</span>','<span class="tag-mini">text-align</span>','<span class="tag-mini danger">仅单行</span>','<span class="tag-mini">简单</span>'],
+    apply:function(){
+      parentBox.style.position="relative";
+      parentBox.style.display="";
+      parentBox.style.height="80px";
+      parentBox.style.lineHeight="80px";
+      parentBox.style.textAlign="center";
+      childBox.style.cssText="display:inline-block;color:#fff;background:linear-gradient(135deg,#185FA5,#2E7BC9);padding:0 24px;font-size:14px;border-radius:6px;box-shadow:0 4px 12px rgba(24,95,165,.35);";
+      childBox.innerHTML="单行文本自动居中";
+    }
+  }
+};
+
+/* ============ 当前方案 ============ */
+let currentScheme = 1;
+
+/* ============ 语法高亮渲染 ============ */
+function renderCode(schemeNum){
+  const s = schemes[schemeNum];
+  const area = document.getElementById('codeArea');
+  area.innerHTML = s.code.map((line,i)=>{
+    let content = escapeHtml(line.ln);
+    // 简单语法着色
+    content = content
+      .replace(/(\/\*.*?\*\/)/g,'<span class="tk-com">$1</span>')
+      .replace(/(\bposition|display|top|left|right|bottom|width|height|margin-top|margin-left|margin|transform|justify-content|align-items|line-height|text-align|padding)\b/g,'<span class="tk-prop">$1</span>')
+      .replace(/(relative|absolute|flex|center|auto|translate|none|block|inline-block)/g,'<span class="tk-val">$1</span>')
+      .replace(/(-?\d+px)/g,'<span class="tk-num">$1</span>');
+    return '<span class="ln" data-line="'+i+'" data-focus="'+(line.focus||'')+'" onclick="highlightLine(this)">'+content+'</span>';
+  }).join('');
+}
+
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ============ 切换方案 ============ */
+function switchScheme(n){
+  currentScheme = n;
+  const s = schemes[n];
+  // 更新按钮状态
+  document.querySelectorAll('.scheme-btn').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.dataset.scheme)===n);
+  });
+  // 更新标题
+  document.getElementById('schemeBadge').textContent = '方案'+n+' '+s.name;
+  document.getElementById('curScheme').textContent = s.name;
+  document.getElementById('stageLabel').textContent = '方案'+n+' · '+s.name;
+  // 重置父盒子样式
+  resetPreview();
+  // 应用方案
+  s.apply();
+  // 渲染代码
+  renderCode(n);
+  // 更新参数区
+  document.getElementById('schemeFeature').textContent = s.feature;
+  document.getElementById('schemeScene').textContent = s.scene;
+  document.getElementById('schemeTags').innerHTML = s.tags.join('');
+  // 重置子盒子内容（方案5会改）
+  if(n!==5){childBox.innerHTML='子盒子<br>居中显示';}
+}
+
+/* ============ 重置预览 ============ */
+function resetPreview(){
+  parentBox.style.cssText='width:80%;height:70%;background:#DCE9F5;border:2px dashed var(--primary);border-radius:8px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:block;line-height:normal;text-align:left;';
+  childBox.style.cssText='';
+  childBox.innerHTML='子盒子<br>居中显示';
+}
+
+/* ============ 代码行点击高亮 ============ */
+function highlightLine(el){
+  document.querySelectorAll('.code-area .ln').forEach(l=>l.classList.remove('hl'));
+  el.classList.add('hl');
+  const focus = el.dataset.focus;
+  if(focus){
+    const target = document.getElementById(focus);
+    if(target){
+      target.style.outline='3px solid #F0A500';
+      target.style.outlineOffset='3px';
+      setTimeout(()=>{
+        target.style.outline='';
+        target.style.outlineOffset='';
+      },1500);
+    }
+  }
+}
+
+/* ============ 查看代码开关 ============ */
+let codeVisible = true;
+function toggleCode(){
+  codeVisible = !codeVisible;
+  const panel = document.querySelector('.panel-code');
+  panel.style.display = codeVisible ? 'flex' : 'none';
+  document.getElementById('btnCode').classList.toggle('active', !codeVisible);
+  // 调整其他面板宽度
+  if(!codeVisible){
+    document.querySelector('.panel-preview').style.width='66%';
+  }else{
+    document.querySelector('.panel-preview').style.width='50%';
+  }
+}
+
+/* ============ 讲解模式 ============ */
+let lectureMode = false;
+function toggleLecture(){
+  lectureMode = !lectureMode;
+  document.body.classList.toggle('lecture', lectureMode);
+  document.getElementById('btnLecture').classList.toggle('active', lectureMode);
+}
+
+/* ============ 重置 ============ */
+function resetAll(){
+  switchScheme(1);
+  codeVisible = true;
+  lectureMode = false;
+  document.querySelector('.panel-code').style.display='flex';
+  document.querySelector('.panel-preview').style.width='50%';
+  document.body.classList.remove('lecture');
+  document.getElementById('btnCode').classList.remove('active');
+  document.getElementById('btnLecture').classList.remove('active');
+}
+
+/* ============ 初始化 ============ */
+window.addEventListener('load',function(){
+  switchScheme(1);
+  // 更新尺寸显示
+  setTimeout(()=>{
+    const pr = parentBox.getBoundingClientRect();
+    const cr = childBox.getBoundingClientRect();
+    document.getElementById('pSize').textContent = Math.round(pr.width)+'×'+Math.round(pr.height);
+    document.getElementById('cSize').textContent = Math.round(cr.width)+'×'+Math.round(cr.height);
+  },100);
+});
+window.addEventListener('resize',function(){
+  setTimeout(()=>{
+    const pr = parentBox.getBoundingClientRect();
+    const cr = childBox.getBoundingClientRect();
+    document.getElementById('pSize').textContent = Math.round(pr.width)+'×'+Math.round(pr.height);
+    document.getElementById('cSize').textContent = Math.round(cr.width)+'×'+Math.round(cr.height);
+  },100);
+});
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

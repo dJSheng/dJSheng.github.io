@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P31-显隐属性对比</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", "Segoe UI", sans-serif; background: #f0f4f8; color: #333; }
+
+  /* 顶部导航条 */
+  .navbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #185FA5, #1a6fb8);
+    color: #fff; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    position: sticky; top: 0; z-index: 1000;
+  }
+  .navbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .navbar-title { font-size: 16px; font-weight: 700; }
+  .navbar-tag {
+    background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 12px;
+    font-size: 12px;
+  }
+  .navbar-right { display: flex; align-items: center; gap: 8px; }
+  .nav-btn {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .nav-btn.active { background: #fff; color: #185FA5; font-weight: 700; }
+
+  /* 主体布局 */
+  .main { display: flex; height: calc(100vh - 56px); }
+  .main.lecture-mode .param-panel,
+  .main.lecture-mode .tip-card { display: none; }
+  .main.lecture-mode .code-panel { width: 30%; }
+  .main.lecture-mode .preview-panel { width: 70%; }
+  .main.hide-code .code-panel { display: none; }
+  .main.hide-code .preview-panel { width: 75%; }
+
+  /* 代码区 */
+  .code-panel {
+    width: 25%; background: #1e1e2e; overflow-y: auto; border-right: 1px solid #2a2a3a;
+  }
+  .code-header {
+    background: #2a2a3a; color: #aaa; padding: 8px 12px;
+    font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 2;
+  }
+  .copy-btn {
+    background: #185FA5; color: #fff; border: none; padding: 3px 8px;
+    border-radius: 4px; cursor: pointer; font-size: 11px;
+  }
+  .copy-btn:hover { background: #1a6fb8; }
+  .code-body { font-family: "Consolas", "Courier New", monospace; font-size: 13px; line-height: 1.7; }
+  .code-line {
+    padding: 2px 12px; cursor: pointer; transition: background 0.15s; white-space: pre;
+  }
+  .code-line:hover { background: rgba(255,255,255,0.05); }
+  .code-line.highlighted { background: rgba(24,95,165,0.3); border-left: 3px solid #185FA5; }
+  .tag { color: #185FA5; }
+  .attr { color: #0F6E56; }
+  .val { color: #BA7517; }
+  .comment { color: #888780; font-style: italic; }
+  .sel { color: #d19a66; }
+
+  /* 预览区 */
+  .preview-panel { width: 50%; background: #fff; display: flex; flex-direction: column; }
+  .preview-header {
+    background: #e8eef5; padding: 8px 14px; font-size: 12px; color: #555;
+    border-bottom: 1px solid #d0d8e0; font-weight: 700;
+  }
+  .preview-frame-wrap { flex: 1; overflow: hidden; }
+  #previewFrame { width: 100%; height: 100%; border: none; }
+
+  /* 参数区 */
+  .param-panel {
+    width: 25%; background: #fff; border-left: 1px solid #e0e6ed; overflow-y: auto; padding: 14px;
+  }
+  .param-section { margin-bottom: 18px; }
+  .param-title {
+    font-size: 13px; font-weight: 700; color: #185FA5; margin-bottom: 8px;
+    padding-bottom: 5px; border-bottom: 2px solid #e8eef5;
+  }
+  .param-group { margin-bottom: 10px; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e8eef5; }
+  .param-group-label { font-size: 12px; font-weight: 700; color: #333; margin-bottom: 6px; }
+  .param-desc { font-size: 11px; color: #888; margin-bottom: 8px; }
+  .toggle-group { display: flex; gap: 6px; }
+  .toggle-btn {
+    flex: 1; padding: 8px; border: 2px solid #d0d8e0; background: #fff; color: #555;
+    border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.2s;
+  }
+  .toggle-btn.active { border-color: #185FA5; background: #185FA5; color: #fff; }
+  .toggle-btn.hide-active { border-color: #d32f2f; background: #d32f2f; color: #fff; }
+
+  /* 教学提示卡 */
+  .tip-card {
+    position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
+    border-top: 2px solid #185FA5; display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 500;
+  }
+  .tip-item { padding: 10px 14px; background: #f8fafc; }
+  .tip-item.ideology { background: #fff0f0; }
+  .tip-icon { font-size: 18px; margin-bottom: 4px; }
+  .tip-label { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 3px; }
+  .tip-item.ideology .tip-label { color: #d32f2f; }
+  .tip-text { font-size: 12px; color: #444; line-height: 1.5; }
+  .tip-item.ideology .tip-text { color: #c62828; font-weight: 600; }
+
+  .main { padding-bottom: 90px; }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航条 -->
+<div class="navbar">
+  <div class="navbar-left">
+    <span class="navbar-tag">对比演示型</span>
+    <span class="navbar-tag">项目⑤任务5</span>
+  </div>
+  <div class="navbar-right">
+    <button class="nav-btn" id="btnCode">查看代码</button>
+    <button class="nav-btn" id="btnLecture">讲解模式</button>
+    <button class="nav-btn" id="btnReset">重置</button>
+  </div>
+</div>
+
+<!-- 主体 -->
+<div class="main" id="main">
+
+  <!-- ① 代码原理区 -->
+  <div class="code-panel">
+    <div class="code-header">
+      <span>CSS 代码 · 三种隐藏对比</span>
+      <button class="copy-btn" id="btnCopy">复制</button>
+    </div>
+    <div class="code-body" id="codeBody">
+      <div class="code-line" data-line="1"><span class="comment">/* 方式一：display:none */</span></div>
+      <div class="code-line" data-line="2"><span class="comment">/* 彻底消失，不占位，下方上移 */</span></div>
+      <div class="code-line" data-line="3"><span class="sel">.box1</span> {</div>
+      <div class="code-line" data-line="4">  <span class="attr">display</span>: <span class="val" id="codeDisplay">block</span>;</div>
+      <div class="code-line" data-line="5">}</div>
+      <div class="code-line" data-line="6">&nbsp;</div>
+      <div class="code-line" data-line="7"><span class="comment">/* 方式二：visibility:hidden */</span></div>
+      <div class="code-line" data-line="8"><span class="comment">/* 隐形留位，占位保留空白 */</span></div>
+      <div class="code-line" data-line="9"><span class="sel">.box2</span> {</div>
+      <div class="code-line" data-line="10">  <span class="attr">visibility</span>: <span class="val" id="codeVisibility">visible</span>;</div>
+      <div class="code-line" data-line="11">}</div>
+      <div class="code-line" data-line="12">&nbsp;</div>
+      <div class="code-line" data-line="13"><span class="comment">/* 方式三：overflow:hidden */</span></div>
+      <div class="code-line" data-line="14"><span class="comment">/* 裁剪溢出，超出部分隐藏 */</span></div>
+      <div class="code-line" data-line="15"><span class="sel">.box3</span> {</div>
+      <div class="code-line" data-line="16">  <span class="attr">overflow</span>: <span class="val" id="codeOverflow">visible</span>;</div>
+      <div class="code-line" data-line="17">  <span class="attr">height</span>: <span class="val">100px</span>;</div>
+      <div class="code-line" data-line="18">}</div>
+    </div>
+  </div>
+
+  <!-- ② 实时预览区 -->
+  <div class="preview-panel">
+    <div class="preview-header">实时预览 · 三个盒子并排对比隐藏效果</div>
+    <div class="preview-frame-wrap">
+      <iframe id="previewFrame"></iframe>
+    </div>
+  </div>
+
+  <!-- ③ 参数调节区 -->
+  <div class="param-panel">
+    <div class="param-section">
+      <div class="param-title">对比控制面板</div>
+
+      <div class="param-group">
+        <div class="param-group-label">盒子1：display</div>
+        <div class="param-desc">display:none 彻底消失不占位</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-box="1" data-val="show">显示</button>
+          <button class="toggle-btn" data-box="1" data-val="hide">display:none</button>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="param-group-label">盒子2：visibility</div>
+        <div class="param-desc">visibility:hidden 隐形占位</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-box="2" data-val="show">显示</button>
+          <button class="toggle-btn" data-box="2" data-val="hide">visibility:hidden</button>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <div class="param-group-label">盒子3：overflow</div>
+        <div class="param-desc">overflow:hidden 裁剪溢出内容</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-box="3" data-val="show">显示全部</button>
+          <button class="toggle-btn" data-box="3" data-val="hide">overflow:hidden</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="param-section">
+      <div class="param-title">效果说明</div>
+      <div style="font-size:12px; color:#555; line-height:1.8;">
+        <p><strong style="color:#185FA5">display:none</strong><br>盒子1消失，盒子2、3会左移填补空位</p>
+        <p style="margin-top:8px"><strong style="color:#185FA5">visibility:hidden</strong><br>盒子2隐形但保留位置，盒子1、3不动</p>
+        <p style="margin-top:8px"><strong style="color:#185FA5">overflow:hidden</strong><br>盒子3超出高度的文字被裁剪</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ 教学提示卡 -->
+<div class="tip-card">
+  <div class="tip-item">
+    <div class="tip-icon">📌</div>
+    <div class="tip-label">核心知识点</div>
+    <div class="tip-text">display:none不占位，visibility:hidden占位，overflow:hidden裁剪溢出内容</div>
+  </div>
+  <div class="tip-item">
+    <div class="tip-icon">⚠️</div>
+    <div class="tip-label">常见错误</div>
+    <div class="tip-text">下拉菜单误用visibility:hidden导致隐藏时仍占位撑开导航栏布局</div>
+  </div>
+  <div class="tip-item">
+    <div class="tip-icon">💡</div>
+    <div class="tip-label">拓展思考</div>
+    <div class="tip-text">overflow:hidden还能清除浮动(BFC)、实现文字省略号、配合resize实现自定义滚动</div>
+  </div>
+  <div class="tip-item ideology">
+    <div class="tip-icon">❤</div>
+    <div class="tip-label">思政小贴士</div>
+    <div class="tip-text">知道何时显示何时隐藏是智慧。display:none彻底退场visibility:hidden留有位置，人也要懂进退时机</div>
+  </div>
+</div>
+
+<script>
+  // 状态
+  var state = {
+    box1: 'show', // display
+    box2: 'show', // visibility
+    box3: 'show'  // overflow
+  };
+
+  function updatePreview() {
+    var doc = document.getElementById('previewFrame').contentDocument;
+
+    var box1Display = state.box1 === 'hide' ? 'none' : 'flex';
+    var box2Visibility = state.box2 === 'hide' ? 'hidden' : 'visible';
+    var box3Overflow = state.box3 === 'hide' ? 'hidden' : 'visible';
+    var box3Height = state.box3 === 'hide' ? '100px' : 'auto';
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>' +
+      'body { margin:0; padding:20px; font-family:"Microsoft YaHei",sans-serif; background:#fafbfc; }' +
+      '.container { display:flex; gap:15px; flex-wrap:wrap; align-items:flex-start; }' +
+      '.box {' +
+        'width:140px; min-height:120px; border-radius:8px; padding:12px;' +
+        'color:#fff; font-size:13px; line-height:1.6; display:flex; flex-direction:column;' +
+        'align-items:center; justify-content:center; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.1);' +
+      '}' +
+      '.box1 { background:#185FA5; display:' + box1Display + '; }' +
+      '.box2 { background:#0F6E56; visibility:' + box2Visibility + '; }' +
+      '.box3 { background:#BA7517; overflow:' + box3Overflow + '; height:' + box3Height + '; transition: height 0.3s; }' +
+      '.box-num { font-size:24px; font-weight:700; margin-bottom:5px; }' +
+      '.box-label { font-size:11px; opacity:0.9; }' +
+      '.box-extra { font-size:10px; opacity:0.7; margin-top:8px; }' +
+      '.legend { margin-top:30px; padding:15px; background:#fff; border-radius:8px; border:1px solid #e0e6ed; font-size:12px; color:#555; line-height:1.8; }' +
+      '.legend strong { color:#185FA5; }' +
+      '.status-bar { margin-bottom:15px; padding:10px; background:#e8eef5; border-radius:6px; font-size:12px; color:#185FA5; }' +
+    '</style></head><body>' +
+      '<div class="status-bar">当前状态：盒子1 display:' + box1Display + ' | 盒子2 visibility:' + box2Visibility + ' | 盒子3 overflow:' + box3Overflow + '</div>' +
+      '<div class="container">' +
+        '<div class="box box1">' +
+          '<div class="box-num">1</div>' +
+          '<div class="box-label">display</div>' +
+          '<div class="box-extra">' + (state.box1==='hide'?'已隐藏':'display:flex') + '</div>' +
+        '</div>' +
+        '<div class="box box2">' +
+          '<div class="box-num">2</div>' +
+          '<div class="box-label">visibility</div>' +
+          '<div class="box-extra">' + (state.box2==='hide'?'已隐形(占位)':'visibility:visible') + '</div>' +
+        '</div>' +
+        '<div class="box box3">' +
+          '<div class="box-num">3</div>' +
+          '<div class="box-label">overflow</div>' +
+          '<div class="box-extra">这是一段很长的文字内容用于演示溢出裁剪效果，超出高度部分会被隐藏。这是一段很长的文字内容。</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="legend">' +
+        '<p><strong>盒子1</strong>：display:' + box1Display + (state.box1==='hide'?' → 彻底消失，盒子2、3左移填补':' → 正常显示') + '</p>' +
+        '<p><strong>盒子2</strong>：visibility:' + box2Visibility + (state.box2==='hide'?' → 隐形但位置保留，盒子1、3不动':' → 正常显示') + '</p>' +
+        '<p><strong>盒子3</strong>：overflow:' + box3Overflow + (state.box3==='hide'?' → 超出100px的文字被裁剪':' → 完整显示所有内容') + '</p>' +
+      '</div>' +
+    '</body></html>';
+
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    // 更新代码
+    document.getElementById('codeDisplay').textContent = state.box1 === 'hide' ? 'none' : 'block';
+    document.getElementById('codeVisibility').textContent = state.box2 === 'hide' ? 'hidden' : 'visible';
+    document.getElementById('codeOverflow').textContent = state.box3 === 'hide' ? 'hidden' : 'visible';
+  }
+
+  // 切换按钮
+  document.querySelectorAll('[data-box]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var boxNum = this.dataset.box;
+      var val = this.dataset.val;
+      // 取消同组active
+      document.querySelectorAll('[data-box="' + boxNum + '"]').forEach(function(b){
+        b.classList.remove('active', 'hide-active');
+      });
+      if (val === 'hide') {
+        this.classList.add('hide-active');
+      } else {
+        this.classList.add('active');
+      }
+      state['box' + boxNum] = val;
+      updatePreview();
+      highlightLines();
+    });
+  });
+
+  // 代码行高亮
+  function highlightLines() {
+    document.querySelectorAll('.code-line').forEach(function(l){ l.classList.remove('highlighted'); });
+    if (state.box1 === 'hide') document.querySelector('[data-line="4"]').classList.add('highlighted');
+    if (state.box2 === 'hide') document.querySelector('[data-line="10"]').classList.add('highlighted');
+    if (state.box3 === 'hide') document.querySelector('[data-line="16"]').classList.add('highlighted');
+  }
+
+  document.querySelectorAll('.code-line').forEach(function(line) {
+    line.addEventListener('click', function() {
+      document.querySelectorAll('.code-line').forEach(function(l){ l.classList.remove('highlighted'); });
+      this.classList.add('highlighted');
+    });
+  });
+
+  // 导航按钮
+  document.getElementById('btnCode').addEventListener('click', function() {
+    var main = document.getElementById('main');
+    main.classList.toggle('hide-code');
+    this.classList.toggle('active');
+  });
+  document.getElementById('btnLecture').addEventListener('click', function() {
+    var main = document.getElementById('main');
+    main.classList.toggle('lecture-mode');
+    this.classList.toggle('active');
+  });
+  document.getElementById('btnReset').addEventListener('click', function() {
+    state = { box1: 'show', box2: 'show', box3: 'show' };
+    document.querySelectorAll('[data-box]').forEach(function(b){
+      b.classList.remove('active', 'hide-active');
+    });
+    document.querySelectorAll('[data-val="show"]').forEach(function(b){
+      b.classList.add('active');
+    });
+    updatePreview();
+    highlightLines();
+  });
+
+  // 复制
+  document.getElementById('btnCopy').addEventListener('click', function() {
+    var code = '/* display:none 彻底消失不占位 */\n.box1 { display: ' + (state.box1==='hide'?'none':'block') + '; }\n\n/* visibility:hidden 隐形占位 */\n.box2 { visibility: ' + (state.box2==='hide'?'hidden':'visible') + '; }\n\n/* overflow:hidden 裁剪溢出 */\n.box3 { overflow: ' + (state.box3==='hide'?'hidden':'visible') + '; height: 100px; }';
+    navigator.clipboard.writeText(code).then(function(){
+      var btn = document.getElementById('btnCopy');
+      btn.textContent = '已复制';
+      setTimeout(function(){ btn.textContent = '复制'; }, 1500);
+    });
+  });
+
+  // 初始化
+  updatePreview();
+</script>
+
+
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

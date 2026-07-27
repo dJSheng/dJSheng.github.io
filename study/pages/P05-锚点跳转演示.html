@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P05-锚点跳转演示 | 特殊字符与超链接</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
+    background: #E6F1FB;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* 顶部导航条 */
+  .navbar {
+    background: linear-gradient(90deg, #185FA5 0%, #2A7BC4 100%);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(24,95,165,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-section { font-size: 13px; opacity: 0.9; }
+  .nav-title { font-size: 16px; font-weight: 600; }
+  .nav-tag {
+    background: rgba(255,255,255,0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  .nav-spacer { flex: 1; }
+  .nav-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .nav-btn.active { background: #fff; color: #185FA5; }
+
+  /* 主容器 */
+  .container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    gap: 12px;
+    padding: 12px;
+    height: calc(100vh - 60px - 180px);
+    min-height: 500px;
+  }
+  .container.lecture-mode {
+    grid-template-columns: 0 100% 0;
+  }
+  .container.lecture-mode .panel-code,
+  .container.lecture-mode .panel-params { display: none; }
+  .container.code-collapsed {
+    grid-template-columns: 0 75% 25%;
+  }
+  .container.code-collapsed .panel-code { display: none; }
+
+  .panel {
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-header {
+    background: #f5f8fc;
+    padding: 8px 14px;
+    border-bottom: 0.5px solid #d0d7e0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #185FA5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-body {
+    flex: 1;
+    overflow: auto;
+    padding: 12px;
+  }
+
+  /* 代码区 */
+  .code-block {
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .code-line {
+    padding: 2px 6px;
+    margin: 0 -6px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: block;
+    min-height: 1.8em;
+  }
+  .code-line:hover { background: #f0f5fa; }
+  .code-line.highlighted { background: #fff3cd; border-left: 3px solid #BA7517; padding-left: 3px; }
+  .tag { color: #185FA5; }
+  .attr { color: #0F6E56; }
+  .value { color: #BA7517; }
+  .comment { color: #888780; font-style: italic; }
+  .text { color: #333; }
+
+  .copy-btn {
+    background: #185FA5;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: #144a82; }
+
+  /* 预览区 */
+  .browser-bar {
+    background: #e8ecef;
+    padding: 6px 12px;
+    border-bottom: 0.5px solid #d0d7e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+  .browser-url {
+    flex: 1;
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    border: 0.5px solid #d0d7e0;
+  }
+  .preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+  }
+
+  /* 参数调节区 */
+  .param-group { margin-bottom: 16px; }
+  .param-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .param-btn {
+    flex: 1;
+    min-width: 70px;
+    padding: 7px 10px;
+    border: 0.5px solid #185FA5;
+    background: #fff;
+    color: #185FA5;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+  .param-btn:hover { background: #E6F1FB; }
+  .param-btn.active { background: #185FA5; color: #fff; }
+
+  .char-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .char-btn {
+    padding: 8px 6px;
+    border: 0.5px solid #d0d7e0;
+    background: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: center;
+    transition: all 0.2s;
+    font-family: "Consolas", monospace;
+  }
+  .char-btn:hover { background: #E6F1FB; border-color: #185FA5; }
+  .char-btn .char-code { color: #0F6E56; font-weight: 600; }
+  .char-btn .char-display { color: #BA7517; font-size: 14px; }
+
+  .info-box {
+    background: #f5f8fc;
+    border: 0.5px solid #d0e0f0;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  /* 教学提示卡 */
+  .tips-card {
+    margin: 0 12px 12px;
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow: hidden;
+  }
+  .tip-col {
+    padding: 12px 14px;
+    border-right: 0.5px solid #e0e7ee;
+  }
+  .tip-col:last-child { border-right: none; }
+  .tip-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #185FA5;
+    margin-bottom: 6px;
+  }
+  .tip-content { font-size: 12px; color: #555; line-height: 1.7; }
+  .tip-sizheng {
+    background: #fff5f5;
+  }
+  .tip-sizheng .tip-title { color: #c0392b; }
+  .tip-sizheng .tip-content { color: #c0392b; }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .container, .container.code-collapsed {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    .panel { min-height: 300px; }
+    .tips-card { grid-template-columns: 1fr 1fr; }
+    .tip-col { border-right: none; border-bottom: 0.5px solid #e0e7ee; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航条 -->
+<div class="navbar">
+  <span class="nav-title">P05 锚点跳转演示</span>
+  <span class="nav-tag">a标签</span>
+  <span class="nav-tag">href</span>
+  <span class="nav-tag">target</span>
+  <span class="nav-tag">锚点链接</span>
+  <span class="nav-tag">特殊字符</span>
+  <span class="nav-spacer"></span>
+  <button class="nav-btn" id="toggleCode" onclick="toggleCode()">查看代码</button>
+  <button class="nav-btn" id="lectureBtn" onclick="toggleLecture()">讲解模式</button>
+  <button class="nav-btn" onclick="resetAll()">重置</button>
+</div>
+
+<!-- 主容器 -->
+<div class="container" id="mainContainer">
+
+  <!-- ① 代码原理区 -->
+  <div class="panel panel-code">
+    <div class="panel-header">
+      <span>① 代码原理区</span>
+      <button class="copy-btn" onclick="copyCode()">复制代码</button>
+    </div>
+    <div class="panel-body">
+      <div class="code-block" id="codeBlock"></div>
+    </div>
+  </div>
+
+  <!-- ② 实时预览区 -->
+  <div class="panel panel-preview">
+    <div class="panel-header">
+      <span>② 实时预览区</span>
+      <span style="font-size:12px;color:#888;" id="previewTip">点击参数区链接，预览区自动滚动</span>
+    </div>
+    <div class="browser-bar">
+      <span class="browser-dot dot-r"></span>
+      <span class="browser-dot dot-y"></span>
+      <span class="browser-dot dot-g"></span>
+      <div class="browser-url" id="browserUrl">https://localhost/p05-anchor.html</div>
+    </div>
+    <iframe class="preview-frame" id="previewFrame"></iframe>
+  </div>
+
+  <!-- ③ 参数调节区 -->
+  <div class="panel panel-params">
+    <div class="panel-header">
+      <span>③ 参数调节区</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="param-group">
+        <label class="param-label">链接类型切换（对比演示）</label>
+        <div class="btn-group">
+          <button class="param-btn active" data-type="anchor" onclick="selectLinkType('anchor')">页内锚点</button>
+          <button class="param-btn" data-type="external" onclick="selectLinkType('external')">外链 https</button>
+          <button class="param-btn" data-type="mail" onclick="selectLinkType('mail')">邮件 mailto</button>
+        </div>
+        <div class="info-box" id="linkTypeInfo">页内锚点：href="#sectionID" 配合 id 跳转到页面指定位置</div>
+      </div>
+
+      <div class="param-group" id="anchorGroup">
+        <label class="param-label">锚点跳转目标</label>
+        <div class="btn-group" style="flex-direction:column;gap:6px;">
+          <button class="param-btn" onclick="jumpToAnchor('section1')" style="text-align:left;">跳转到「第一段」</button>
+          <button class="param-btn" onclick="jumpToAnchor('section2')" style="text-align:left;">跳转到「第二段」</button>
+          <button class="param-btn" onclick="jumpToAnchor('section3')" style="text-align:left;">跳转到「第三段」</button>
+          <button class="param-btn" onclick="jumpToAnchor('top')" style="text-align:left;">返回顶部</button>
+        </div>
+        <div class="info-box">点击后预览区自动滚动，代码区高亮对应关系</div>
+      </div>
+
+      <div class="param-group" id="targetGroup">
+        <label class="param-label">target 属性（新窗口/原窗口）</label>
+        <div class="btn-group">
+          <button class="param-btn active" data-target="_self" onclick="selectTarget('_self')">_self 原窗口</button>
+          <button class="param-btn" data-target="_blank" onclick="selectTarget('_blank')">_blank 新窗口</button>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">特殊字符对照表（点击插入）</label>
+        <div class="char-grid">
+          <button class="char-btn" onclick="insertChar('&nbsp;')">
+            <span class="char-code">&amp;nbsp;</span><br>
+            <span class="char-display">空格</span>
+          </button>
+          <button class="char-btn" onclick="insertChar('&copy;')">
+            <span class="char-code">&amp;copy;</span><br>
+            <span class="char-display">&copy;</span>
+          </button>
+          <button class="char-btn" onclick="insertChar('&reg;')">
+            <span class="char-code">&amp;reg;</span><br>
+            <span class="char-display">&reg;</span>
+          </button>
+          <button class="char-btn" onclick="insertChar('&trade;')">
+            <span class="char-code">&amp;trade;</span><br>
+            <span class="char-display">&trade;</span>
+          </button>
+          <button class="char-btn" onclick="insertChar('&lt;')">
+            <span class="char-code">&amp;lt;</span><br>
+            <span class="char-display">&lt;</span>
+          </button>
+          <button class="char-btn" onclick="insertChar('&gt;')">
+            <span class="char-code">&amp;gt;</span><br>
+            <span class="char-display">&gt;</span>
+          </button>
+          <button class="char-btn" onclick="insertChar('&amp;')">
+            <span class="char-code">&amp;amp;</span><br>
+            <span class="char-display">&amp;</span>
+          </button>
+          <button class="char-btn" onclick="insertChar('&yen;')">
+            <span class="char-code">&amp;yen;</span><br>
+            <span class="char-display">&yen;</span>
+          </button>
+        </div>
+        <div class="info-box">特殊字符需用实体编码，否则会被浏览器解析</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ④ 教学提示卡 -->
+<div class="tips-card">
+  <div class="tip-col">
+    <div class="tip-title">★ 核心知识点</div>
+    <div class="tip-content">
+      &lt;a href="url"&gt; 链接文字 &lt;/a&gt;<br>
+      target="_blank" 新窗口打开<br>
+      锚点：href="#id" ↔ id="id"<br>
+      特殊字符用实体编码 &amp;nbsp; &amp;copy;
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">⚠ 常见错误</div>
+    <div class="tip-content">
+      ① 锚点 href 的 # 后 id 与目标 id 不一致<br>
+      ② 忘记加 # 号写成 href="section2"<br>
+      ③ 外链忘记加 https:// 协议<br>
+      ④ 直接输入 &lt; &gt; &amp; 导致解析错误
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">? 拓展思考题</div>
+    <div class="tip-content">
+      1. 锚点跳转的 id 与 href 如何对应？<br>
+      2. target="_blank" 有什么安全风险？<br>
+      3. 为什么要用 &amp;nbsp; 而不是直接敲空格？<br>
+      4. mailto 链接如何预填邮件主题？
+    </div>
+  </div>
+  <div class="tip-col tip-sizheng">
+    <div class="tip-title">♥ 思政小贴士</div>
+    <div class="tip-content">
+      "超链接是指路牌，你把用户引向哪里就是你的责任，网络不是法外之地。"<br>
+      <strong>——链接即责任</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 状态
+  let state = {
+    linkType: 'anchor',  // anchor / external / mail
+    target: '_self',
+    insertedChars: []  // 插入的特殊字符
+  };
+
+  const linkTypeInfos = {
+    anchor: '页内锚点：href="#sectionID" 配合 id 跳转到页面指定位置',
+    external: '外部链接：href="https://..." 跳转到其他网站，建议加 target="_blank"',
+    mail: '邮件链接：href="mailto:邮箱地址" 点击后调用邮件客户端'
+  };
+
+  // 选择链接类型
+  function selectLinkType(type) {
+    state.linkType = type;
+    document.querySelectorAll('[data-type]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type === type);
+    });
+    document.getElementById('linkTypeInfo').textContent = linkTypeInfos[type];
+
+    // 锚点组仅页内锚点时显示
+    document.getElementById('anchorGroup').style.display = type === 'anchor' ? 'block' : 'none';
+
+    updatePreview();
+  }
+
+  // 选择target
+  function selectTarget(target) {
+    state.target = target;
+    document.querySelectorAll('[data-target]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.target === target);
+    });
+    updatePreview();
+  }
+
+  // 跳转到锚点
+  function jumpToAnchor(id) {
+    const frame = document.getElementById('previewFrame');
+    const doc = frame.contentDocument;
+    const target = doc.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // 高亮目标元素
+      doc.querySelectorAll('.hl-target').forEach(el => el.classList.remove('hl-target'));
+      target.classList.add('hl-target');
+      setTimeout(() => target.classList.remove('hl-target'), 2000);
+    }
+    // 高亮代码中对应的id和href
+    highlightAnchorCode(id);
+  }
+
+  // 高亮锚点对应代码
+  function highlightAnchorCode(id) {
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlighted'));
+    document.querySelectorAll('.code-line').forEach((line, idx) => {
+      const text = line.textContent;
+      if (text.includes(`href="#${id}"`) || text.includes(`id="${id}"`)) {
+        line.classList.add('highlighted');
+      }
+    });
+  }
+
+  // 插入特殊字符
+  function insertChar(char) {
+    state.insertedChars.push(char);
+    updatePreview();
+  }
+
+  // 生成代码
+  function generateCode() {
+    let lines = [];
+
+    if (state.linkType === 'anchor') {
+      lines.push('<span class="comment">&lt;!-- 顶部导航：页内锚点 --&gt;</span>');
+      lines.push('<span class="tag">&lt;nav&gt;</span>');
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#section1"</span> <span class="attr">target</span>=<span class="value">"${state.target}"</span><span class="tag">&gt;</span><span class="text">第一段</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#section2"</span> <span class="attr">target</span>=<span class="value">"${state.target}"</span><span class="tag">&gt;</span><span class="text">第二段</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#section3"</span> <span class="attr">target</span>=<span class="value">"${state.target}"</span><span class="tag">&gt;</span><span class="text">第三段</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push('<span class="tag">&lt;/nav&gt;</span>');
+      lines.push('');
+      lines.push('<span class="comment">&lt;!-- 锚点目标：id 与 href 的 # 后对应 --&gt;</span>');
+      lines.push('<span class="tag">&lt;h2</span> <span class="attr">id</span>=<span class="value">"section1"</span><span class="tag">&gt;</span><span class="text">第一段 活动背景</span><span class="tag">&lt;/h2&gt;</span>');
+      lines.push('<span class="tag">&lt;h2</span> <span class="attr">id</span>=<span class="value">"section2"</span><span class="tag">&gt;</span><span class="text">第二段 活动内容</span><span class="tag">&lt;/h2&gt;</span>');
+      lines.push('<span class="tag">&lt;h2</span> <span class="attr">id</span>=<span class="value">"section3"</span><span class="tag">&gt;</span><span class="text">第三段 活动意义</span><span class="tag">&lt;/h2&gt;</span>');
+    } else if (state.linkType === 'external') {
+      lines.push('<span class="comment">&lt;!-- 外部链接：需加 https:// 协议 --&gt;</span>');
+      lines.push('<span class="tag">&lt;nav&gt;</span>');
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://www.edu.cn"</span> <span class="attr">target</span>=<span class="value">"${state.target}"</span><span class="tag">&gt;</span><span class="text">中国教育网</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://www.chsi.com.cn"</span> <span class="attr">target</span>=<span class="value">"${state.target}"</span><span class="tag">&gt;</span><span class="text">学信网</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://www.gov.cn"</span> <span class="attr">target</span>=<span class="value">"${state.target}"</span><span class="tag">&gt;</span><span class="text">中国政府网</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push('<span class="tag">&lt;/nav&gt;</span>');
+    } else if (state.linkType === 'mail') {
+      lines.push('<span class="comment">&lt;!-- 邮件链接：mailto: 邮箱地址 --&gt;</span>');
+      lines.push('<span class="tag">&lt;nav&gt;</span>');
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"mailto:news@college.edu.cn"</span><span class="tag">&gt;</span><span class="text">联系我们</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push(`<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"mailto:admin@college.edu.cn?subject=资讯反馈"</span><span class="tag">&gt;</span><span class="text">资讯反馈</span><span class="tag">&lt;/a&gt;</span>`);
+      lines.push('<span class="tag">&lt;/nav&gt;</span>');
+    }
+
+    // 特殊字符
+    if (state.insertedChars.length > 0) {
+      lines.push('');
+      lines.push('<span class="comment">&lt;!-- 特殊字符（实体编码） --&gt;</span>');
+      const charLine = state.insertedChars.map(c => `<span class="value">${c}</span>`).join('<span class="text"> </span>');
+      lines.push(`<span class="tag">&lt;p&gt;</span><span class="text">版权声明 ${charLine} 学院新媒体中心</span><span class="tag">&lt;/p&gt;</span>`);
+    }
+
+    return lines;
+  }
+
+  // 生成纯HTML代码（用于复制）
+  function generatePlainCode() {
+    let html = '';
+    if (state.linkType === 'anchor') {
+      html += '<nav>\n';
+      html += `  <a href="#section1" target="${state.target}">第一段</a>\n`;
+      html += `  <a href="#section2" target="${state.target}">第二段</a>\n`;
+      html += `  <a href="#section3" target="${state.target}">第三段</a>\n`;
+      html += '</nav>\n\n';
+      html += '<h2 id="section1">第一段 活动背景</h2>\n';
+      html += '<h2 id="section2">第二段 活动内容</h2>\n';
+      html += '<h2 id="section3">第三段 活动意义</h2>\n';
+    } else if (state.linkType === 'external') {
+      html += '<nav>\n';
+      html += `  <a href="https://www.edu.cn" target="${state.target}">中国教育网</a>\n`;
+      html += `  <a href="https://www.chsi.com.cn" target="${state.target}">学信网</a>\n`;
+      html += `  <a href="https://www.gov.cn" target="${state.target}">中国政府网</a>\n`;
+      html += '</nav>\n';
+    } else if (state.linkType === 'mail') {
+      html += '<nav>\n';
+      html += '  <a href="mailto:news@college.edu.cn">联系我们</a>\n';
+      html += '  <a href="mailto:admin@college.edu.cn?subject=资讯反馈">资讯反馈</a>\n';
+      html += '</nav>\n';
+    }
+    if (state.insertedChars.length > 0) {
+      html += `\n<p>版权声明 ${state.insertedChars.join(' ')} 学院新媒体中心</p>\n`;
+    }
+    return html;
+  }
+
+  // 生成预览页面HTML
+  function generatePreviewHTML() {
+    let navHTML = '';
+    let contentHTML = '';
+
+    if (state.linkType === 'anchor') {
+      navHTML = `
+        <nav style="position:sticky;top:0;background:#185FA5;padding:10px;z-index:10;">
+          <a href="#section1" style="color:#fff;margin-right:15px;">第一段</a>
+          <a href="#section2" style="color:#fff;margin-right:15px;">第二段</a>
+          <a href="#section3" style="color:#fff;margin-right:15px;">第三段</a>
+          <a href="#top" style="color:#fff;">返回顶部</a>
+        </nav>`;
+      contentHTML = `
+        <h1 id="top">校园资讯-技能强国主题教育活动</h1>
+        <p>点击上方导航链接，页面会自动滚动到对应锚点位置。</p>
+        <hr>
+        <h2 id="section1">第一段 活动背景</h2>
+        <p>为深入贯彻技能强国战略，我院于近日启动主题教育活动，全校1200余名师生参与。本次活动旨在弘扬工匠精神，培养高素质技术技能人才，推动职业教育高质量发展。</p>
+        <p>活动背景详述：随着产业升级和技术进步，社会对高素质技术技能人才的需求日益增长。学院积极响应国家号召，将"技能强国"理念融入人才培养全过程。</p>
+        <p>本次活动得到了学院领导的高度重视，各系部积极组织师生参与，形成了人人学技能、人人练技能的良好氛围。</p>
+        <div style="height:200px;background:#f0f5fa;margin:20px 0;padding:15px;border-left:4px solid #185FA5;">
+          （此处为活动背景详述内容，滚动可见锚点跳转效果）
+        </div>
+        <h2 id="section2">第二段 活动内容</h2>
+        <p>活动内容包括：技能大师讲座、学生作品展览、校企合作签约仪式、专业技能竞赛等。</p>
+        <p>其中技能大师讲座邀请了行业知名专家，分享了前沿技术动态和职业发展经验；学生作品展览展示了各专业学生的优秀作品，体现了学院的教学成果。</p>
+        <p>校企合作签约仪式上，学院与多家企业签署了合作协议，为学生实习就业开辟了新渠道。</p>
+        <div style="height:200px;background:#f0f5fa;margin:20px 0;padding:15px;border-left:4px solid #0F6E56;">
+          （此处为活动内容详述，继续滚动查看锚点效果）
+        </div>
+        <h2 id="section3">第三段 活动意义</h2>
+        <p>本次活动旨在弘扬工匠精神，培养高素质技术技能人才，推动职业教育高质量发展。</p>
+        <p>通过本次活动，师生们进一步认识到了技能学习的重要性，增强了职业认同感和使命感。学院将继续开展此类活动，为培养更多能工巧匠、大国工匠贡献力量。</p>
+        <div style="height:100px;background:#f0f5fa;margin:20px 0;padding:15px;border-left:4px solid #BA7517;">
+          （页面底部，可点击"返回顶部"跳回）
+        </div>`;
+    } else if (state.linkType === 'external') {
+      navHTML = `
+        <nav style="background:#185FA5;padding:10px;">
+          <a href="https://www.edu.cn" target="${state.target}" style="color:#fff;margin-right:15px;">中国教育网</a>
+          <a href="https://www.chsi.com.cn" target="${state.target}" style="color:#fff;margin-right:15px;">学信网</a>
+          <a href="https://www.gov.cn" target="${state.target}" style="color:#fff;">中国政府网</a>
+        </nav>
+        <p style="color:#888;font-size:12px;padding:8px;">外链跳转：target="${state.target}"（${state.target === '_blank' ? '新窗口打开' : '原窗口打开'}）</p>`;
+      contentHTML = `
+        <h1>外部链接演示</h1>
+        <p>点击上方导航链接，将跳转到外部网站。</p>
+        <p>注意：外部链接必须加 <code>https://</code> 协议，否则会被当作相对路径处理。</p>
+        <p>target="_blank" 会在新窗口/新标签页打开，target="_self" 会在原窗口打开（替换当前页面）。</p>
+        <hr>
+        <p><strong>安全提示</strong>：外链建议加 <code>rel="noopener noreferrer"</code> 防止新窗口通过 window.opener 操作原窗口。</p>`;
+    } else if (state.linkType === 'mail') {
+      navHTML = `
+        <nav style="background:#185FA5;padding:10px;">
+          <a href="mailto:news@college.edu.cn" style="color:#fff;margin-right:15px;">联系我们</a>
+          <a href="mailto:admin@college.edu.cn?subject=资讯反馈" style="color:#fff;">资讯反馈（预填主题）</a>
+        </nav>
+        <p style="color:#888;font-size:12px;padding:8px;">邮件链接：点击后调用系统邮件客户端</p>`;
+      contentHTML = `
+        <h1>邮件链接演示</h1>
+        <p>点击上方链接，会调用系统默认的邮件客户端，并自动填入收件人地址。</p>
+        <p>语法：<code>&lt;a href="mailto:邮箱地址"&gt;文字&lt;/a&gt;</code></p>
+        <p>预填主题：<code>mailto:xxx@xx.com?subject=主题内容</code></p>
+        <hr>
+        <p>注意：邮件链接依赖用户设备安装了邮件客户端，移动端兼容性较好，PC端可能无效。</p>`;
+    }
+
+    // 特殊字符
+    let charHTML = '';
+    if (state.insertedChars.length > 0) {
+      charHTML = `
+        <hr>
+        <h3>已插入的特殊字符</h3>
+        <p>版权声明 ${state.insertedChars.join(' ')} 学院新媒体中心</p>
+        <p style="color:#888;font-size:12px;">实体编码会被浏览器解析为对应字符，源码中是 &amp;nbsp; &amp;copy; 等形式</p>`;
+    }
+
+    return `
+      <!DOCTYPE html>
+      <html lang="zh-CN">
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: "Microsoft YaHei", sans-serif; padding: 20px; line-height: 1.8; color: #333; }
+          h1 { color: #185FA5; }
+          h2 { color: #185FA5; margin-top: 30px; border-bottom: 2px solid #185FA5; padding-bottom: 5px; }
+          p { margin: 10px 0; }
+          code { background: #f0f5fa; padding: 2px 6px; border-radius: 3px; color: #BA7517; font-family: Consolas, monospace; }
+          a { text-decoration: none; }
+          a:hover { text-decoration: underline; }
+          .hl-target { animation: highlight 2s ease; }
+          @keyframes highlight {
+            0% { background: #fff3cd; }
+            100% { background: transparent; }
+          }
+        </style>
+      </head>
+      <body>
+        ${navHTML}
+        ${contentHTML}
+        ${charHTML}</body>
+      </html>
+    `;
+  }
+
+  // 更新预览
+  function updatePreview() {
+    // 更新代码区
+    const lines = generateCode();
+    const codeBlock = document.getElementById('codeBlock');
+    codeBlock.innerHTML = lines.map((line, idx) =>
+      `<span class="code-line" data-line="${idx}" onclick="highlightLine(${idx})">${line || ' '}</span>`
+    ).join('');
+
+    // 更新预览iframe
+    const previewHTML = generatePreviewHTML();
+    const previewDoc = document.getElementById('previewFrame').contentDocument;
+    previewDoc.open();
+    previewDoc.write(previewHTML);
+    previewDoc.close();
+
+    // 更新地址栏
+    const urls = {
+      anchor: 'https://localhost/p05-anchor.html#section1',
+      external: 'https://localhost/p05-external.html',
+      mail: 'https://localhost/p05-mailto.html'
+    };
+    document.getElementById('browserUrl').textContent = urls[state.linkType];
+  }
+
+  // 高亮代码行
+  function highlightLine(idx) {
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlighted'));
+    const line = document.querySelector(`.code-line[data-line="${idx}"]`);
+    if (line) line.classList.add('highlighted');
+  }
+
+  // 复制代码
+  function copyCode() {
+    const plainCode = generatePlainCode();
+    navigator.clipboard.writeText(plainCode).then(() => {
+      const btn = event.target;
+      const oldText = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(() => { btn.textContent = oldText; }, 1500);
+    });
+  }
+
+  // 切换代码显示
+  function toggleCode() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('code-collapsed');
+    const btn = document.getElementById('toggleCode');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('code-collapsed') ? '显示代码' : '查看代码';
+  }
+
+  // 讲解模式
+  function toggleLecture() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('lecture-mode');
+    const btn = document.getElementById('lectureBtn');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('lecture-mode') ? '退出讲解' : '讲解模式';
+  }
+
+  // 重置
+  function resetAll() {
+    state = {
+      linkType: 'anchor',
+      target: '_self',
+      insertedChars: []
+    };
+    document.querySelectorAll('[data-type]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type === 'anchor');
+    });
+    document.querySelectorAll('[data-target]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.target === '_self');
+    });
+    document.getElementById('linkTypeInfo').textContent = linkTypeInfos['anchor'];
+    document.getElementById('anchorGroup').style.display = 'block';
+    document.getElementById('mainContainer').classList.remove('lecture-mode', 'code-collapsed');
+    document.getElementById('lectureBtn').classList.remove('active');
+    document.getElementById('lectureBtn').textContent = '讲解模式';
+    document.getElementById('toggleCode').classList.remove('active');
+    document.getElementById('toggleCode').textContent = '查看代码';
+    updatePreview();
+  }
+
+  // 初始化
+  updatePreview();
+</script>
+
+
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

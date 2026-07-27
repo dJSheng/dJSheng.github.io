@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P23-渐变生成器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", sans-serif; background: #f4f7fb; color: #333; height: 100vh; display: flex; flex-direction: column; }
+  .navbar { background: #185FA5; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .navbar .chapter { font-weight: bold; font-size: 15px; }
+  .navbar .ppt-title { font-size: 14px; opacity: 0.9; }
+  .navbar .tag { background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+  .navbar .spacer { flex: 1; }
+  .navbar button { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .navbar button:hover { background: rgba(255,255,255,0.3); }
+  .navbar button.active { background: #fff; color: #185FA5; }
+  .main { flex: 1; display: flex; overflow: hidden; }
+  .panel { padding: 14px; overflow: auto; }
+  .code-area { width: 25%; background: #1e2b38; color: #e0e6ed; }
+  .preview-area { width: 50%; background: #fff; display: flex; flex-direction: column; }
+  .param-area { width: 25%; background: #fff; border-left: 1px solid #e0e6ed; }
+  .code-area h3 { color: #7fb4e8; font-size: 13px; margin-bottom: 10px; border-bottom: 1px solid #2d3e50; padding-bottom: 6px; }
+  .code-block { font-family: "Consolas", monospace; font-size: 13px; line-height: 1.7; }
+  .code-line { padding: 2px 8px; border-radius: 3px; transition: background 0.3s; }
+  .code-line.highlight { background: #3a5a7a; box-shadow: inset 3px 0 0 #ffd700; }
+  .sel { color: #5fa8e8; }
+  .prop { color: #4ec9b0; }
+  .val { color: #ce9178; }
+  .func { color: #dcdcaa; }
+  .comment { color: #6a9955; }
+  .copy-btn { margin-top: 10px; background: #185FA5; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; width: 100%; }
+  .browser-bar { background: #e8eef5; padding: 8px 12px; border-bottom: 1px solid #d0d9e5; font-size: 12px; color: #666; }
+  .browser-bar .url { background: #fff; padding: 4px 10px; border-radius: 10px; border: 1px solid #ccc; display: inline-block; min-width: 300px; }
+  .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; background: #fafcfe; }
+  .demo-btn { padding: 18px 56px; border: none; border-radius: 30px; color: #fff; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: all 0.3s; }
+  .demo-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .gradient-preview { width: 320px; height: 120px; border-radius: 8px; margin-top: 24px; border: 1px solid #ddd; transition: all 0.3s; }
+  .param-area h3 { color: #185FA5; font-size: 14px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #185FA5; }
+  .param-group { margin-bottom: 14px; }
+  .param-group label { display: flex; justify-content: space-between; font-size: 12px; color: #555; margin-bottom: 6px; }
+  .param-group label .val-show { color: #185FA5; font-weight: bold; font-family: Consolas; font-size: 11px; }
+  .param-group input[type=color] { width: 100%; height: 32px; border: 1px solid #d0d9e5; border-radius: 6px; cursor: pointer; }
+  .param-group input[type=range] { width: 100%; accent-color: #185FA5; cursor: pointer; }
+  .param-group select { width: 100%; padding: 6px; border: 1px solid #d0d9e5; border-radius: 6px; font-size: 12px; }
+  .type-toggle { display: flex; gap: 8px; }
+  .type-toggle button { flex: 1; padding: 8px; border: 1px solid #d0d9e5; background: #fff; border-radius: 6px; cursor: pointer; font-size: 12px; }
+  .type-toggle button.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+  .reset-btn { margin-top: 8px; width: 100%; padding: 8px; background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 12px; color: #666; }
+  .reset-btn:hover { border-color: #185FA5; color: #185FA5; }
+  .tips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 12px; background: #fff; border-top: 2px solid #185FA5; }
+  .tip-card { padding: 10px; border-radius: 8px; font-size: 12px; line-height: 1.6; }
+  .tip-card h4 { font-size: 12px; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px dashed #ccc; }
+  .tip-core { background: #e8f4ff; }
+  .tip-core h4 { color: #185FA5; }
+  .tip-error { background: #fff4e8; }
+  .tip-error h4 { color: #BA7517; }
+  .tip-think { background: #e8fff4; }
+  .tip-think h4 { color: #0F6E56; }
+  .tip-sizheng { background: #ffe8e8; border: 1px solid #ff6666; }
+  .tip-sizheng h4 { color: #cc0000; }
+  body.lecture .navbar, body.lecture .tips { display: none; }
+  body.lecture .code-area { width: 30%; }
+  body.lecture .preview-area { width: 70%; }
+  body.lecture .param-area { width: 0; display: none; }
+  @media (max-width: 900px) {
+    .main { flex-direction: column; }
+    .code-area, .preview-area, .param-area { width: 100%; }
+    .tips { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span class="tag">参数调节</span>
+  <span class="spacer"></span>
+  <button id="codeToggle">查看代码</button>
+  <button id="lectureBtn">讲解模式</button>
+  <button id="resetBtn">重置</button>
+</div>
+
+<div class="main">
+  <div class="panel code-area">
+    <h3>代码原理区 · 实时CSS</h3>
+    <div class="code-block" id="codeBlock">
+      <div><span class="sel">.btn</span> {</div>
+      <div class="code-line" data-prop="gradient">  <span class="prop">background</span>: <span class="val" id="c-gradient">linear-gradient(to right, #ff9966, #ff5e62)</span>;</div>
+      <div>}</div>
+      <br>
+      <div class="comment">/* 线性渐变语法 */</div>
+      <div class="comment">/* linear-gradient(方向, 颜色1, 颜色2) */</div>
+      <br>
+      <div class="comment">/* 方向取值 */</div>
+      <div class="comment">/* to left/right/top/bottom */</div>
+      <div class="comment">/* to right bottom (对角) */</div>
+      <div class="comment">/* 0-360deg (角度) */</div>
+      <br>
+      <div class="comment">/* 径向渐变语法 */</div>
+      <div class="comment">/* radial-gradient(shape, 颜色1, 颜色2) */</div>
+      <div class="comment">/* shape: circle / ellipse */</div>
+      <br>
+      <div class="comment">★ 方向与颜色用逗号分隔</div>
+      <div class="comment">★ 颜色用 #hex 或 rgb()</div>
+    </div>
+    <button class="copy-btn" onclick="copyCode()">复制代码</button>
+  </div>
+
+  <div class="preview-area">
+    <div class="browser-bar">
+      <span>🌐</span> <span class="url">file:///gradient-generator.html</span>
+    </div>
+    <div class="stage">
+      <button class="demo-btn" id="demoBtn">立即购买</button>
+      <div class="gradient-preview" id="gradientPreview"></div>
+    </div>
+  </div>
+
+  <div class="panel param-area">
+    <h3>参数调节区</h3>
+    <div class="param-group">
+      <label>渐变类型</label>
+      <div class="type-toggle">
+        <button class="active" data-type="linear" onclick="setType('linear')">linear 线性</button>
+        <button data-type="radial" onclick="setType('radial')">radial 径向</button>
+      </div>
+    </div>
+    <div class="param-group">
+      <label>颜色1 <span class="val-show" id="v-color1">#ff9966</span></label>
+      <input type="color" id="i-color1" value="#ff9966">
+    </div>
+    <div class="param-group">
+      <label>颜色2 <span class="val-show" id="v-color2">#ff5e62</span></label>
+      <input type="color" id="i-color2" value="#ff5e62">
+    </div>
+    <div class="param-group" id="angle-group">
+      <label>角度 <span class="val-show" id="v-angle">90deg</span></label>
+      <input type="range" id="r-angle" min="0" max="360" value="90">
+    </div>
+    <div class="param-group" id="shape-group" style="display:none;">
+      <label>径向形状</label>
+      <select id="s-shape">
+        <option value="circle">circle 圆形</option>
+        <option value="ellipse">ellipse 椭圆</option>
+      </select>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">重置参数</button>
+  </div>
+</div>
+
+<div class="tips">
+  <div class="tip-card tip-core">
+    <h4>核心知识点</h4>
+    linear-gradient(方向,颜色1,颜色2)线性渐变；radial-gradient(形状,颜色1,颜色2)径向渐变。方向可用方位词或角度。
+  </div>
+  <div class="tip-card tip-error">
+    <h4>常见错误</h4>
+    ① 方向与颜色之间漏逗号；② 括号未闭合；③ 颜色值漏掉#号；④ 把方向写成left而不是to left。
+  </div>
+  <div class="tip-card tip-think">
+    <h4>拓展思考题</h4>
+    如何实现3色渐变？角度90deg和to right效果一样吗？径向渐变适合做按钮还是大背景？
+  </div>
+  <div class="tip-card tip-sizheng">
+    <h4>思政小贴士</h4>
+    渐变是过渡之美。中国水墨画"墨分五色"就是渐变。培养审美，让网页有中国韵味。
+  </div>
+</div>
+
+<script>
+  const state = {
+    type: 'linear',
+    color1: '#ff9966',
+    color2: '#ff5e62',
+    angle: 90,
+    shape: 'circle'
+  };
+  const defaults = {...state};
+
+  function buildGradient() {
+    if (state.type === 'linear') {
+      return `linear-gradient(${state.angle}deg, ${state.color1}, ${state.color2})`;
+    } else {
+      return `radial-gradient(${state.shape}, ${state.color1}, ${state.color2})`;
+    }
+  }
+
+  function update() {
+    const grad = buildGradient();
+    document.getElementById('demoBtn').style.background = grad;
+    document.getElementById('gradientPreview').style.background = grad;
+    document.getElementById('c-gradient').textContent = grad;
+
+    document.getElementById('v-color1').textContent = state.color1;
+    document.getElementById('v-color2').textContent = state.color2;
+    document.getElementById('v-angle').textContent = state.angle + 'deg';
+
+    // 显示/隐藏参数组
+    document.getElementById('angle-group').style.display = state.type === 'linear' ? '' : 'none';
+    document.getElementById('shape-group').style.display = state.type === 'radial' ? '' : 'none';
+  }
+
+  function setType(type) {
+    state.type = type;
+    document.querySelectorAll('.type-toggle button').forEach(b => b.classList.toggle('active', b.dataset.type === type));
+    update();
+    highlightProp('gradient');
+    setTimeout(() => highlightProp(null), 1000);
+  }
+
+  function highlightProp(prop) {
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlight'));
+    if (prop) {
+      const line = document.querySelector(`.code-line[data-prop="${prop}"]`);
+      if (line) line.classList.add('highlight');
+    }
+  }
+
+  document.getElementById('i-color1').addEventListener('input', function() {
+    state.color1 = this.value;
+    update();
+    highlightProp('gradient');
+  });
+  document.getElementById('i-color1').addEventListener('change', () => setTimeout(() => highlightProp(null), 1000));
+
+  document.getElementById('i-color2').addEventListener('input', function() {
+    state.color2 = this.value;
+    update();
+    highlightProp('gradient');
+  });
+  document.getElementById('i-color2').addEventListener('change', () => setTimeout(() => highlightProp(null), 1000));
+
+  document.getElementById('r-angle').addEventListener('input', function() {
+    state.angle = parseInt(this.value);
+    update();
+    highlightProp('gradient');
+  });
+  document.getElementById('r-angle').addEventListener('change', () => setTimeout(() => highlightProp(null), 1000));
+
+  document.getElementById('s-shape').addEventListener('change', function() {
+    state.shape = this.value;
+    update();
+    highlightProp('gradient');
+    setTimeout(() => highlightProp(null), 1000);
+  });
+
+  function resetAll() {
+    Object.assign(state, defaults);
+    document.getElementById('i-color1').value = state.color1;
+    document.getElementById('i-color2').value = state.color2;
+    document.getElementById('r-angle').value = state.angle;
+    document.getElementById('s-shape').value = state.shape;
+    setType('linear');
+  }
+
+  function copyCode() {
+    const grad = buildGradient();
+    const text = `.btn {\n  background: ${grad};\n}`;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '已复制 ✓';
+      setTimeout(() => btn.textContent = '复制代码', 1500);
+    });
+  }
+
+  let codeVisible = true;
+  document.getElementById('codeToggle').addEventListener('click', function() {
+    codeVisible = !codeVisible;
+    document.querySelector('.code-area').style.display = codeVisible ? '' : 'none';
+    document.querySelector('.preview-area').style.width = codeVisible ? '50%' : '75%';
+    this.classList.toggle('active', !codeVisible);
+  });
+  document.getElementById('lectureBtn').addEventListener('click', function() {
+    document.body.classList.toggle('lecture');
+    this.classList.toggle('active');
+  });
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+  update();
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

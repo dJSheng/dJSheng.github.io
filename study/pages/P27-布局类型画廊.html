@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P27-布局类型画廊 | 5.1.1 网页布局概述</title>
+<style>
+/* ========== 全局变量 ========== */
+:root{
+  --primary:#185FA5;
+  --primary-light:#4A8FCE;
+  --primary-dark:#0F4378;
+  --bg:#F0F4F8;
+  --card-bg:#FFFFFF;
+  --text:#2C3E50;
+  --text-light:#6B7C8C;
+  --border:#D5DDE5;
+  --tag-blue:#185FA5;
+  --tag-green:#0F6E56;
+  --tag-orange:#BA7517;
+  --tag-gray:#888780;
+  --danger:#D94545;
+  --radius:8px;
+  --code-tag:#185FA5;
+  --code-attr:#0F6E56;
+  --code-value:#BA7517;
+  --code-comment:#888780;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:"Microsoft YaHei","Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ========== 顶部导航条 ========== */
+.navbar{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  padding:0 20px;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 2px 8px rgba(15,67,120,0.3);
+  flex-shrink:0;
+  z-index:100;
+}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.nav-chapter{
+  background:rgba(255,255,255,0.15);
+  padding:4px 12px;
+  border-radius:4px;
+  font-size:13px;
+  font-weight:600;
+}
+.nav-title{font-size:16px;font-weight:600;}
+.nav-tags{display:flex;gap:8px;}
+.nav-tag{
+  background:rgba(255,255,255,0.2);
+  padding:2px 10px;
+  border-radius:12px;
+  font-size:12px;
+}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-btn{
+  background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.3);
+  color:#fff;
+  padding:5px 14px;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:13px;
+  transition:all .2s;
+}
+.nav-btn:hover{background:rgba(255,255,255,0.3);}
+.nav-btn.active{background:#fff;color:var(--primary);font-weight:600;}
+
+/* ========== 主区域 ========== */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.workspace{
+  flex:1;
+  display:flex;
+  gap:8px;
+  padding:8px;
+  overflow:hidden;
+  min-height:0;
+}
+
+/* ========== ①代码原理区（左25%） ========== */
+.code-panel{
+  width:25%;
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+.panel-header{
+  background:var(--primary);
+  color:#fff;
+  padding:8px 14px;
+  font-size:13px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+}
+.panel-header .icon{margin-right:6px;}
+.copy-btn{
+  background:rgba(255,255,255,0.2);
+  border:none;
+  color:#fff;
+  padding:3px 10px;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:12px;
+}
+.copy-btn:hover{background:rgba(255,255,255,0.35);}
+.code-content{
+  flex:1;
+  overflow:auto;
+  padding:12px;
+  font-family:"Consolas","Courier New",monospace;
+  font-size:13px;
+  line-height:1.7;
+}
+.code-line{
+  padding:2px 8px;
+  border-radius:3px;
+  cursor:pointer;
+  transition:background .15s;
+  white-space:pre;
+}
+.code-line:hover{background:rgba(24,95,165,0.08);}
+.code-line.highlight{background:rgba(24,95,165,0.18);border-left:3px solid var(--primary);}
+.code-tag{color:var(--code-tag);font-weight:600;}
+.code-attr{color:var(--code-attr);}
+.code-value{color:var(--code-value);}
+.code-comment{color:var(--code-comment);font-style:italic;}
+.code-text{color:#444;}
+
+/* ========== ②实时预览区（中50%） ========== */
+.preview-panel{
+  width:50%;
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+.address-bar{
+  background:#E8EDF2;
+  padding:8px 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.address-dot{width:10px;height:10px;border-radius:50%;}
+.dot-red{background:#FF5F57;}
+.dot-yellow{background:#FEBC2E;}
+.dot-green{background:#28C840;}
+.address-input{
+  flex:1;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:4px 12px;
+  font-size:12px;
+  color:var(--text-light);
+}
+.preview-frame{
+  flex:1;
+  overflow:auto;
+  background:#FAFBFC;
+  padding:20px;
+}
+.layout-demo{
+  width:100%;
+  min-height:100%;
+}
+.layout-demo > div{
+  border-radius:4px;
+  text-align:center;
+  font-size:13px;
+  color:#fff;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .3s;
+}
+/* 单栏布局 */
+.demo-single header,.demo-single main,.demo-single footer{
+  padding:20px;margin-bottom:8px;
+}
+.demo-single header{background:var(--primary);}
+.demo-single main{background:var(--primary-light);min-height:200px;}
+.demo-single footer{background:var(--primary-dark);}
+/* 两栏布局 */
+.demo-two-col header,.demo-two-col footer{padding:20px;margin-bottom:8px;}
+.demo-two-col header{background:var(--primary);}
+.demo-two-col footer{background:var(--primary-dark);}
+.demo-two-col .content{display:flex;gap:8px;margin-bottom:8px;}
+.demo-two-col .main{flex:2;background:var(--primary-light);min-height:200px;padding:20px;}
+.demo-two-col .sidebar{flex:1;background:#5BA3D8;min-height:200px;padding:20px;}
+/* 三栏布局 */
+.demo-three-col header,.demo-three-col footer{padding:20px;margin-bottom:8px;}
+.demo-three-col header{background:var(--primary);}
+.demo-three-col footer{background:var(--primary-dark);}
+.demo-three-col .content{display:flex;gap:8px;margin-bottom:8px;}
+.demo-three-col .left{flex:1;background:#5BA3D8;min-height:200px;padding:20px;}
+.demo-three-col .center{flex:2;background:var(--primary-light);min-height:200px;padding:20px;}
+.demo-three-col .right{flex:1;background:#7DB8E0;min-height:200px;padding:20px;}
+/* 混合布局 */
+.demo-mixed header{padding:16px;margin-bottom:8px;background:var(--primary);}
+.demo-mixed .nav-bar{display:flex;gap:8px;margin-bottom:8px;}
+.demo-mixed .nav-bar div{flex:1;padding:10px;background:var(--primary-light);}
+.demo-mixed .content{display:flex;gap:8px;margin-bottom:8px;}
+.demo-mixed .main{flex:2;background:var(--primary-light);min-height:160px;padding:20px;}
+.demo-mixed .sidebar{flex:1;display:flex;flex-direction:column;gap:8px;}
+.demo-mixed .sidebar div{flex:1;background:#5BA3D8;padding:16px;}
+.demo-mixed .bottom-row{display:flex;gap:8px;margin-bottom:8px;}
+.demo-mixed .bottom-row div{flex:1;padding:14px;background:#7DB8E0;}
+.demo-mixed footer{padding:16px;background:var(--primary-dark);}
+
+/* ========== ③参数调节区（右25%） ========== */
+.param-panel{
+  width:25%;
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+.param-content{
+  flex:1;
+  overflow-y:auto;
+  padding:14px;
+}
+.param-section{margin-bottom:20px;}
+.param-section-title{
+  font-size:13px;
+  font-weight:600;
+  color:var(--primary);
+  margin-bottom:10px;
+  padding-bottom:6px;
+  border-bottom:2px solid var(--primary);
+}
+.layout-btn{
+  width:100%;
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  padding:10px;
+  margin-bottom:10px;
+  cursor:pointer;
+  background:#fff;
+  transition:all .2s;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.layout-btn:hover{border-color:var(--primary-light);}
+.layout-btn.active{border-color:var(--primary);background:rgba(24,95,165,0.06);}
+.layout-thumb{
+  width:60px;
+  height:42px;
+  border-radius:4px;
+  display:flex;
+  gap:2px;
+  padding:3px;
+  flex-shrink:0;
+  background:#E8EDF2;
+}
+.layout-thumb > div{border-radius:2px;}
+.thumb-single{flex-direction:column;}
+.thumb-single div{flex:1;background:var(--primary-light);}
+.thumb-two{flex-direction:column;}
+.thumb-two .t-header{height:30%;background:var(--primary);}
+.thumb-two .t-body{flex:1;display:flex;gap:2px;}
+.thumb-two .t-body div:first-child{flex:2;background:var(--primary-light);}
+.thumb-two .t-body div:last-child{flex:1;background:#5BA3D8;}
+.thumb-three .t-header{height:30%;background:var(--primary);border-radius:2px;}
+.thumb-three .t-body{flex:1;display:flex;gap:2px;margin-top:2px;}
+.thumb-three .t-body div:nth-child(1){flex:1;background:#5BA3D8;}
+.thumb-three .t-body div:nth-child(2){flex:2;background:var(--primary-light);}
+.thumb-three .t-body div:nth-child(3){flex:1;background:#7DB8E0;}
+.thumb-mixed{flex-direction:column;gap:2px;}
+.thumb-mixed .m-top{height:25%;background:var(--primary);}
+.thumb-mixed .m-mid{height:45%;display:flex;gap:2px;}
+.thumb-mixed .m-mid div:first-child{flex:2;background:var(--primary-light);}
+.thumb-mixed .m-mid div:last-child{flex:1;background:#5BA3D8;}
+.thumb-mixed .m-bottom{height:25%;background:var(--primary-dark);}
+.layout-btn-info{text-align:left;flex:1;}
+.layout-btn-name{font-size:13px;font-weight:600;color:var(--text);}
+.layout-btn-desc{font-size:11px;color:var(--text-light);margin-top:2px;}
+.layout-info-box{
+  background:#F7F9FB;
+  border-radius:var(--radius);
+  padding:12px;
+  font-size:12px;
+  line-height:1.8;
+  color:var(--text-light);
+}
+.layout-info-box strong{color:var(--primary);}
+
+/* ========== ④教学提示卡（底部4列） ========== */
+.tip-bar{
+  display:flex;
+  gap:8px;
+  padding:0 8px 8px 8px;
+  flex-shrink:0;
+}
+.tip-card{
+  flex:1;
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  padding:10px 14px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+  border-top:3px solid var(--primary);
+}
+.tip-card.danger{border-top-color:var(--danger);}
+.tip-title{
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:4px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.tip-card .tip-title{color:var(--primary);}
+.tip-card.danger .tip-title{color:var(--danger);}
+.tip-content{font-size:12px;color:var(--text-light);line-height:1.6;}
+
+/* ========== 讲解模式 ========== */
+.explain-mode .code-panel,.explain-mode .param-panel,.explain-mode .tip-bar{display:none;}
+.explain-mode .preview-panel{width:100%;}
+.explain-mode .workspace{padding:16px;}
+
+/* ========== 滚动条 ========== */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:#F0F4F8;}
+::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:3px;}
+
+/* ========== 响应式 ========== */
+@media(max-width:1024px){
+  .workspace{flex-direction:column;}
+  .code-panel,.preview-panel,.param-panel{width:100%;}
+  .tip-bar{flex-wrap:wrap;}
+  .tip-card{min-width:48%;}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== 顶部导航条 ========== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <span class="nav-title">P27-布局类型画廊</span>
+    <div class="nav-tags">
+      <span class="nav-tag">A对比演示型</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-btn" id="btnCode">查看代码</button>
+    <button class="nav-btn" id="btnExplain">讲解模式</button>
+    <button class="nav-btn" id="btnReset">重置</button>
+  </div>
+</nav>
+
+<!-- ========== 主区域 ========== -->
+<div class="main">
+  <div class="workspace" id="workspace">
+
+    <!-- ①代码原理区 -->
+    <div class="code-panel" id="codePanel">
+      <div class="panel-header">
+        <span><span class="icon">&lt;/&gt;</span> 代码原理</span>
+        <button class="copy-btn" onclick="copyCode()">复制</button>
+      </div>
+      <div class="code-content" id="codeContent"></div>
+    </div>
+
+    <!-- ②实时预览区 -->
+    <div class="preview-panel">
+      <div class="panel-header">
+        <span><span class="icon">&#9635;</span> 实时预览</span>
+        <span style="font-size:12px;font-weight:400;opacity:.8" id="layoutLabel">单栏布局</span>
+      </div>
+      <div class="address-bar">
+        <span class="address-dot dot-red"></span>
+        <span class="address-dot dot-yellow"></span>
+        <span class="address-dot dot-green"></span>
+        <span class="address-input" id="addressBar">https://layout-demo.example.com/single-column</span>
+      </div>
+      <div class="preview-frame" id="previewFrame">
+        <div class="layout-demo" id="layoutDemo"></div>
+      </div>
+    </div>
+
+    <!-- ③参数调节区 -->
+    <div class="param-panel">
+      <div class="panel-header">
+        <span><span class="icon">&#9881;</span> 布局切换</span>
+      </div>
+      <div class="param-content">
+        <div class="param-section">
+          <div class="param-section-title">选择布局类型</div>
+          <button class="layout-btn active" data-layout="single" onclick="switchLayout('single')">
+            <div class="layout-thumb thumb-single"><div></div></div>
+            <div class="layout-btn-info">
+              <div class="layout-btn-name">单栏布局</div>
+              <div class="layout-btn-desc">结构简单 · 博客/专题</div>
+            </div>
+          </button>
+          <button class="layout-btn" data-layout="two" onclick="switchLayout('two')">
+            <div class="layout-thumb thumb-two"><div class="t-header"></div><div class="t-body"><div></div><div></div></div></div>
+            <div class="layout-btn-info">
+              <div class="layout-btn-name">两栏布局</div>
+              <div class="layout-btn-desc">主内容+侧栏 · 资讯/博客</div>
+            </div>
+          </button>
+          <button class="layout-btn" data-layout="three" onclick="switchLayout('three')">
+            <div class="layout-thumb thumb-three"><div class="t-header"></div><div class="t-body"><div></div><div></div><div></div></div></div>
+            <div class="layout-btn-info">
+              <div class="layout-btn-name">三栏布局</div>
+              <div class="layout-btn-desc">左导航+主+右推荐 · 电商/门户</div>
+            </div>
+          </button>
+          <button class="layout-btn" data-layout="mixed" onclick="switchLayout('mixed')">
+            <div class="layout-thumb thumb-mixed"><div class="m-top"></div><div class="m-mid"><div></div><div></div></div><div class="m-bottom"></div></div>
+            <div class="layout-btn-info">
+              <div class="layout-btn-name">混合布局</div>
+              <div class="layout-btn-desc">多区域组合 · 企业门户首页</div>
+            </div>
+          </button>
+        </div>
+        <div class="param-section">
+          <div class="param-section-title">布局说明</div>
+          <div class="layout-info-box" id="layoutInfo">
+            <strong>单栏布局</strong><br>
+            所有内容纵向排列，结构最简单。适用于信息量较少、阅读体验优先的页面，如个人博客、活动专题页、落地页。优点是移动端适配容易。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④教学提示卡 -->
+  <div class="tip-bar">
+    <div class="tip-card">
+      <div class="tip-title">&#9733; 核心知识点</div>
+      <div class="tip-content">布局4类型：单栏(博客)、两栏(资讯)、三栏(电商)、混合(门户)。选型依据：信息量、内容层级、用户浏览路径。</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-title">&#9888; 常见错误</div>
+      <div class="tip-content">盲目追求复杂布局；混合布局区域划分过细导致维护困难；未考虑移动端适配。</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-title">&#128161; 拓展思考</div>
+      <div class="tip-content">京东/知乎/淘宝首页分别用哪种布局？分析其布局选型与业务需求的关联。</div>
+    </div>
+    <div class="tip-card danger">
+      <div class="tip-title">&#9829; 思政小贴士</div>
+      <div class="tip-content">布局先看整体再看局部，"不谋全局者不足谋一域"，做网页如此做事也如此。</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== 布局数据 ==========
+var layouts={
+  single:{
+    name:"单栏布局",
+    url:"https://layout-demo.example.com/single-column",
+    info:'<strong>单栏布局</strong><br>所有内容纵向排列，结构最简单。适用于信息量较少、阅读体验优先的页面，如个人博客、活动专题页、落地页。优点是移动端适配容易。',
+    html:'<span class="code-comment">&lt;!-- 单栏布局 --&gt;</span>\n<span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"layout layout--single"</span><span class="code-tag">&gt;</span>\n  <span class="code-tag">&lt;header</span> <span class="code-attr">class</span>=<span class="code-value">"header"</span><span class="code-tag">&gt;</span>头部 Header<span class="code-tag">&lt;/header&gt;</span>\n  <span class="code-tag">&lt;main</span> <span class="code-attr">class</span>=<span class="code-value">"main"</span><span class="code-tag">&gt;</span>主内容 Main<span class="code-tag">&lt;/main&gt;</span>\n  <span class="code-tag">&lt;footer</span> <span class="code-attr">class</span>=<span class="code-value">"footer"</span><span class="code-tag">&gt;</span>页脚 Footer<span class="code-tag">&lt;/footer&gt;</span>\n<span class="code-tag">&lt;/div&gt;</span>',
+    demo:'<div class="demo-single"><header>头部 Header</header><main>主内容 Main</main><footer>页脚 Footer</footer></div>'
+  },
+  two:{
+    name:"两栏布局",
+    url:"https://layout-demo.example.com/two-column",
+    info:'<strong>两栏布局</strong><br>主内容区+侧边栏，主次分明。适用于博客文章页、新闻资讯页、后台管理页面。侧边栏可放导航、推荐、广告等辅助内容。',
+    html:'<span class="code-comment">&lt;!-- 两栏布局 --&gt;</span>\n<span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"layout layout--two-col"</span><span class="code-tag">&gt;</span>\n  <span class="code-tag">&lt;header</span> <span class="code-attr">class</span>=<span class="code-value">"header"</span><span class="code-tag">&gt;</span>头部 Header<span class="code-tag">&lt;/header&gt;</span>\n  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"content"</span><span class="code-tag">&gt;</span>\n    <span class="code-tag">&lt;main</span> <span class="code-attr">class</span>=<span class="code-value">"main"</span><span class="code-tag">&gt;</span>主内容 Main<span class="code-tag">&lt;/main&gt;</span>\n    <span class="code-tag">&lt;aside</span> <span class="code-attr">class</span>=<span class="code-value">"sidebar"</span><span class="code-tag">&gt;</span>侧边栏 Aside<span class="code-tag">&lt;/aside&gt;</span>\n  <span class="code-tag">&lt;/div&gt;</span>\n  <span class="code-tag">&lt;footer</span> <span class="code-attr">class</span>=<span class="code-value">"footer"</span><span class="code-tag">&gt;</span>页脚 Footer<span class="code-tag">&lt;/footer&gt;</span>\n<span class="code-tag">&lt;/div&gt;</span>',
+    demo:'<div class="demo-two-col"><header>头部 Header</header><div class="content"><main class="main">主内容 Main</main><aside class="sidebar">侧边栏 Aside</aside></div><footer>页脚 Footer</footer></div>'
+  },
+  three:{
+    name:"三栏布局",
+    url:"https://layout-demo.example.com/three-column",
+    info:'<strong>三栏布局</strong><br>左导航+主内容+右推荐，信息密度最高。适用于电商首页、大型门户网站、后台管理。左右栏可固定宽度，中间自适应。',
+    html:'<span class="code-comment">&lt;!-- 三栏布局 --&gt;</span>\n<span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"layout layout--three-col"</span><span class="code-tag">&gt;</span>\n  <span class="code-tag">&lt;header</span> <span class="code-attr">class</span>=<span class="code-value">"header"</span><span class="code-tag">&gt;</span>头部 Header<span class="code-tag">&lt;/header&gt;</span>\n  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"content"</span><span class="code-tag">&gt;</span>\n    <span class="code-tag">&lt;aside</span> <span class="code-attr">class</span>=<span class="code-value">"left"</span><span class="code-tag">&gt;</span>左导航 Left<span class="code-tag">&lt;/aside&gt;</span>\n    <span class="code-tag">&lt;main</span> <span class="code-attr">class</span>=<span class="code-value">"center"</span><span class="code-tag">&gt;</span>主内容 Center<span class="code-tag">&lt;/main&gt;</span>\n    <span class="code-tag">&lt;aside</span> <span class="code-attr">class</span>=<span class="code-value">"right"</span><span class="code-tag">&gt;</span>右推荐 Right<span class="code-tag">&lt;/aside&gt;</span>\n  <span class="code-tag">&lt;/div&gt;</span>\n  <span class="code-tag">&lt;footer</span> <span class="code-attr">class</span>=<span class="code-value">"footer"</span><span class="code-tag">&gt;</span>页脚 Footer<span class="code-tag">&lt;/footer&gt;</span>\n<span class="code-tag">&lt;/div&gt;</span>',
+    demo:'<div class="demo-three-col"><header>头部 Header</header><div class="content"><aside class="left">左导航 Left</aside><main class="center">主内容 Center</main><aside class="right">右推荐 Right</aside></div><footer>页脚 Footer</footer></div>'
+  },
+  mixed:{
+    name:"混合布局",
+    url:"https://layout-demo.example.com/mixed-layout",
+    info:'<strong>混合布局</strong><br>多区域组合，灵活度最高。适用于企业门户首页、大型网站首页。可组合导航栏+轮播+两栏内容+底部栏等，是实际项目中最常用的布局方式（对应项目⑤）。',
+    html:'<span class="code-comment">&lt;!-- 混合布局（项目⑤门户首页） --&gt;</span>\n<span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"layout layout--mixed"</span><span class="code-tag">&gt;</span>\n  <span class="code-tag">&lt;header</span> <span class="code-attr">class</span>=<span class="code-value">"header"</span><span class="code-tag">&gt;</span>头部 Header<span class="code-tag">&lt;/header&gt;</span>\n  <span class="code-tag">&lt;nav</span> <span class="code-attr">class</span>=<span class="code-value">"nav-bar"</span><span class="code-tag">&gt;</span>导航 Nav<span class="code-tag">&lt;/nav&gt;</span>\n  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"content"</span><span class="code-tag">&gt;</span>\n    <span class="code-tag">&lt;main</span> <span class="code-attr">class</span>=<span class="code-value">"main"</span><span class="code-tag">&gt;</span>主内容 Main<span class="code-tag">&lt;/main&gt;</span>\n    <span class="code-tag">&lt;aside</span> <span class="code-attr">class</span>=<span class="code-value">"sidebar"</span><span class="code-tag">&gt;</span>侧边栏 Aside<span class="code-tag">&lt;/aside&gt;</span>\n  <span class="code-tag">&lt;/div&gt;</span>\n  <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"bottom-row"</span><span class="code-tag">&gt;</span>底部推荐 Bottom<span class="code-tag">&lt;/div&gt;</span>\n  <span class="code-tag">&lt;footer</span> <span class="code-attr">class</span>=<span class="code-value">"footer"</span><span class="code-tag">&gt;</span>页脚 Footer<span class="code-tag">&lt;/footer&gt;</span>\n<span class="code-tag">&lt;/div&gt;</span>',
+    demo:'<div class="demo-mixed"><header>头部 Header</header><div class="nav-bar"><div>导航1</div><div>导航2</div><div>导航3</div></div><div class="content"><main class="main">主内容 Main</main><aside class="sidebar"><div>侧边栏1</div><div>侧边栏2</div></aside></div><div class="bottom-row"><div>底部推荐1</div><div>底部推荐2</div><div>底部推荐3</div></div><footer>页脚 Footer</footer></div>'
+  }
+};
+
+var currentLayout="single";
+
+// ========== 切换布局 ==========
+function switchLayout(type){
+  currentLayout=type;
+  var data=layouts[type];
+  // 更新按钮状态
+  var btns=document.querySelectorAll('.layout-btn');
+  btns.forEach(function(b){
+    b.classList.toggle('active',b.dataset.layout===type);
+  });
+  // 更新预览
+  document.getElementById('layoutDemo').innerHTML=data.demo;
+  document.getElementById('layoutLabel').textContent=data.name;
+  document.getElementById('addressBar').textContent=data.url;
+  // 更新代码
+  renderCode(data.html);
+  // 更新说明
+  document.getElementById('layoutInfo').innerHTML=data.info;
+}
+
+// ========== 渲染代码（可点击高亮） ==========
+function renderCode(htmlStr){
+  var lines=htmlStr.split('\n');
+  var html='';
+  lines.forEach(function(line,i){
+    html+='<div class="code-line" data-line="'+i+'" onclick="highlightLine(this)">'+(line||'&nbsp;')+'</div>';
+  });
+  document.getElementById('codeContent').innerHTML=html;
+}
+
+// ========== 点击代码行高亮 ==========
+function highlightLine(el){
+  document.querySelectorAll('.code-line').forEach(function(l){
+    l.classList.remove('highlight');
+  });
+  el.classList.add('highlight');
+}
+
+// ========== 复制代码 ==========
+function copyCode(){
+  var text=document.getElementById('codeContent').innerText;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){
+      showCopyTip();
+    });
+  }else{
+    var ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    showCopyTip();
+  }
+}
+function showCopyTip(){
+  var btn=document.querySelector('.copy-btn');
+  var orig=btn.textContent;
+  btn.textContent='已复制';
+  setTimeout(function(){btn.textContent=orig;},1500);
+}
+
+// ========== 查看代码开关 ==========
+document.getElementById('btnCode').addEventListener('click',function(){
+  var panel=document.getElementById('codePanel');
+  panel.style.display=panel.style.display==='none'?'flex':'none';
+  this.classList.toggle('active');
+});
+
+// ========== 讲解模式 ==========
+document.getElementById('btnExplain').addEventListener('click',function(){
+  document.body.classList.toggle('explain-mode');
+  this.classList.toggle('active');
+  this.textContent=document.body.classList.contains('explain-mode')?'退出讲解':'讲解模式';
+});
+
+// ========== 重置 ==========
+document.getElementById('btnReset').addEventListener('click',function(){
+  switchLayout('single');
+  document.getElementById('codePanel').style.display='flex';
+  document.getElementById('btnCode').classList.remove('active');
+  document.body.classList.remove('explain-mode');
+  document.getElementById('btnExplain').classList.remove('active');
+  document.getElementById('btnExplain').textContent='讲解模式';
+});
+
+// ========== 初始化 ==========
+switchLayout('single');
+</script>
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P02 HTML5骨架生成器 | 网页设计与制作</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --primary:#185FA5;--primary-light:#E6F1FB;--primary-dark:#0C447C;
+    --bg:#F1EFE8;--card:#FFFFFF;--border:#D3D1C7;
+    --text:#2C2C2A;--text-sec:#5F5E5A;--text-hint:#888780;
+    --code-bg:#F8F7F4;--tag:#185FA5;--attr:#0F6E56;--val:#BA7517;--comment:#888780;--string:#0F6E56;
+    --danger:#A32D2D;--danger-light:#FCEBEB;--success:#0F6E56;--amber:#854F0B;--amber-light:#FAEEDA;
+  }
+  body{font-family:-apple-system,"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.6}
+  .nav{background:var(--card);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .nav .chapter{color:var(--primary);font-weight:500;font-size:12px}
+  .nav .title{font-weight:500;font-size:14px}
+  .nav .tag{background:var(--primary-light);color:var(--primary-dark);padding:2px 8px;border-radius:10px;font-size:11px}
+  .nav .spacer{flex:1}
+  .nav button{background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;color:var(--text-sec);transition:all .2s}
+  .nav button:hover{border-color:var(--primary);color:var(--primary)}
+  .nav button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .main{display:grid;grid-template-columns:25% 50% 25%;gap:1px;background:var(--border);height:calc(100vh - 100px)}
+  .panel{background:var(--card);overflow:auto;padding:14px}
+  .panel-head{font-size:12px;font-weight:500;color:var(--text-sec);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+  .panel-head .dot{width:8px;height:8px;border-radius:50%;background:var(--primary)}
+
+  /* 代码区 */
+  .code-block{background:var(--code-bg);border-radius:8px;padding:12px;font-family:Consolas,"Courier New",monospace;font-size:12px;line-height:1.8;white-space:pre-wrap;word-break:break-all}
+  .code-line{cursor:pointer;padding:2px 6px;border-radius:4px;transition:.15s;margin:1px 0}
+  .code-line:hover{background:var(--primary-light)}
+  .code-line.active{background:#FAC775;font-weight:500}
+  .c-tag{color:var(--tag)}.c-attr{color:var(--attr)}.c-val{color:var(--val)}.c-com{color:var(--comment);font-style:italic}.c-str{color:var(--string)}
+  .code-line .label{display:inline-block;background:var(--amber-light);color:var(--amber);font-size:10px;padding:0 4px;border-radius:3px;margin-left:8px;font-style:normal;font-family:sans-serif}
+  button.copy-btn{width:100%;margin-top:10px;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);cursor:pointer;font-size:12px;color:var(--text-sec)}
+  button.copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+  /* 预览区 */
+  .preview-wrap{background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;height:100%;display:flex;flex-direction:column}
+  .preview-bar{background:#F8F7F4;padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-hint);display:flex;align-items:center;gap:6px}
+  .preview-bar .dots{display:flex;gap:4px}
+  .preview-bar .dots span{width:8px;height:8px;border-radius:50%}
+  .preview-bar .dots .r{background:#E24B4A}.preview-bar .dots .y{background:#FAC775}.preview-bar .dots .g{background:#0F6E56}
+  .preview-bar .url{flex:1;background:#fff;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:monospace;font-size:11px}
+  .preview-frame{flex:1;border:none;background:#fff;min-height:300px}
+
+  /* 参数区 */
+  .param-group{margin-bottom:16px}
+  .param-label{font-size:12px;color:var(--text-sec);margin-bottom:6px;font-weight:500}
+  .param-desc{font-size:11px;color:var(--text-hint);margin-top:4px}
+  .form-item{margin-bottom:12px}
+  .form-item label{display:block;font-size:12px;color:var(--text-sec);margin-bottom:4px;font-weight:500}
+  .form-item input,.form-item select{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#fff;transition:.2s}
+  .form-item input:focus,.form-item select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
+  .form-item .hint{font-size:11px;color:var(--text-hint);margin-top:3px}
+  .tag-light{display:inline-block;background:var(--primary-light);color:var(--primary-dark);padding:1px 6px;border-radius:3px;font-size:10px;font-family:monospace;cursor:pointer;transition:.15s}
+  .tag-light:hover{background:var(--primary);color:#fff}
+  .tag-light.active{background:var(--primary);color:#fff}
+  .info-box{margin-top:16px;padding:10px;background:var(--primary-light);border-radius:8px;font-size:11px;color:var(--primary-dark);line-height:1.6}
+  .info-box strong{color:var(--primary-dark)}
+
+  /* 教学提示卡 */
+  .tip-card{background:var(--card);border-top:1px solid var(--border);padding:12px 20px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
+  .tip-item .tip-head{font-size:11px;font-weight:500;color:var(--primary);margin-bottom:4px}
+  .tip-item .tip-body{font-size:12px;color:var(--text-sec);line-height:1.5}
+  .tip-item.sizheng .tip-head{color:var(--danger)}
+  .tip-item.sizheng .tip-body{color:var(--text);background:var(--danger-light);padding:6px 8px;border-radius:6px;border-left:3px solid var(--danger)}
+
+  body.lecture .main{grid-template-columns:0 100% 0}
+  body.lecture .panel:not(.preview-panel){display:none}
+  body.lecture .tip-card{display:none}
+  body.lecture .main{height:calc(100vh - 50px)}
+
+  .highlight-element{outline:3px solid #FAC775 !important;outline-offset:2px}
+
+  @media(max-width:900px){.main{grid-template-columns:1fr;height:auto}.tip-card{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <span class="tag">知识点：HTML5文档骨架</span>
+  <span class="spacer"></span>
+  <button id="btnCode" class="active" onclick="toggleCode()">查看代码 ON</button>
+  <button id="btnLecture" onclick="toggleLecture()">讲解模式</button>
+  <button onclick="resetAll()">重置</button>
+</div>
+
+<div class="main">
+  <!-- ①代码原理区 -->
+  <div class="panel code-panel" id="codePanel">
+    <div class="panel-head"><span class="dot"></span>① 代码原理区（点击标签行高亮预览）</div>
+    <div class="code-block" id="codeDisplay"></div>
+    <button class="copy-btn" onclick="copyCode()">复制代码</button>
+
+    <div style="margin-top:14px">
+      <div class="param-label" style="margin-bottom:8px">骨架标签说明</div>
+      <div style="font-size:11px;color:var(--text-sec);line-height:1.8">
+        <span class="tag-light" onclick="highlightTag('doctype')">!DOCTYPE</span> 文档类型声明<br>
+        <span class="tag-light" onclick="highlightTag('html')">&lt;html&gt;</span> 根标签<br>
+        <span class="tag-light" onclick="highlightTag('head')">&lt;head&gt;</span> 头部（看不见的信息）<br>
+        <span class="tag-light" onclick="highlightTag('meta')">&lt;meta&gt;</span> 字符集设置<br>
+        <span class="tag-light" onclick="highlightTag('title')">&lt;title&gt;</span> 网页标题<br>
+        <span class="tag-light" onclick="highlightTag('body')">&lt;body&gt;</span> 主体（看得见的内容）
+      </div>
+    </div>
+  </div>
+
+  <!-- ②实时预览区 -->
+  <div class="panel preview-panel">
+    <div class="panel-head"><span class="dot" style="background:#0F6E56"></span>② 实时预览区</div>
+    <div class="preview-wrap">
+      <div class="preview-bar">
+        <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="url" id="previewUrl">preview://我的数字名片.html</div>
+      </div>
+      <iframe class="preview-frame" id="previewFrame"></iframe>
+    </div>
+  </div>
+
+  <!-- ③参数调节区 -->
+  <div class="panel param-panel">
+    <div class="panel-head"><span class="dot" style="background:#BA7517"></span>③ 参数调节区</div>
+
+    <div class="param-group">
+      <div class="param-label">填写参数，自动生成骨架</div>
+    </div>
+
+    <div class="form-item">
+      <label>网页标题（title）</label>
+      <input type="text" id="inpTitle" value="我的数字名片" oninput="generateCode()">
+      <div class="hint">显示在浏览器标签栏</div>
+    </div>
+
+    <div class="form-item">
+      <label>字符集（charset）</label>
+      <select id="selCharset" onchange="generateCode()">
+        <option value="UTF-8" selected>UTF-8（推荐·支持中文）</option>
+        <option value="GBK">GBK（简体中文）</option>
+        <option value="ISO-8859-1">ISO-8859-1（西欧）</option>
+      </select>
+      <div class="hint">UTF-8 是最通用的编码</div>
+    </div>
+
+    <div class="form-item">
+      <label>语言（lang）</label>
+      <select id="selLang" onchange="generateCode()">
+        <option value="zh-CN" selected>zh-CN（简体中文）</option>
+        <option value="zh-TW">zh-TW（繁体中文）</option>
+        <option value="en">en（英语）</option>
+        <option value="ja">ja（日语）</option>
+      </select>
+    </div>
+
+    <div class="form-item">
+      <label>body 内容（可选）</label>
+      <input type="text" id="inpBody" value="你好，这是我的第一个网页！" oninput="generateCode()">
+      <div class="hint">写在 body 中的内容会显示在页面上</div>
+    </div>
+
+    <div class="info-box">
+      <strong>骨架口诀：</strong><br>
+      DOCTYPE 声明在最前，<br>
+      html 根标签包全篇，<br>
+      head 藏着看不见的信息，<br>
+      body 装着看得见的内容。
+    </div>
+  </div>
+</div>
+
+<!-- ④教学提示卡 -->
+<div class="tip-card">
+  <div class="tip-item">
+    <div class="tip-head">核心知识点</div>
+    <div class="tip-body">HTML5骨架 = DOCTYPE声明 + html根标签 + head头部 + body主体，缺一不可。</div>
+  </div>
+  <div class="tip-item">
+    <div class="tip-head">常见错误</div>
+    <div class="tip-body">忘记写 &lt;!DOCTYPE html&gt; 会导致浏览器"怪异模式"；标签未闭合会渲染异常。</div>
+  </div>
+  <div class="tip-item">
+    <div class="tip-head">拓展思考</div>
+    <div class="tip-body">修改 title 里的文字，观察浏览器哪里变化？head 和 body 各放什么内容？</div>
+  </div>
+  <div class="tip-item sizheng">
+    <div class="tip-head">思政小贴士</div>
+    <div class="tip-body">HTML是开放标准，万维网初衷是信息共享。我们学开放技术，要让信息惠及更多人。</div>
+  </div>
+</div>
+
+<script>
+var currentCode='';
+
+function generateCode(){
+  var title=document.getElementById('inpTitle').value||'网页标题';
+  var charset=document.getElementById('selCharset').value;
+  var lang=document.getElementById('selLang').value;
+  var body=document.getElementById('inpBody').value||'';
+
+  var code=
+'<span class="code-line" data-tag="doctype"><span class="c-tag">&lt;!DOCTYPE html&gt;</span> <span class="c-com">&lt;!-- 告诉浏览器这是HTML5文档 --&gt;</span> <span class="label">文档类型声明</span></span>\n'+
+'<span class="code-line" data-tag="html"><span class="c-tag">&lt;html</span> <span class="c-attr">lang</span>=<span class="c-val">"'+lang+'"</span><span class="c-tag">&gt;</span> <span class="c-com">&lt;!-- 根标签，所有内容都在里面 --&gt;</span> <span class="label">根标签</span></span>\n'+
+'\n'+
+'<span class="code-line" data-tag="head"><span class="c-tag">&lt;head&gt;</span> <span class="c-com">&lt;!-- 头部：放看不见的信息 --&gt;</span> <span class="label">头部</span></span>\n'+
+'<span class="code-line" data-tag="meta" style="padding-left:16px"><span class="c-tag">&lt;meta</span> <span class="c-attr">charset</span>=<span class="c-val">"'+charset+'"</span><span class="c-tag">&gt;</span> <span class="c-com">&lt;!-- 字符集设置 --&gt;</span> <span class="label">字符集</span></span>\n'+
+'<span class="code-line" data-tag="title" style="padding-left:16px"><span class="c-tag">&lt;title&gt;</span>'+escapeHtml(title)+'<span class="c-tag">&lt;/title&gt;</span> <span class="c-com">&lt;!-- 网页标题 --&gt;</span> <span class="label">标题</span></span>\n'+
+'<span class="code-line" data-tag="head"><span class="c-tag">&lt;/head&gt;</span></span>\n'+
+'\n'+
+'<span class="code-line" data-tag="body"><span class="c-tag">&lt;body&gt;</span> <span class="c-com">&lt;!-- 主体：放看得见的内容 --&gt;</span> <span class="label">主体</span></span>\n'+
+'<span class="code-line" style="padding-left:16px">'+escapeHtml(body)+'</span>\n'+
+'<span class="code-line" data-tag="body"><span class="c-tag">&lt;/body&gt;</span></span>\n'+
+'\n'+
+'<span class="code-line" data-tag="html"><span class="c-tag">&lt;/html&gt;</span> <span class="c-com">&lt;!-- 根标签闭合 --&gt;</span></span>';
+
+  document.getElementById('codeDisplay').innerHTML=code;
+
+  var rawCode='<!DOCTYPE html>\n<html lang="'+lang+'">\n\n<head>\n    <meta charset="'+charset+'">\n    <title>'+title+'</title>\n</head>\n\n<body>\n    '+body+'\n</body>\n\n</html>';
+  currentCode=rawCode;
+
+  document.getElementById('previewUrl').textContent='preview://'+(title||'untitled')+'.html';
+
+  var frame=document.getElementById('previewFrame');
+  var doc=frame.contentDocument||frame.contentWindow.document;
+  var html='<!DOCTYPE html>\n<html lang="'+lang+'">\n<head>\n<meta charset="'+charset+'">\n<title>'+escapeHtml(title)+'</title>\n<style>body{font-family:"Microsoft YaHei",sans-serif;padding:40px;text-align:center;color:#2C2C2A}body:before{content:"浏览器标签栏标题：'+escapeHtml(title)+'";display:block;font-size:12px;color:#888;margin-bottom:20px;padding:6px;background:#F8F7F4;border-radius:4px}.content{font-size:18px;color:#185FA5;padding:20px;border:1px dashed #D3D1C7;border-radius:8px;display:inline-block}</style>\n</head>\n<body>\n<div class="content">'+escapeHtml(body)+'</div>\n</body>\n</html>';
+  doc.open();doc.write(html);doc.close();
+
+  document.querySelectorAll('.code-line[data-tag]').forEach(function(line){
+    line.addEventListener('click',function(){
+      document.querySelectorAll('.code-line').forEach(l=>l.classList.remove('active'));
+      this.classList.add('active');
+      highlightTag(this.getAttribute('data-tag'));
+    });
+  });
+}
+
+function highlightTag(tag){
+  document.querySelectorAll('.tag-light').forEach(t=>t.classList.remove('active'));
+  var tl=document.querySelector('.tag-light');
+  document.querySelectorAll('.code-line').forEach(l=>l.classList.remove('active'));
+  document.querySelectorAll('.code-line[data-tag="'+tag+'"]').forEach(function(l){
+    l.classList.add('active');
+  });
+
+  var frame=document.getElementById('previewFrame');
+  var doc=frame.contentDocument||frame.contentWindow.document;
+  var map={doctype:'<!--DOCTYPE-->',html:'html',head:'head',meta:'meta',title:'title',body:'body'};
+  var el=doc.getElementsByTagName(map[tag]);
+  if(el&&el.length>0){
+    var target=el[0];
+    doc.querySelectorAll('.highlight-element').forEach(e=>e.classList.remove('highlight-element'));
+    if(target.tagName==='HTML'||target.tagName==='HEAD'||target.tagName==='BODY'){
+      target.style.outline='3px solid #FAC775';
+      target.style.outlineOffset='-3px';
+      setTimeout(function(){target.style.outline='';target.style.outlineOffset=''},2000);
+    }
+  }
+}
+
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function toggleCode(){
+  var panel=document.getElementById('codePanel');
+  var btn=document.getElementById('btnCode');
+  if(panel.style.display==='none'){panel.style.display='block';btn.textContent='查看代码 ON';btn.classList.add('active')}
+  else{panel.style.display='none';btn.textContent='查看代码 OFF';btn.classList.remove('active')}
+}
+
+function toggleLecture(){
+  document.body.classList.toggle('lecture');
+  var btn=document.getElementById('btnLecture');
+  btn.classList.toggle('active',document.body.classList.contains('lecture'));
+}
+
+function resetAll(){
+  document.getElementById('inpTitle').value='我的数字名片';
+  document.getElementById('selCharset').value='UTF-8';
+  document.getElementById('selLang').value='zh-CN';
+  document.getElementById('inpBody').value='你好，这是我的第一个网页！';
+  generateCode();
+}
+
+function copyCode(){
+  navigator.clipboard.writeText(currentCode).then(function(){alert('代码已复制到剪贴板！\n\n你可以粘贴到VS Code中保存为.html文件')});
+}
+
+generateCode();
+</script>
+
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>

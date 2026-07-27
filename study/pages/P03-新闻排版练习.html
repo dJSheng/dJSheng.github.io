@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P03-新闻排版练习 | 标题段落与文本格式化</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
+    background: #E6F1FB;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* 顶部导航条 */
+  .navbar {
+    background: linear-gradient(90deg, #185FA5 0%, #2A7BC4 100%);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(24,95,165,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-section { font-size: 13px; opacity: 0.9; }
+  .nav-title { font-size: 16px; font-weight: 600; }
+  .nav-tag {
+    background: rgba(255,255,255,0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  .nav-spacer { flex: 1; }
+  .nav-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .nav-btn.active { background: #fff; color: #185FA5; }
+
+  /* 主容器 */
+  .container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    gap: 12px;
+    padding: 12px;
+    height: calc(100vh - 60px - 180px);
+    min-height: 500px;
+  }
+  .container.lecture-mode {
+    grid-template-columns: 0 100% 0;
+  }
+  .container.lecture-mode .panel-code,
+  .container.lecture-mode .panel-params { display: none; }
+  .container.code-collapsed {
+    grid-template-columns: 0 75% 25%;
+  }
+  .container.code-collapsed .panel-code { display: none; }
+
+  .panel {
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-header {
+    background: #f5f8fc;
+    padding: 8px 14px;
+    border-bottom: 0.5px solid #d0d7e0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #185FA5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-body {
+    flex: 1;
+    overflow: auto;
+    padding: 12px;
+  }
+
+  /* 代码区 */
+  .code-block {
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .code-line {
+    padding: 2px 6px;
+    margin: 0 -6px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: block;
+    min-height: 1.8em;
+  }
+  .code-line:hover { background: #f0f5fa; }
+  .code-line.highlighted { background: #fff3cd; border-left: 3px solid #BA7517; padding-left: 3px; }
+  .tag { color: #185FA5; }
+  .attr { color: #0F6E56; }
+  .value { color: #BA7517; }
+  .comment { color: #888780; font-style: italic; }
+  .text { color: #333; }
+
+  .copy-btn {
+    background: #185FA5;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: #144a82; }
+
+  /* 预览区 */
+  .browser-bar {
+    background: #e8ecef;
+    padding: 6px 12px;
+    border-bottom: 0.5px solid #d0d7e0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+  .browser-url {
+    flex: 1;
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    border: 0.5px solid #d0d7e0;
+  }
+  .preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+  }
+
+  /* 参数调节区 */
+  .param-group { margin-bottom: 16px; }
+  .param-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .param-input, .param-select, .param-textarea {
+    width: 100%;
+    padding: 6px 10px;
+    border: 0.5px solid #d0d7e0;
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: inherit;
+    background: #fff;
+  }
+  .param-input:focus, .param-select:focus, .param-textarea:focus {
+    outline: none;
+    border-color: #185FA5;
+    box-shadow: 0 0 0 2px rgba(24,95,165,0.15);
+  }
+  .param-textarea { resize: vertical; min-height: 60px; }
+  .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .param-btn {
+    flex: 1;
+    min-width: 70px;
+    padding: 6px 10px;
+    border: 0.5px solid #185FA5;
+    background: #fff;
+    color: #185FA5;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+  .param-btn:hover { background: #E6F1FB; }
+  .param-btn.active { background: #185FA5; color: #fff; }
+
+  .heading-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .heading-btn {
+    padding: 8px 4px;
+    border: 0.5px solid #d0d7e0;
+    background: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .heading-btn.active {
+    background: #185FA5;
+    color: #fff;
+    border-color: #185FA5;
+  }
+
+  /* 教学提示卡 */
+  .tips-card {
+    margin: 0 12px 12px;
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #d0d7e0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow: hidden;
+  }
+  .tip-col {
+    padding: 12px 14px;
+    border-right: 0.5px solid #e0e7ee;
+  }
+  .tip-col:last-child { border-right: none; }
+  .tip-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #185FA5;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tip-content { font-size: 12px; color: #555; line-height: 1.7; }
+  .tip-思政 {
+    background: #fff5f5;
+  }
+  .tip-思政 .tip-title { color: #c0392b; }
+  .tip-思政 .tip-content { color: #c0392b; }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .container, .container.code-collapsed {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    .panel { min-height: 300px; }
+    .tips-card { grid-template-columns: 1fr 1fr; }
+    .tip-col { border-right: none; border-bottom: 0.5px solid #e0e7ee; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航条 -->
+<div class="navbar">
+  <span class="nav-title">P03 新闻排版练习</span>
+  <span class="nav-tag">标题标签</span>
+  <span class="nav-tag">段落标签</span>
+  <span class="nav-tag">br换行</span>
+  <span class="nav-tag">hr水平线</span>
+  <span class="nav-spacer"></span>
+  <button class="nav-btn" id="toggleCode" onclick="toggleCode()">查看代码</button>
+  <button class="nav-btn" id="lectureBtn" onclick="toggleLecture()">讲解模式</button>
+  <button class="nav-btn" onclick="resetAll()">重置</button>
+</div>
+
+<!-- 主容器 -->
+<div class="container" id="mainContainer">
+
+  <!-- ① 代码原理区 -->
+  <div class="panel panel-code">
+    <div class="panel-header">
+      <span>① 代码原理区</span>
+      <button class="copy-btn" onclick="copyCode()">复制代码</button>
+    </div>
+    <div class="panel-body">
+      <div class="code-block" id="codeBlock"></div>
+    </div>
+  </div>
+
+  <!-- ② 实时预览区 -->
+  <div class="panel panel-preview">
+    <div class="panel-header">
+      <span>② 实时预览区</span>
+    </div>
+    <div class="browser-bar">
+      <span class="browser-dot dot-r"></span>
+      <span class="browser-dot dot-y"></span>
+      <span class="browser-dot dot-g"></span>
+      <div class="browser-url">https://localhost/p03-preview.html</div>
+    </div>
+    <iframe class="preview-frame" id="previewFrame"></iframe>
+  </div>
+
+  <!-- ③ 参数调节区 -->
+  <div class="panel panel-params">
+    <div class="panel-header">
+      <span>③ 参数调节区</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="param-group">
+        <label class="param-label">标题级别选择（h1-h6）</label>
+        <div class="heading-selector" id="headingSelector">
+          <button class="heading-btn active" data-level="h1" onclick="selectHeading('h1')">h1</button>
+          <button class="heading-btn" data-level="h2" onclick="selectHeading('h2')">h2</button>
+          <button class="heading-btn" data-level="h3" onclick="selectHeading('h3')">h3</button>
+          <button class="heading-btn" data-level="h4" onclick="selectHeading('h4')">h4</button>
+          <button class="heading-btn" data-level="h5" onclick="selectHeading('h5')">h5</button>
+          <button class="heading-btn" data-level="h6" onclick="selectHeading('h6')">h6</button>
+        </div>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">标题文字</label>
+        <input type="text" class="param-input" id="titleText" value="学院开展技能强国主题教育活动" oninput="updatePreview()">
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">段落文字</label>
+        <textarea class="param-textarea" id="paragraphText" oninput="updatePreview()">为深入贯彻技能强国战略，我院于近日启动主题教育活动，全校1200余名师生参与。活动内容包括技能大师讲座、学生作品展览、校企合作签约。</textarea>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">段落内换行（插入 br）</label>
+        <div class="btn-group">
+          <button class="param-btn" id="brBtn" onclick="toggleBr()">插入 br</button>
+        </div>
+        <small style="color:#888; display:block; margin-top:4px;">勾选后将在段落中插入 br 换行</small>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">水平分隔线（插入 hr）</label>
+        <div class="btn-group">
+          <button class="param-btn" id="hrBtn" onclick="toggleHr()">插入 hr</button>
+        </div>
+        <small style="color:#888; display:block; margin-top:4px;">勾选后将在标题与段落间插入 hr 水平线</small>
+      </div>
+
+      <div class="param-group">
+        <label class="param-label">第二个段落（可选）</label>
+        <textarea class="param-textarea" id="paragraphText2" placeholder="可选：输入第二段内容" oninput="updatePreview()">本次活动旨在弘扬工匠精神，培养高素质技术技能人才。</textarea>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ④ 教学提示卡 -->
+<div class="tips-card">
+  <div class="tip-col">
+    <div class="tip-title">★ 核心知识点</div>
+    <div class="tip-content">
+      h1-h6 标题层级（一页一个h1，不跳级）<br>
+      p 段落自动产生段间距<br>
+      br 单标签换行（无间距）<br>
+      hr 语义分隔水平线
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">⚠ 常见错误</div>
+    <div class="tip-content">
+      ① 用 br 代替 p 做段落分隔<br>
+      ② 标题层级跳级（h1直接到h3）<br>
+      ③ h 标签仅用来放大字号<br>
+      ④ 忘记 hr 是单标签需闭合
+    </div>
+  </div>
+  <div class="tip-col">
+    <div class="tip-title">? 拓展思考题</div>
+    <div class="tip-content">
+      1. br 和 p 在浏览器中表现有何不同？<br>
+      2. 一个页面可以有几个 h1？为什么？<br>
+      3. hr 除了视觉分隔还有什么语义？<br>
+      4. 标题字号能通过标签改变吗？
+    </div>
+  </div>
+  <div class="tip-col tip-思政">
+    <div class="tip-title">♥ 思政小贴士</div>
+    <div class="tip-content">
+      "标题是网页的'眼睛'，好标题准确传达信息而非'标题党'，做内容要有责任感。"<br>
+      <strong>——内容创作者的社会责任</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 状态
+  let state = {
+    heading: 'h1',
+    titleText: '学院开展技能强国主题教育活动',
+    paragraphText: '为深入贯彻技能强国战略，我院于近日启动主题教育活动，全校1200余名师生参与。活动内容包括技能大师讲座、学生作品展览、校企合作签约。',
+    paragraphText2: '本次活动旨在弘扬工匠精神，培养高素质技术技能人才。',
+    useBr: false,
+    useHr: false
+  };
+
+  // 标题级别选择
+  function selectHeading(level) {
+    state.heading = level;
+    document.querySelectorAll('.heading-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.level === level);
+    });
+    updatePreview();
+  }
+
+  // 切换 br
+  function toggleBr() {
+    state.useBr = !state.useBr;
+    document.getElementById('brBtn').classList.toggle('active', state.useBr);
+    updatePreview();
+  }
+
+  // 切换 hr
+  function toggleHr() {
+    state.useHr = !state.useHr;
+    document.getElementById('hrBtn').classList.toggle('active', state.useHr);
+    updatePreview();
+  }
+
+  // 读取输入
+  function readInputs() {
+    state.titleText = document.getElementById('titleText').value;
+    state.paragraphText = document.getElementById('paragraphText').value;
+    state.paragraphText2 = document.getElementById('paragraphText2').value;
+  }
+
+  // 生成 HTML 源码
+  function generateHTML() {
+    let lines = [];
+    lines.push('<span class="comment">&lt;!-- 标题区 --&gt;</span>');
+    lines.push(`<span class="tag">&lt;${state.heading}&gt;</span><span class="text">${escapeHtml(state.titleText)}</span><span class="tag">&lt;/${state.heading}&gt;</span>`);
+
+    if (state.useHr) {
+      lines.push('<span class="comment">&lt;!-- 水平线分隔 --&gt;</span>');
+      lines.push('<span class="tag">&lt;hr&gt;</span>');
+    }
+
+    lines.push('<span class="comment">&lt;!-- 正文段落 --&gt;</span>');
+    if (state.useBr) {
+      // 在段落中插入 br 换行
+      const parts = state.paragraphText.split(/[，。！？；]/);
+      let content = '';
+      let i = 0;
+      while (i < parts.length) {
+        content += escapeHtml(parts[i]);
+        if (i + 1 < parts.length) {
+          const punct = state.paragraphText.match(/[，。！？；]/g);
+          if (punct && punct[Math.min(i, punct.length-1)]) {
+            content += punct[Math.min(i, punct.length-1)];
+          }
+          content += '<span class="tag">&lt;br&gt;</span>';
+        }
+        i++;
+      }
+      // 简化处理：直接在句号后插入 br
+      let simpleContent = escapeHtml(state.paragraphText);
+      simpleContent = simpleContent.replace(/。/g, '。<span class="tag">&lt;br&gt;</span>');
+      lines.push(`<span class="tag">&lt;p&gt;</span><span class="text">${simpleContent}</span><span class="tag">&lt;/p&gt;</span>`);
+    } else {
+      lines.push(`<span class="tag">&lt;p&gt;</span><span class="text">${escapeHtml(state.paragraphText)}</span><span class="tag">&lt;/p&gt;</span>`);
+    }
+
+    if (state.paragraphText2.trim()) {
+      lines.push(`<span class="tag">&lt;p&gt;</span><span class="text">${escapeHtml(state.paragraphText2)}</span><span class="tag">&lt;/p&gt;</span>`);
+    }
+
+    return lines;
+  }
+
+  // 生成纯 HTML（用于预览）
+  function generatePlainHTML() {
+    let html = '';
+    html += `<${state.heading}>${state.titleText}</${state.heading}>\n`;
+    if (state.useHr) {
+      html += '<hr>\n';
+    }
+    if (state.useBr) {
+      let content = state.paragraphText.replace(/。/g, '。<br>');
+      html += `<p>${content}</p>\n`;
+    } else {
+      html += `<p>${state.paragraphText}</p>\n`;
+    }
+    if (state.paragraphText2.trim()) {
+      html += `<p>${state.paragraphText2}</p>\n`;
+    }
+    return html;
+  }
+
+  // HTML 转义
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // 更新预览
+  function updatePreview() {
+    readInputs();
+
+    // 更新代码区
+    const lines = generateHTML();
+    const codeBlock = document.getElementById('codeBlock');
+    codeBlock.innerHTML = lines.map((line, idx) =>
+      `<span class="code-line" data-line="${idx}" onclick="highlightLine(${idx})">${line || ' '}</span>`
+    ).join('');
+
+    // 更新预览iframe
+    const plainHTML = generatePlainHTML();
+    const previewDoc = document.getElementById('previewFrame').contentDocument;
+    previewDoc.open();
+    previewDoc.write(`
+      <!DOCTYPE html>
+      <html lang="zh-CN">
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: "Microsoft YaHei", sans-serif; padding: 20px; line-height: 1.8; color: #333; }
+          h1,h2,h3,h4,h5,h6 { color: #185FA5; margin: 10px 0; }
+          p { margin: 10px 0; text-indent: 2em; }
+          hr { border: none; border-top: 2px solid #185FA5; margin: 15px 0; }
+          .hl-element { outline: 2px solid #BA7517; outline-offset: 2px; background: #fff3cd; }
+        </style>
+      </head>
+      <body>
+        ${plainHTML}</body>
+      </html>
+    `);
+    previewDoc.close();
+  }
+
+  // 高亮代码行 + 高亮预览元素
+  function highlightLine(idx) {
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('highlighted'));
+    const line = document.querySelector(`.code-line[data-line="${idx}"]`);
+    if (line) line.classList.add('highlighted');
+
+    // 在预览区高亮对应元素
+    const previewDoc = document.getElementById('previewFrame').contentDocument;
+    previewDoc.querySelectorAll('.hl-element').forEach(el => el.classList.remove('hl-element'));
+
+    const codeText = line ? line.textContent : '';
+    // 判断是哪种标签
+    if (codeText.includes(`<${state.heading}>`)) {
+      const el = previewDoc.querySelector(state.heading);
+      if (el) el.classList.add('hl-element');
+    } else if (codeText.includes('<hr')) {
+      const el = previewDoc.querySelector('hr');
+      if (el) el.classList.add('hl-element');
+    } else if (codeText.includes('<p>')) {
+      const els = previewDoc.querySelectorAll('p');
+      // 简单判断第几个p
+      const pCount = Array.from(document.querySelectorAll('.code-line')).slice(0, idx+1).filter(l => l.textContent.includes('<p>')).length;
+      if (els[pCount-1]) els[pCount-1].classList.add('hl-element');
+    }
+  }
+
+  // 复制代码
+  function copyCode() {
+    const plainHTML = generatePlainHTML();
+    navigator.clipboard.writeText(plainHTML).then(() => {
+      const btn = event.target;
+      const oldText = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(() => { btn.textContent = oldText; }, 1500);
+    });
+  }
+
+  // 切换代码显示
+  function toggleCode() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('code-collapsed');
+    const btn = document.getElementById('toggleCode');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('code-collapsed') ? '显示代码' : '查看代码';
+  }
+
+  // 讲解模式
+  function toggleLecture() {
+    const container = document.getElementById('mainContainer');
+    container.classList.toggle('lecture-mode');
+    const btn = document.getElementById('lectureBtn');
+    btn.classList.toggle('active');
+    btn.textContent = container.classList.contains('lecture-mode') ? '退出讲解' : '讲解模式';
+  }
+
+  // 重置
+  function resetAll() {
+    state = {
+      heading: 'h1',
+      titleText: '学院开展技能强国主题教育活动',
+      paragraphText: '为深入贯彻技能强国战略，我院于近日启动主题教育活动，全校1200余名师生参与。活动内容包括技能大师讲座、学生作品展览、校企合作签约。',
+      paragraphText2: '本次活动旨在弘扬工匠精神，培养高素质技术技能人才。',
+      useBr: false,
+      useHr: false
+    };
+    document.getElementById('titleText').value = state.titleText;
+    document.getElementById('paragraphText').value = state.paragraphText;
+    document.getElementById('paragraphText2').value = state.paragraphText2;
+    document.getElementById('brBtn').classList.remove('active');
+    document.getElementById('hrBtn').classList.remove('active');
+    document.querySelectorAll('.heading-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.level === 'h1');
+    });
+    // 重置容器状态
+    document.getElementById('mainContainer').classList.remove('lecture-mode', 'code-collapsed');
+    document.getElementById('lectureBtn').classList.remove('active');
+    document.getElementById('lectureBtn').textContent = '讲解模式';
+    document.getElementById('toggleCode').classList.remove('active');
+    document.getElementById('toggleCode').textContent = '查看代码';
+    updatePreview();
+  }
+
+  // 初始化
+  updatePreview();
+</script>
+
+
+<!-- 交互式课件通用导航（自动注入） -->
+<script src="../assets/courseware-nav.js"></script>
+</body>
+</html>
