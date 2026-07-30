@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="第4章：AI辅助编程教程 - Claude Code使用指南">
+    <title>第4章：AI辅助编程教程 - 实训手册</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">
+                <div class="navbar-logo">WEB</div>
+                <div>
+                    <div class="navbar-title">蓝色经济职业导航站</div>
+                    <div class="navbar-subtitle"><strong>实训手册 - 第4章</strong></div>
+                </div>
+            </a>
+            <div class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="navbar-nav">
+                <a href="#intro" class="nav-link">Claude Code介绍</a>
+                <a href="#prompts" class="nav-link">常用提示词</a>
+                <a href="#tips" class="nav-link">使用技巧</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">第4章目录</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="#intro" class="sidebar-link">4.1 Claude Code介绍</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#prompts" class="sidebar-link">4.2 常用提示词模板</a>
+                    <ul class="sidebar-subnav">
+                        <li><a href="#prompt-gen" class="sidebar-sublink">生成代码</a></li>
+                        <li><a href="#prompt-exp" class="sidebar-sublink">解释代码</a></li>
+                        <li><a href="#prompt-fix" class="sidebar-sublink">修复问题</a></li>
+                        <li><a href="#prompt-opt" class="sidebar-sublink">优化代码</a></li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#tips" class="sidebar-link">4.3 代码理解与修改技巧</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#examples" class="sidebar-link">4.4 实战案例演示</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 内容区域 -->
+        <div class="content-wrapper">
+            <!-- Claude Code介绍 -->
+            <section id="intro" class="section">
+                <div class="section-header">
+                    <span class="section-number">4.1</span>
+                    <h1 class="section-title">Claude Code介绍</h1>
+                    <p class="section-subtitle">强大的AI编程助手，帮助你提高开发效率</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🤖</div>
+                        <h3 class="card-title">什么是Claude Code</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Claude Code</strong>（简称CC）是一款强大的AI编程助手，可以帮助你：</p>
+                        <ul>
+                            <li>生成HTML/CSS代码</li>
+                            <li>解释代码的含义和作用</li>
+                            <li>修复代码中的错误</li>
+                            <li>优化和改进代码</li>
+                            <li>回答编程相关的问题</li>
+                        </ul>
+
+                        <div class="alert alert-info">
+                            <span class="alert-icon">💡</span>
+                            <div class="alert-content">
+                                <div class="alert-title">使用AI的正确方式</div>
+                                <p>AI是辅助工具，不是替代学习。你应该先理解AI生成的代码，再将其融入自己的项目中。这样可以学到更多，也能更好地控制项目质量。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 常用提示词模板 -->
+            <section id="prompts" class="section">
+                <div class="section-header">
+                    <span class="section-number">4.2</span>
+                    <h1 class="section-title">常用提示词模板</h1>
+                    <p class="section-subtitle">实训中常用的提示词模板，可根据需要修改</p>
+                </div>
+
+                <div id="prompt-gen" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h3 class="card-title">生成代码</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">生成CSS样式</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">请帮我写一个卡片组件的CSS样式，要求：
+1. 有圆角边框（8px）
+2. 有轻微阴影效果
+3. 鼠标悬停时向上浮动
+4. 使用海洋蓝色主题（主色#1E88E5）</pre>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">生成HTML结构</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">请帮我写一个导航栏的HTML结构，要求：
+1. 包含logo和5个导航链接
+2. 使用语义化标签（header、nav）
+3. 链接包括：首页、产业图谱、职业探索、AI匹配、关于我们</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="prompt-exp" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔍</div>
+                        <h3 class="card-title">解释代码</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">解释CSS代码</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">请解释这段CSS代码的作用：
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+每一行代码都要解释清楚。</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="prompt-fix" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔧</div>
+                        <h3 class="card-title">修复问题</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">修复布局问题</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">我的卡片布局在小屏幕上出现问题，卡片没有正确换行。
+请帮我检查并修复这个CSS代码：
+
+.career-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="prompt-opt" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">⚡</div>
+                        <h3 class="card-title">优化代码</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">优化代码性能</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">请帮我优化这段CSS代码，使其更简洁高效：
+
+.card {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 代码理解与修改技巧 -->
+            <section id="tips" class="section">
+                <div class="section-header">
+                    <span class="section-number">4.3</span>
+                    <h1 class="section-title">代码理解与修改技巧</h1>
+                    <p class="section-subtitle">如何理解AI生成的代码并根据项目调整</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📖</div>
+                        <h3 class="card-title">理解AI生成的代码</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-number">1</span>
+                                <div class="feature-content">
+                                    <h4>逐行阅读</h4>
+                                    <p>不要一次性复制整个代码块，先逐行阅读理解</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">2</span>
+                                <div class="feature-content">
+                                    <h4>查阅手册</h4>
+                                    <p>遇到不熟悉的属性，查阅本章的知识点回顾或在线文档</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">3</span>
+                                <div class="feature-content">
+                                    <h4>提问AI</h4>
+                                    <p>如果某行代码不理解，直接问AI"请解释这行代码"</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">4</span>
+                                <div class="feature-content">
+                                    <h4>实际测试</h4>
+                                    <p>将代码复制到项目中，观察实际效果</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">✏️</div>
+                        <h3 class="card-title">修改AI生成的代码</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>AI生成的代码可能需要根据你的项目进行调整：</p>
+                        <ul>
+                            <li><strong>颜色调整</strong>：将颜色值改为你的项目主题色</li>
+                            <li><strong>尺寸调整</strong>：根据实际需要修改宽度、高度、间距等</li>
+                            <li><strong>命名调整</strong>：将类名改为符合你项目命名规范的名称</li>
+                            <li><strong>结构简化</strong>：删除不需要的部分，保留核心功能</li>
+                        </ul>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">示例：调整AI生成的卡片样式</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">/* AI生成的原始代码 */
+.card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 根据项目调整后的代码 */
+/* 使用CSS变量，便于统一管理 */
+.career-card {
+    background: var(--bg-white);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+/* 命名改为career-card，更符合项目语义 */</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 实战案例演示 -->
+            <section id="examples" class="section">
+                <div class="section-header">
+                    <span class="section-number">4.4</span>
+                    <h1 class="section-title">实战案例演示</h1>
+                    <p class="section-subtitle">使用AI生成响应式网格布局的完整流程</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">案例：使用AI生成响应式网格布局</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-number">步骤1</span>
+                                <div class="feature-content">
+                                    <h4>描述需求</h4>
+                                    <p>向AI描述你需要的布局效果</p>
+                                    <div class="code-block" style="margin-top: 10px;">
+                                        <pre class="code-content">我需要一个职业卡片的网格布局，要求：
+1. 大屏幕显示3列
+2. 中屏幕显示2列
+3. 小屏幕显示1列
+4. 卡片之间有20px间距
+5. 每个卡片有悬停动画效果</pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">步骤2</span>
+                                <div class="feature-content">
+                                    <h4>获取AI回复</h4>
+                                    <p>AI会生成完整的CSS代码</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">步骤3</span>
+                                <div class="feature-content">
+                                    <h4>理解并调整</h4>
+                                    <p>阅读代码，根据项目需要调整颜色、命名等</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">步骤4</span>
+                                <div class="feature-content">
+                                    <h4>应用到项目</h4>
+                                    <p>将调整后的代码复制到项目的CSS文件中</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">步骤5</span>
+                                <div class="feature-content">
+                                    <h4>测试效果</h4>
+                                    <p>在浏览器中预览，检查不同屏幕尺寸下的效果</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success">
+                            <span class="alert-icon">✅</span>
+                            <div class="alert-content">
+                                <div class="alert-title">学习建议</div>
+                                <p>每次使用AI生成代码后，尝试自己手动写一遍类似的代码。这样可以加深理解，逐步提高自己的编码能力。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 章节导航 -->
+            <nav class="chapter-nav">
+                <div class="chapter-nav__inner">
+                    <div class="chapter-nav__prev">
+                        <a href="chapter3.html">
+                            <span class="chapter-nav__label">← 上一章</span>
+                            <span class="chapter-nav__title">第3章：实训步骤</span>
+                        </a>
+                    </div>
+                    <a href="index.html" class="chapter-nav__home">🏠 返回首页</a>
+                    <div class="chapter-nav__next">
+                        <a href="chapter5.html">
+                            <span class="chapter-nav__label">下一章 →</span>
+                            <span class="chapter-nav__title">第5章：AI功能使用</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">泉州海洋职业学院</h3>
+            <p class="footer-desc">人工智能产业学院 · Web前端应用基础课程</p>
+            <p class="footer-info">© 2026 校企协同育人成果展示</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

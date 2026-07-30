@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="蓝色经济职业导航站实训手册 - Web前端应用基础课程综合实训指导">
+    <title>实训手册 - 蓝色经济职业导航站</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">
+                <div class="navbar-logo">WEB</div>
+                <div>
+                    <div class="navbar-title">蓝色经济职业导航站</div>
+                    <div class="navbar-subtitle"><strong>实训手册</strong></div>
+                </div>
+            </a>
+            <div class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="navbar-nav">
+                <a href="#resources" class="nav-link">资源下载</a>
+                <a href="#intro" class="nav-link">项目简介</a>
+                <a href="#goals" class="nav-link">实训目标</a>
+                <a href="#structure" class="nav-link">项目结构</a>
+                <a href="#quickstart" class="nav-link">快速开始</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">手册目录</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="chapter1.html" class="sidebar-link">第1章：项目概述</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chapter2.html" class="sidebar-link">第2章：知识点回顾</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chapter3.html" class="sidebar-link">第3章：实训步骤</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chapter4.html" class="sidebar-link">第4章：AI辅助编程</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chapter5.html" class="sidebar-link">第5章：AI功能使用</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chapter6.html" class="sidebar-link">第6章：扩展任务</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chapter7.html" class="sidebar-link">第7章：附录</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 内容区域 -->
+        <div class="content-wrapper">
+            <!-- 资源下载区 -->
+            <section id="resources" class="section">
+                <div class="section-header">
+                    <span class="section-number">资源下载</span>
+                    <h1 class="section-title">项目资源</h1>
+                    <p class="section-subtitle">在开始实训之前，请先下载以下资源</p>
+                </div>
+
+                <div class="download-grid">
+                    <!-- 图片素材 -->
+                    <div class="download-card">
+                        <div class="download-card__icon">🖼️</div>
+                        <h3 class="download-card__title">图片素材包</h3>
+                        <p class="download-card__desc">
+                            包含项目所需的所有图片素材：Logo、产业图片、职业图片等。
+                        </p>
+                        <p class="download-card__info">
+                            <span>文件大小：约 2MB</span>
+                            <span>格式：JPG/PNG</span>
+                        </p>
+                        <a href="#" class="download-card__btn" onclick="alert('请向老师获取下载链接'); return false;">
+                            下载素材
+                        </a>
+                    </div>
+
+                    <!-- CSS模板 -->
+                    <div class="download-card">
+                        <div class="download-card__icon">🎨</div>
+                        <h3 class="download-card__title">CSS变量模板</h3>
+                        <p class="download-card__desc">
+                            预定义好的CSS变量文件，包含颜色、间距、圆角、阴影等变量定义。
+                        </p>
+                        <p class="download-card__info">
+                            <span>文件大小：约 5KB</span>
+                            <span>格式：CSS</span>
+                        </p>
+                        <a href="#" class="download-card__btn" onclick="alert('请向老师获取下载链接'); return false;">
+                            下载模板
+                        </a>
+                    </div>
+
+                    <!-- 完整代码 -->
+                    <div class="download-card">
+                        <div class="download-card__icon">💻</div>
+                        <h3 class="download-card__title">完整项目代码</h3>
+                        <p class="download-card__desc">
+                            完整的项目参考代码，供学生对照检查。建议先自己动手完成，再参考此代码。
+                        </p>
+                        <p class="download-card__info">
+                            <span>文件大小：约 50KB</span>
+                            <span>格式：HTML/CSS</span>
+                        </p>
+                        <a href="#" class="download-card__btn download-card__btn--reference" onclick="alert('请向老师获取下载链接'); return false;">
+                            下载参考代码
+                        </a>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <div class="alert-title">使用建议</div>
+                        <p>强烈建议先自己动手完成项目，遇到问题再参考完整代码。直接复制代码会大大降低学习效果！</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 项目简介 -->
+            <section id="intro" class="section">
+                <div class="section-header">
+                    <span class="section-number">第一章</span>
+                    <h1 class="section-title">项目简介</h1>
+                    <p class="section-subtitle">了解项目背景与定位</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🌊</div>
+                        <h3 class="card-title">项目介绍</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>
+                            <strong>蓝色经济职业导航站</strong>是一个面向海洋职业院校学生的职业启蒙与导航平台，帮助学生了解海洋新兴产业、探索相关职业方向、规划个人发展路径。
+                        </p>
+                        <p>
+                            本项目作为《Web前端应用基础》课程的综合实训案例，采用<strong>纯HTML5+CSS3</strong>技术实现，适合大一新生（零基础）学生进行实训练习。
+                        </p>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-number">1</span>
+                                <div class="feature-content">
+                                    <h4>产业全景</h4>
+                                    <p>全面了解海洋新能源、生物医药、渔业、交通运输、油气、滨海旅游六大新兴产业</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">2</span>
+                                <div class="feature-content">
+                                    <h4>职业导航</h4>
+                                    <p>深入探索海洋产业相关职业，了解岗位职责与发展路径</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">3</span>
+                                <div class="feature-content">
+                                    <h4>AI智能匹配</h4>
+                                    <p>通过AI技术分析兴趣与技能，推荐最适合的海洋职业发展方向</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-success">
+                            <span class="alert-icon">✅</span>
+                            <div class="alert-content">
+                                <div class="alert-title">技术栈</div>
+                                <p>HTML5 + CSS3 + Flexbox + Grid布局 + CSS变量 + 响应式设计</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 实训目标 -->
+            <section id="goals" class="section">
+                <div class="section-header">
+                    <span class="section-number">第二章</span>
+                    <h1 class="section-title">实训目标</h1>
+                    <p class="section-subtitle">明确学习目标与素养培养</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">技能目标</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li>掌握HTML5文档的基本结构</li>
+                            <li>熟练使用常用HTML标签（语义化标签、表单标签等）</li>
+                            <li>掌握CSS3样式编写技巧（选择器、盒模型、布局）</li>
+                            <li>学会使用Flexbox和Grid进行页面布局</li>
+                            <li>能够实现基础响应式设计</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💡</div>
+                        <h3 class="card-title">素养目标</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li>了解海洋产业发展现状与职业机遇</li>
+                            <li>培养自主学习和探索精神</li>
+                            <li>学会使用AI工具辅助编程</li>
+                            <li>提升问题分析与解决能力</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 项目结构 -->
+            <section id="structure" class="section">
+                <div class="section-header">
+                    <span class="section-number">第三章</span>
+                    <h1 class="section-title">项目结构</h1>
+                    <p class="section-subtitle">了解项目文件组织方式</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📁</div>
+                        <h3 class="card-title">文件结构</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">项目文件结构</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">blue-economy-career/
+│
+├── index.html              # 首页
+├── industry.html           # 海洋产业图谱
+├── career.html             # 职业探索
+├── career-detail.html      # 职业详情
+├── ai-match.html           # AI职业匹配
+├── about.html              # 校企合作介绍
+│
+├── css/
+│   ├── common.css          # 公共样式
+│   └── *.css               # 各页面样式
+│
+├── images/                 # 图片素材
+│
+└── README.md               # 项目说明</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 快速开始 -->
+            <section id="quickstart" class="section">
+                <div class="section-header">
+                    <span class="section-number">第四章</span>
+                    <h1 class="section-title">快速开始</h1>
+                    <p class="section-subtitle">开始实训的基本步骤</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🚀</div>
+                        <h3 class="card-title">操作步骤</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="steps-container">
+                            <div class="step-item" data-step="1">
+                                <h4 class="step-title">下载资源</h4>
+                                <p class="step-desc">从上方资源下载区获取图片素材和CSS模板</p>
+                            </div>
+                            <div class="step-item" data-step="2">
+                                <h4 class="step-title">创建项目文件夹</h4>
+                                <p class="step-desc">按照第3章的步骤创建项目文件结构</p>
+                            </div>
+                            <div class="step-item" data-step="3">
+                                <h4 class="step-title">编写代码</h4>
+                                <p class="step-desc">按照手册步骤，从零开始编写HTML和CSS代码</p>
+                            </div>
+                            <div class="step-item" data-step="4">
+                                <h4 class="step-title">预览测试</h4>
+                                <p class="step-desc">使用Live Server或直接打开HTML文件预览效果</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <span class="alert-icon">💡</span>
+                    <div class="alert-content">
+                        <div class="alert-title">学习建议</div>
+                        <p>建议先完整阅读手册各章节，了解项目全貌后再动手实践。遇到问题时，可以先尝试自己思考解决方案，必要时再参考示例代码。</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">泉州海洋职业学院</h3>
+            <p class="footer-desc">人工智能产业学院 · Web前端应用基础课程</p>
+            <p class="footer-info">© 2026 校企协同育人成果展示</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

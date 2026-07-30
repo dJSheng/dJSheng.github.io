@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="第6章：扩展任务 - 个人中心、学习路径等创意扩展">
+    <title>第6章：扩展任务 - 实训手册</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">
+                <div class="navbar-logo">WEB</div>
+                <div>
+                    <div class="navbar-title">蓝色经济职业导航站</div>
+                    <div class="navbar-subtitle"><strong>实训手册 - 第6章</strong></div>
+                </div>
+            </a>
+            <div class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="navbar-nav">
+                <a href="#profile" class="nav-link">个人中心</a>
+                <a href="#learning-path" class="nav-link">学习路径</a>
+                <a href="#creative" class="nav-link">创意扩展</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">第6章目录</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="#profile" class="sidebar-link">6.1 个人中心页面</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#learning-path" class="sidebar-link">6.2 学习路径页面</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#creative" class="sidebar-link">6.3 其他创意扩展</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#resources" class="sidebar-link">6.4 学习资源推荐</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 内容区域 -->
+        <div class="content-wrapper">
+            <!-- 个人中心页面 -->
+            <section id="profile" class="section">
+                <div class="section-header">
+                    <span class="section-number">6.1</span>
+                    <h1 class="section-title">个人中心页面</h1>
+                    <p class="section-subtitle">设计一个个人中心页面，包含用户信息展示、收藏的职业、学习记录等模块</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">👤</div>
+                        <h3 class="card-title">功能描述</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>设计一个个人中心页面，包含用户信息展示、收藏的职业、学习记录等模块。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🛠️</div>
+                        <h3 class="card-title">技术要点</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li>用户头像和基本信息展示</li>
+                            <li>收藏列表的卡片布局</li>
+                            <li>学习进度条的实现</li>
+                            <li>设置/编辑按钮的样式</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h3 class="card-title">页面结构建议</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">个人中心页面结构</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">&lt;!-- 个人中心 --&gt;
+&lt;main class="profile-page"&gt;
+    &lt;!-- 用户信息区 --&gt;
+    &lt;section class="profile-header"&gt;
+        &lt;div class="avatar"&gt;头像&lt;/div&gt;
+        &lt;div class="user-info"&gt;
+            &lt;h2&gt;用户名&lt;/h2&gt;
+            &lt;p&gt;个人简介...&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;!-- 收藏职业 --&gt;
+    &lt;section class="favorites"&gt;
+        &lt;h3&gt;我收藏的职业&lt;/h3&gt;
+        &lt;div class="favorite-list"&gt;...&lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;!-- 学习记录 --&gt;
+    &lt;section class="learning-history"&gt;
+        &lt;h3&gt;学习记录&lt;/h3&gt;
+        ...
+    &lt;/section&gt;
+&lt;/main&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学习路径页面 -->
+            <section id="learning-path" class="section">
+                <div class="section-header">
+                    <span class="section-number">6.2</span>
+                    <h1 class="section-title">学习路径页面</h1>
+                    <p class="section-subtitle">展示不同职业的学习路径，包括课程、证书、技能等</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📚</div>
+                        <h3 class="card-title">功能描述</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>展示不同职业的学习路径，包括需要学习的课程、获取的证书、掌握的技能等。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🛠️</div>
+                        <h3 class="card-title">技术要点</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li>时间线/步骤条布局</li>
+                            <li>课程卡片的展示</li>
+                            <li>技能标签的样式</li>
+                            <li>进度指示器</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h3 class="card-title">参考布局</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">学习路径时间线</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">&lt;!-- 学习路径时间线 --&gt;
+&lt;section class="learning-path"&gt;
+    &lt;div class="path-step"&gt;
+        &lt;div class="step-marker"&gt;1&lt;/div&gt;
+        &lt;div class="step-content"&gt;
+            &lt;h4&gt;基础阶段&lt;/h4&gt;
+            &lt;p&gt;学习基础理论知识&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="path-step"&gt;
+        &lt;div class="step-marker"&gt;2&lt;/div&gt;
+        &lt;div class="step-content"&gt;
+            &lt;h4&gt;进阶阶段&lt;/h4&gt;
+            &lt;p&gt;掌握专业技能&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- 更多步骤... --&gt;
+&lt;/section&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 其他创意扩展 -->
+            <section id="creative" class="section">
+                <div class="section-header">
+                    <span class="section-number">6.3</span>
+                    <h1 class="section-title">其他创意扩展</h1>
+                    <p class="section-subtitle">更多可以尝试的功能扩展方向</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💡</div>
+                        <h3 class="card-title">创意扩展方向</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-number">1</span>
+                                <div class="feature-content">
+                                    <h4>职业对比功能</h4>
+                                    <p>设计一个可以对比多个职业的页面，展示薪资、发展前景等对比信息</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">2</span>
+                                <div class="feature-content">
+                                    <h4>数据可视化</h4>
+                                    <p>使用纯CSS实现简单的柱状图、饼图，展示产业数据</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">3</span>
+                                <div class="feature-content">
+                                    <h4>暗黑模式</h4>
+                                    <p>为项目添加暗黑模式切换功能（使用CSS变量）</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">4</span>
+                                <div class="feature-content">
+                                    <h4>动画效果</h4>
+                                    <p>添加更多CSS动画效果，如卡片翻转、数字滚动等</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <span class="alert-icon">💡</span>
+                            <div class="alert-content">
+                                <div class="alert-title">扩展建议</div>
+                                <p>选择自己感兴趣的扩展任务进行实践。可以先用AI工具生成基础代码，再根据项目需求进行调整和美化。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学习资源推荐 -->
+            <section id="resources" class="section">
+                <div class="section-header">
+                    <span class="section-number">6.4</span>
+                    <h1 class="section-title">学习资源推荐</h1>
+                    <p class="section-subtitle">继续深入学习Web前端开发的推荐资源</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📖</div>
+                        <h3 class="card-title">学习资源</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>资源类型</th>
+                                        <th>推荐内容</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>HTML教程</td>
+                                        <td>MDN Web Docs - HTML基础</td>
+                                    </tr>
+                                    <tr>
+                                        <td>CSS教程</td>
+                                        <td>MDN Web Docs - CSS基础</td>
+                                    </tr>
+                                    <tr>
+                                        <td>布局学习</td>
+                                        <td>CSS-Tricks - Flexbox/Grid指南</td>
+                                    </tr>
+                                    <tr>
+                                        <td>设计参考</td>
+                                        <td>Dribbble、Behance等设计网站</td>
+                                    </tr>
+                                    <tr>
+                                        <td>图标素材</td>
+                                        <td>Font Awesome、iconfont等</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 章节导航 -->
+            <nav class="chapter-nav">
+                <div class="chapter-nav__inner">
+                    <div class="chapter-nav__prev">
+                        <a href="chapter5.html">
+                            <span class="chapter-nav__label">← 上一章</span>
+                            <span class="chapter-nav__title">第5章：AI功能使用</span>
+                        </a>
+                    </div>
+                    <a href="index.html" class="chapter-nav__home">🏠 返回首页</a>
+                    <div class="chapter-nav__next">
+                        <a href="chapter7.html">
+                            <span class="chapter-nav__label">下一章 →</span>
+                            <span class="chapter-nav__title">第7章：附录</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">泉州海洋职业学院</h3>
+            <p class="footer-desc">人工智能产业学院 · Web前端应用基础课程</p>
+            <p class="footer-info">© 2026 校企协同育人成果展示</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

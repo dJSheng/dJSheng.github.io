@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="第1章：项目概述 - 了解项目背景、目标和技术栈">
+    <title>第1章：项目概述 - 实训手册</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">
+                <div class="navbar-logo">WEB</div>
+                <div>
+                    <div class="navbar-title">蓝色经济职业导航站</div>
+                    <div class="navbar-subtitle"><strong>实训手册 - 第1章</strong></div>
+                </div>
+            </a>
+            <div class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="navbar-nav">
+                <a href="#background" class="nav-link">项目背景</a>
+                <a href="#intro" class="nav-link">项目介绍</a>
+                <a href="#tech" class="nav-link">技术栈</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">第1章目录</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="#background" class="sidebar-link">1.1 项目背景与目标</a>
+                    <ul class="sidebar-subnav">
+                        <li><a href="#bg-intro" class="sidebar-sublink">背景介绍</a></li>
+                        <li><a href="#bg-goal" class="sidebar-sublink">项目目标</a></li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#intro" class="sidebar-link">1.2 项目介绍</a>
+                    <ul class="sidebar-subnav">
+                        <li><a href="#intro-func" class="sidebar-sublink">核心功能</a></li>
+                        <li><a href="#intro-page" class="sidebar-sublink">页面结构</a></li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#tech" class="sidebar-link">1.3 技术栈说明</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 内容区域 -->
+        <div class="content-wrapper">
+            <!-- 项目背景 -->
+            <section id="background" class="section">
+                <div class="section-header">
+                    <span class="section-number">1.1</span>
+                    <h1 class="section-title">项目背景与目标</h1>
+                    <p class="section-subtitle">了解项目的背景和整体目标</p>
+                </div>
+
+                <div id="bg-intro" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🌊</div>
+                        <h3 class="card-title">背景介绍</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>随着海洋强国战略的深入推进，海洋新兴产业正成为国家经济发展的新引擎。<strong>蓝色经济</strong>是以海洋资源为基础的新兴经济形态，涵盖海洋新能源、生物医药、渔业、交通运输、油气、滨海旅游六大核心产业领域。</p>
+                        <p>本项目旨在帮助海洋职业院校学生了解海洋产业发展现状，探索相关职业方向，规划个人发展路径。</p>
+                    </div>
+                </div>
+
+                <div id="bg-goal" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">项目目标</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-number">1</span>
+                                <div class="feature-content">
+                                    <h4>知识目标</h4>
+                                    <p>了解六大海洋新兴产业的发展现状与职业机遇</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">2</span>
+                                <div class="feature-content">
+                                    <h4>技能目标</h4>
+                                    <p>掌握HTML5+CSS3网页开发的基本技能</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">3</span>
+                                <div class="feature-content">
+                                    <h4>素养目标</h4>
+                                    <p>培养自主学习能力和职业规划意识</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 项目介绍 -->
+            <section id="intro" class="section">
+                <div class="section-header">
+                    <span class="section-number">1.2</span>
+                    <h1 class="section-title">蓝色经济职业导航站介绍</h1>
+                    <p class="section-subtitle">了解项目的核心功能与页面结构</p>
+                </div>
+
+                <div id="intro-func" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📱</div>
+                        <h3 class="card-title">核心功能</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>功能模块</th>
+                                        <th>说明</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>海洋产业图谱</td>
+                                        <td>展示六大海洋新兴产业的详细信息</td>
+                                    </tr>
+                                    <tr>
+                                        <td>职业探索</td>
+                                        <td>浏览各产业相关职业，了解岗位职责与发展路径</td>
+                                    </tr>
+                                    <tr>
+                                        <td>AI职业匹配</td>
+                                        <td>通过AI技术分析用户兴趣，推荐适合的职业方向</td>
+                                    </tr>
+                                    <tr>
+                                        <td>校企合作介绍</td>
+                                        <td>展示校企合作背景与成果</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="intro-page" class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📄</div>
+                        <h3 class="card-title">页面结构</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">页面关系图</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">首页(index.html)
+    │
+    ├── 海洋产业图谱(industry.html)
+    │       └── 点击产业 → 职业探索页
+    │
+    ├── 职业探索(career.html)
+    │       └── 点击职业 → 职业详情页
+    │
+    ├── AI职业匹配(ai-match.html)
+    │       └── 表单提交
+    │
+    └── 校企合作(about.html)</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 技术栈 -->
+            <section id="tech" class="section">
+                <div class="section-header">
+                    <span class="section-number">1.3</span>
+                    <h1 class="section-title">技术栈说明</h1>
+                    <p class="section-subtitle">了解项目使用的技术与工具</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💻</div>
+                        <h3 class="card-title">核心技术</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-number">1</span>
+                                <div class="feature-content">
+                                    <h4>HTML5</h4>
+                                    <p>页面结构与内容，使用语义化标签</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">2</span>
+                                <div class="feature-content">
+                                    <h4>CSS3</h4>
+                                    <p>页面样式与布局，使用Flexbox/Grid</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">3</span>
+                                <div class="feature-content">
+                                    <h4>响应式设计</h4>
+                                    <p>适配不同屏幕尺寸</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <span class="alert-icon">💡</span>
+                            <div class="alert-content">
+                                <div class="alert-title">为什么不使用JavaScript？</div>
+                                <p>本项目面向《Web前端应用基础》课程，该课程不涉及JavaScript内容。AI功能通过纯HTML表单实现，学生无需编写JS代码即可体验完整的交互流程。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🛠️</div>
+                        <h3 class="card-title">开发工具</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li><strong>代码编辑器</strong>：VS Code（推荐）或其他编辑器</li>
+                            <li><strong>浏览器</strong>：Chrome、Firefox、Edge等现代浏览器</li>
+                            <li><strong>调试工具</strong>：浏览器开发者工具（F12）</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 章节导航 -->
+            <nav class="chapter-nav">
+                <div class="chapter-nav__inner">
+                    <div class="chapter-nav__prev chapter-nav__placeholder"></div>
+                    <a href="index.html" class="chapter-nav__home">🏠 返回首页</a>
+                    <div class="chapter-nav__next">
+                        <a href="chapter2.html">
+                            <span class="chapter-nav__label">下一章 →</span>
+                            <span class="chapter-nav__title">第2章：知识点回顾</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">泉州海洋职业学院</h3>
+            <p class="footer-desc">人工智能产业学院 · Web前端应用基础课程</p>
+            <p class="footer-info">© 2026 校企协同育人成果展示</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

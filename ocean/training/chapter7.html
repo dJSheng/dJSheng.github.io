@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="第7章：附录 - 常见问题解答与参考资源">
+    <title>第7章：附录 - 实训手册</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">
+                <div class="navbar-logo">WEB</div>
+                <div>
+                    <div class="navbar-title">蓝色经济职业导航站</div>
+                    <div class="navbar-subtitle"><strong>实训手册 - 第7章</strong></div>
+                </div>
+            </a>
+            <div class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="navbar-nav">
+                <a href="#faq" class="nav-link">常见问题</a>
+                <a href="#bem" class="nav-link">命名规范</a>
+                <a href="#colors" class="nav-link">颜色参考</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">第7章目录</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="#faq" class="sidebar-link">7.1 常见问题解答</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#bem" class="sidebar-link">7.2 CSS命名规范（BEM）</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#colors" class="sidebar-link">7.3 项目颜色参考</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#references" class="sidebar-link">7.4 参考资源</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 内容区域 -->
+        <div class="content-wrapper">
+            <!-- 常见问题解答 -->
+            <section id="faq" class="section">
+                <div class="section-header">
+                    <span class="section-number">7.1</span>
+                    <h1 class="section-title">常见问题解答</h1>
+                    <p class="section-subtitle">实训过程中常见的问题与解决方案</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">❓</div>
+                        <h3 class="card-title">Q1: 页面在浏览器中显示乱码怎么办？</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>A:</strong> 确保HTML文件的编码设置为UTF-8。在head标签中添加：</p>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">设置编码</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">&lt;meta charset="UTF-8"&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">❓</div>
+                        <h3 class="card-title">Q2: CSS样式没有生效怎么办？</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>A:</strong> 检查以下几点：</p>
+                        <ul>
+                            <li>CSS文件路径是否正确</li>
+                            <li>选择器是否写错</li>
+                            <li>是否有语法错误（缺少分号、括号等）</li>
+                            <li>浏览器开发者工具查看元素的计算样式</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">❓</div>
+                        <h3 class="card-title">Q3: 图片无法显示怎么办？</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>A:</strong> 检查图片路径是否正确，建议使用相对路径。确保图片文件存在于指定位置。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">❓</div>
+                        <h3 class="card-title">Q4: 布局在不同屏幕尺寸下错乱怎么办？</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>A:</strong> 使用媒体查询进行响应式设计：</p>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">媒体查询示例</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">@media screen and (max-width: 768px) {
+    /* 小屏幕样式 */
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">❓</div>
+                        <h3 class="card-title">Q5: 如何调试页面问题？</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>A:</strong> 使用浏览器开发者工具（F12）：</p>
+                        <ul>
+                            <li><strong>Elements面板</strong>：查看和修改HTML/CSS</li>
+                            <li><strong>Console面板</strong>：查看错误信息</li>
+                            <li><strong>Network面板</strong>：检查资源加载情况</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CSS命名规范 -->
+            <section id="bem" class="section">
+                <div class="section-header">
+                    <span class="section-number">7.2</span>
+                    <h1 class="section-title">CSS命名规范（BEM）</h1>
+                    <p class="section-subtitle">本项目采用BEM命名规范，结构清晰、易于维护</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📐</div>
+                        <h3 class="card-title">BEM命名规范</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">BEM命名示例</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">/* Block（块）- 独立的组件 */
+.card { }
+
+/* Element（元素）- 块的组成部分 */
+.card__title { }
+.card__content { }
+.card__footer { }
+
+/* Modifier（修饰符）- 状态或变体 */
+.card--featured { }
+.card--large { }
+.card__title--highlight { }</pre>
+                        </div>
+
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-number">Block</span>
+                                <div class="feature-content">
+                                    <h4>块</h4>
+                                    <p>独立的组件，如 card、header、nav</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">Element</span>
+                                <div class="feature-content">
+                                    <h4>元素</h4>
+                                    <p>块的组成部分，用双下划线连接，如 card__title</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-number">Modifier</span>
+                                <div class="feature-content">
+                                    <h4>修饰符</h4>
+                                    <p>状态或变体，用双中划线连接，如 card--active</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 项目颜色参考 -->
+            <section id="colors" class="section">
+                <div class="section-header">
+                    <span class="section-number">7.3</span>
+                    <h1 class="section-title">项目颜色参考</h1>
+                    <p class="section-subtitle">本项目使用的颜色规范</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🎨</div>
+                        <h3 class="card-title">颜色规范</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>颜色名称</th>
+                                        <th>色值</th>
+                                        <th>用途</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>主色（海洋蓝）</td>
+                                        <td>#1E88E5</td>
+                                        <td>主按钮、链接、重点元素</td>
+                                    </tr>
+                                    <tr>
+                                        <td>主色浅</td>
+                                        <td>#64B5F6</td>
+                                        <td>悬停状态、次要按钮</td>
+                                    </tr>
+                                    <tr>
+                                        <td>主色深</td>
+                                        <td>#1565C0</td>
+                                        <td>标题、强调文字</td>
+                                    </tr>
+                                    <tr>
+                                        <td>辅助色</td>
+                                        <td>#00ACC1</td>
+                                        <td>渐变、装饰元素</td>
+                                    </tr>
+                                    <tr>
+                                        <td>背景浅色</td>
+                                        <td>#F5F9FC</td>
+                                        <td>页面背景</td>
+                                    </tr>
+                                    <tr>
+                                        <td>文字主色</td>
+                                        <td>#333333</td>
+                                        <td>正文文字</td>
+                                    </tr>
+                                    <tr>
+                                        <td>文字次色</td>
+                                        <td>#666666</td>
+                                        <td>描述文字</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 参考资源 -->
+            <section id="references" class="section">
+                <div class="section-header">
+                    <span class="section-number">7.4</span>
+                    <h1 class="section-title">参考资源</h1>
+                    <p class="section-subtitle">继续深入学习Web前端开发的资源推荐</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📚</div>
+                        <h3 class="card-title">官方文档</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li><a href="https://developer.mozilla.org/zh-CN/" target="_blank">MDN Web Docs</a> - 权威的Web开发文档</li>
+                            <li><a href="https://www.w3.org/standards/" target="_blank">W3C标准</a> - Web技术标准</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🎓</div>
+                        <h3 class="card-title">学习平台</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li><a href="https://www.runoob.com/" target="_blank">菜鸟教程</a> - 入门教程</li>
+                            <li><a href="https://www.w3school.com.cn/" target="_blank">W3School</a> - 快速参考</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🛠️</div>
+                        <h3 class="card-title">工具推荐</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li><strong>VS Code</strong> - 代码编辑器</li>
+                            <li><strong>Live Server</strong> - 本地服务器插件</li>
+                            <li><strong>Chrome DevTools</strong> - 浏览器调试工具</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <span class="alert-icon">🎉</span>
+                    <div class="alert-content">
+                        <div class="alert-title">恭喜完成实训！</div>
+                        <p>通过本次实训，你已经掌握了HTML+CSS的基本用法，能够独立完成一个完整的静态网站项目。继续加油，探索更多Web开发的精彩世界！</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 章节导航 -->
+            <nav class="chapter-nav">
+                <div class="chapter-nav__inner">
+                    <div class="chapter-nav__prev">
+                        <a href="chapter6.html">
+                            <span class="chapter-nav__label">← 上一章</span>
+                            <span class="chapter-nav__title">第6章：扩展任务</span>
+                        </a>
+                    </div>
+                    <a href="index.html" class="chapter-nav__home">🏠 返回首页</a>
+                    <div class="chapter-nav__next chapter-nav__placeholder"></div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">泉州海洋职业学院</h3>
+            <p class="footer-desc">人工智能产业学院 · Web前端应用基础课程</p>
+            <p class="footer-info">© 2026 校企协同育人成果展示</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

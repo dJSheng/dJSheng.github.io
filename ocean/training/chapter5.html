@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="第5章：AI功能使用说明 - HTML表单实现AI职业匹配">
+    <title>第5章：AI功能使用说明 - 实训手册</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">
+                <div class="navbar-logo">WEB</div>
+                <div>
+                    <div class="navbar-title">蓝色经济职业导航站</div>
+                    <div class="navbar-subtitle"><strong>实训手册 - 第5章</strong></div>
+                </div>
+            </a>
+            <div class="menu-toggle" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="navbar-nav">
+                <a href="#intro" class="nav-link">功能介绍</a>
+                <a href="#api" class="nav-link">接口文档</a>
+                <a href="#form" class="nav-link">表单示例</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">第5章目录</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="#intro" class="sidebar-link">5.1 AI职业匹配功能介绍</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#principle" class="sidebar-link">5.2 实现原理</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#api" class="sidebar-link">5.3 后端接口文档</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#form" class="sidebar-link">5.4 完整表单代码示例</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#elements" class="sidebar-link">5.5 表单元素详解</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#styles" class="sidebar-link">5.6 表单样式代码</a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#notes" class="sidebar-link">5.7 注意事项</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- 内容区域 -->
+        <div class="content-wrapper">
+            <!-- 功能介绍 -->
+            <section id="intro" class="section">
+                <div class="section-header">
+                    <span class="section-number">5.1</span>
+                    <h1 class="section-title">AI职业匹配功能介绍</h1>
+                    <p class="section-subtitle">本项目的亮点功能，通过分析用户信息智能推荐职业方向</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🤖</div>
+                        <h3 class="card-title">功能说明</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>AI职业匹配</strong>是本项目的亮点功能，通过分析用户的兴趣、技能和性格特点，智能推荐最适合的海洋职业方向。</p>
+
+                        <div class="alert alert-info">
+                            <span class="alert-icon">💡</span>
+                            <div class="alert-content">
+                                <div class="alert-title">技术亮点</div>
+                                <p>本项目的AI功能采用<strong>纯HTML表单</strong>实现，学生完全不需要编写JavaScript代码！只需理解HTML表单的基本用法即可。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 实现原理 -->
+            <section id="principle" class="section">
+                <div class="section-header">
+                    <span class="section-number">5.2</span>
+                    <h1 class="section-title">实现原理</h1>
+                    <p class="section-subtitle">了解表单提交的工作流程</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔄</div>
+                        <h3 class="card-title">技术架构</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">工作流程</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">┌─────────────────┐    表单提交    ┌─────────────────┐
+│                 │ ────────────→ │                 │
+│  用户填写表单    │               │   后端服务器     │
+│  (HTML页面)     │               │   (AI处理)      │
+│                 │ ←──────────── │                 │
+└─────────────────┘   返回结果    └─────────────────┘
+
+步骤说明：
+1. 用户在HTML页面填写表单
+2. 点击提交按钮，浏览器将数据发送到后端
+3. 后端AI服务分析数据
+4. 返回匹配结果页面</pre>
+                        </div>
+
+                        <p><strong>学生任务：</strong></p>
+                        <ul>
+                            <li>编写HTML表单结构</li>
+                            <li>设计表单样式（CSS）</li>
+                            <li>设置表单的action属性（指向后端API地址）</li>
+                        </ul>
+                        <p><strong>不需要</strong>编写任何JavaScript代码来处理表单数据。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 后端接口文档 -->
+            <section id="api" class="section">
+                <div class="section-header">
+                    <span class="section-number">5.3</span>
+                    <h1 class="section-title">后端接口文档</h1>
+                    <p class="section-subtitle">了解表单提交的目标地址和参数格式</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📡</div>
+                        <h3 class="card-title">API接口说明</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="api-method api-method-post">POST</div>
+                        <div class="api-url">/api/ai-match</div>
+
+                        <p><strong>接口说明：</strong>AI职业匹配接口，接收用户填写的个人信息，返回匹配的职业推荐结果。</p>
+
+                        <p><strong>请求地址：</strong></p>
+                        <div class="code-block">
+                            <pre class="code-content">http://39.100.68.78:8087/api/ai-match</pre>
+                        </div>
+
+                        <p class="api-note">注意：本地测试时表单提交会发送到此服务器地址。如果服务器未启动或网络不通，提交可能会失败。</p>
+
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>参数名</th>
+                                        <th>类型</th>
+                                        <th>必填</th>
+                                        <th>说明</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>interest</code></td>
+                                        <td>string</td>
+                                        <td>是</td>
+                                        <td>感兴趣的产业方向</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>skills</code></td>
+                                        <td>array</td>
+                                        <td>是</td>
+                                        <td>技能特长（可多选）</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>personality</code></td>
+                                        <td>string</td>
+                                        <td>是</td>
+                                        <td>性格特点</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>education</code></td>
+                                        <td>string</td>
+                                        <td>是</td>
+                                        <td>学历背景</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>notes</code></td>
+                                        <td>string</td>
+                                        <td>否</td>
+                                        <td>其他补充说明</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 完整表单代码示例 -->
+            <section id="form" class="section">
+                <div class="section-header">
+                    <span class="section-number">5.4</span>
+                    <h1 class="section-title">完整表单代码示例</h1>
+                    <p class="section-subtitle">AI匹配表单的完整HTML结构</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <h3 class="card-title">AI匹配表单完整代码</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">AI匹配表单完整代码</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">&lt;!-- AI职业匹配表单 --&gt;
+&lt;form action="/api/ai-match" method="POST"&gt;
+
+    &lt;!-- 兴趣方向（单选下拉框） --&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label class="form-label" for="interest"&gt;您最感兴趣的海洋产业方向&lt;/label&gt;
+        &lt;select class="form-select" id="interest" name="interest" required&gt;
+            &lt;option value=""&gt;请选择...&lt;/option&gt;
+            &lt;option value="new-energy"&gt;海洋新能源（海上风电、潮汐能等）&lt;/option&gt;
+            &lt;option value="biomedicine"&gt;海洋生物医药（药物研发、质量控制等）&lt;/option&gt;
+            &lt;option value="fishery"&gt;海洋渔业（养殖、捕捞、加工等）&lt;/option&gt;
+            &lt;option value="transport"&gt;海洋交通运输（航运、港口管理等）&lt;/option&gt;
+            &lt;option value="oil-gas"&gt;海洋油气业（勘探、开采、工程等）&lt;/option&gt;
+            &lt;option value="tourism"&gt;滨海旅游业（邮轮、度假、研学等）&lt;/option&gt;
+            &lt;option value="not-sure"&gt;还不确定，希望AI推荐&lt;/option&gt;
+        &lt;/select&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 技能特长（多选复选框） --&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label class="form-label"&gt;您的技能特长（可多选）&lt;/label&gt;
+        &lt;div class="form-checkbox-group"&gt;
+            &lt;label class="form-checkbox"&gt;
+                &lt;input type="checkbox" name="skills" value="technical"&gt;
+                &lt;span&gt;技术动手能力强&lt;/span&gt;
+            &lt;/label&gt;
+            &lt;label class="form-checkbox"&gt;
+                &lt;input type="checkbox" name="skills" value="communication"&gt;
+                &lt;span&gt;沟通协调能力强&lt;/span&gt;
+            &lt;/label&gt;
+            &lt;!-- 更多选项... --&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 提交按钮 --&gt;
+    &lt;div class="form-submit"&gt;
+        &lt;button type="submit" class="submit-btn"&gt;
+            开始AI匹配分析
+        &lt;/button&gt;
+    &lt;/div&gt;
+
+&lt;/form&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 表单元素详解 -->
+            <section id="elements" class="section">
+                <div class="section-header">
+                    <span class="section-number">5.5</span>
+                    <h1 class="section-title">表单元素详解</h1>
+                    <p class="section-subtitle">理解各种表单元素的用法</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h3 class="card-title">下拉选择框（select）</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">select示例</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">&lt;select name="interest" required&gt;
+    &lt;option value=""&gt;请选择...&lt;/option&gt;         &lt;!-- 默认空选项 --&gt;
+    &lt;option value="new-energy"&gt;海洋新能源&lt;/option&gt; &lt;!-- 实际值和技术文档对应 --&gt;
+&lt;/select&gt;</pre>
+                        </div>
+                        <ul>
+                            <li><code>&lt;select&gt;</code>：下拉选择框容器</li>
+                            <li><code>&lt;option&gt;</code>：选项，value是提交给后端的值</li>
+                            <li><code>required</code>：必填验证</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">☑️</div>
+                        <h3 class="card-title">复选框（checkbox）</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">checkbox示例</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">&lt;label class="form-checkbox"&gt;
+    &lt;input type="checkbox" name="skills" value="technical"&gt;
+    &lt;span&gt;技术动手能力强&lt;/span&gt;
+&lt;/label&gt;</pre>
+                        </div>
+                        <ul>
+                            <li><code>type="checkbox"</code>：复选框类型</li>
+                            <li>多个同name的checkbox会被合并为数组提交</li>
+                            <li>用 <code>&lt;label&gt;</code> 包裹可以点击文字也能选中</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📄</div>
+                        <h3 class="card-title">多行文本框（textarea）</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">textarea示例</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">&lt;textarea name="notes" placeholder="请输入..."&gt;&lt;/textarea&gt;</pre>
+                        </div>
+                        <ul>
+                            <li><code>&lt;textarea&gt;</code>：多行文本输入</li>
+                            <li><code>placeholder</code>：占位提示文字</li>
+                            <li>可用CSS设置 <code>min-height</code> 控制高度</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 表单样式代码 -->
+            <section id="styles" class="section">
+                <div class="section-header">
+                    <span class="section-number">5.6</span>
+                    <h1 class="section-title">表单样式代码</h1>
+                    <p class="section-subtitle">表单元素的CSS样式</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🎨</div>
+                        <h3 class="card-title">表单样式代码</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">表单样式（添加到CSS文件中）</span>
+                                <button class="code-copy" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre class="code-content">/* 表单组 */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+/* 表单标签 */
+.form-label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* 输入框通用样式 */
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-family: var(--font-family);
+    transition: all 0.3s ease;
+}
+
+/* 聚焦状态 */
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+}
+
+/* 多行文本框 */
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* 复选框组 */
+.form-checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+}
+
+/* 提交按钮 */
+.submit-btn {
+    padding: var(--spacing-sm) var(--spacing-xl);
+    background: var(--gradient-primary);
+    color: var(--bg-white);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 注意事项 -->
+            <section id="notes" class="section">
+                <div class="section-header">
+                    <span class="section-number">5.7</span>
+                    <h1 class="section-title">注意事项</h1>
+                    <p class="section-subtitle">常见问题解答</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">⚠️</div>
+                        <h3 class="card-title">本地测试说明</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="alert alert-warning">
+                            <span class="alert-icon">⚠️</span>
+                            <div class="alert-content">
+                                <div class="alert-title">本地测试说明</div>
+                                <p>本项目的AI功能需要后端服务支持。在本地实训时，点击"开始AI匹配分析"按钮可能会显示"无法连接"或404错误，这是正常现象。</p>
+                                <p><strong>重点在于理解表单的编写方式，而非实际的数据处理。</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">❓</div>
+                        <h3 class="card-title">常见问题</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Q1: name属性可以随便写吗？</strong></p>
+                        <p>A: 不可以！name属性必须与后端接口文档中定义的参数名完全一致，否则后端无法正确接收数据。</p>
+
+                        <p><strong>Q2: value属性的值是怎么来的？</strong></p>
+                        <p>A: value值也需要与后端约定好。例如"new-energy"代表海洋新能源，后端根据这个值进行匹配计算。</p>
+
+                        <p><strong>Q3: 为什么复选框的name都一样？</strong></p>
+                        <p>A: 同名的多个checkbox会被合并为一个数组提交。例如skills数组可能包含 ["technical", "outdoor"]。</p>
+
+                        <p><strong>Q4: 如何测试表单是否正确？</strong></p>
+                        <p>A: 可以先用 <code>action="https://httpbin.org/post"</code> 测试，这个网站会返回你提交的数据，方便调试。</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <span class="alert-icon">✅</span>
+                    <div class="alert-content">
+                        <div class="alert-title">实训要点</div>
+                        <p>通过本项目，你将掌握HTML表单的基本用法。在实际开发中，表单是最常用的用户交互方式之一，理解表单的工作原理非常重要。</p>
+                        <p>完成本章后，你应该能够：</p>
+                        <ul>
+                            <li>编写包含各种输入类型的表单</li>
+                            <li>正确设置name、value、required等属性</li>
+                            <li>理解表单提交的工作流程</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 章节导航 -->
+            <nav class="chapter-nav">
+                <div class="chapter-nav__inner">
+                    <div class="chapter-nav__prev">
+                        <a href="chapter4.html">
+                            <span class="chapter-nav__label">← 上一章</span>
+                            <span class="chapter-nav__title">第4章：AI辅助编程</span>
+                        </a>
+                    </div>
+                    <a href="index.html" class="chapter-nav__home">🏠 返回首页</a>
+                    <div class="chapter-nav__next">
+                        <a href="chapter6.html">
+                            <span class="chapter-nav__label">下一章 →</span>
+                            <span class="chapter-nav__title">第6章：扩展任务</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">泉州海洋职业学院</h3>
+            <p class="footer-desc">人工智能产业学院 · Web前端应用基础课程</p>
+            <p class="footer-info">© 2026 校企协同育人成果展示</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
