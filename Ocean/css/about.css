@@ -1,0 +1,218 @@
+/* ========================================
+   校企合作页样式 - about.css
+   蓝色经济职业导航站
+   ======================================== */
+
+/* ---------- 合作介绍 ---------- */
+.about-intro {
+    padding: var(--spacing-xl) 0;
+    background: var(--bg-white);
+}
+
+.about-intro__content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-intro__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.about-intro__desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 2;
+}
+
+/* ---------- 合作双方 ---------- */
+.about-partners {
+    padding: var(--spacing-xl) 0;
+}
+
+.about-partners__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+}
+
+.partner-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.partner-card__logo {
+    width: 100px;
+    height: 100px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    margin: 0 auto var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.partner-card__name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.partner-card__type {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.partner-card__desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+/* ---------- 合作方向 ---------- */
+.about-directions {
+    padding: var(--spacing-xl) 0;
+    background: var(--gradient-light);
+}
+
+.about-directions__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.about-directions__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+}
+
+.direction-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.direction-card__icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    margin: 0 auto var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.direction-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.direction-card__desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ---------- 合作成果 ---------- */
+.about-results {
+    padding: var(--spacing-xl) 0;
+}
+
+.about-results__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.about-results__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.result-item__icon {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.result-item__text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+/* ---------- 项目说明 ---------- */
+.about-project {
+    padding: var(--spacing-xl) 0;
+    background: var(--bg-white);
+}
+
+.about-project__content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.about-project__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.about-project__text {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 2;
+}
+
+/* ---------- 响应式设计 ---------- */
+@media screen and (max-width: 992px) {
+    .about-partners__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-directions__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .about-directions__grid {
+        grid-template-columns: 1fr;
+    }
+}

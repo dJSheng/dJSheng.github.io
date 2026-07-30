@@ -1,0 +1,256 @@
+/* ========================================
+   职业详情样式 - detail.css
+   蓝色经济职业导航站
+   ======================================== */
+
+/* ---------- 详情头部 ---------- */
+.detail-header {
+    background: var(--gradient-primary);
+    color: var(--bg-white);
+    padding: var(--spacing-xl) 0;
+}
+
+.detail-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.detail-header__icon {
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+}
+
+.detail-header__info {
+    flex: 1;
+}
+
+.detail-header__industry {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xs);
+}
+
+.detail-header__title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+}
+
+.detail-header__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.detail-header__tag {
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+}
+
+/* ---------- 详情内容 ---------- */
+.detail-content {
+    padding: var(--spacing-xl) 0;
+}
+
+.detail-content__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.detail-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.detail-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* 信息卡片 */
+.info-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.info-card__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.info-card__text {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+}
+
+/* 发展路径 */
+.path-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.path-card__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.path-card__steps {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.path-step {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--gradient-light);
+    border-radius: var(--radius-md);
+    color: var(--primary-dark);
+    font-size: 0.9rem;
+}
+
+.path-arrow {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+/* 从业者故事 */
+.story-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.story-card__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.story-card__content {
+    padding: var(--spacing-md);
+    background: var(--gradient-light);
+    border-radius: var(--radius-md);
+}
+
+.story-card__name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.story-card__text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+}
+
+/* 侧边栏卡片 */
+.sidebar-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.sidebar-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.sidebar-card__item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-card__item:last-child {
+    border-bottom: none;
+}
+
+.sidebar-card__label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.sidebar-card__value {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* 相关职业 */
+.related-careers {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.related-careers__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.related-careers__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.related-careers__link {
+    display: block;
+    padding: var(--spacing-xs);
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+}
+
+.related-careers__link:hover {
+    background: var(--gradient-light);
+}
+
+/* ---------- 响应式设计 ---------- */
+@media screen and (max-width: 992px) {
+    .detail-content__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-header__inner {
+        flex-direction: column;
+        text-align: center;
+    }
+}

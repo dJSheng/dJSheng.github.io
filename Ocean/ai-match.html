@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI职业匹配测试 - 通过AI技术分析你的兴趣与技能，推荐最适合的海洋职业发展方向">
+    <title>AI职业匹配 - 蓝色经济职业导航站</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/ai-match.css">
+</head>
+<body>
+    <!-- 页头 -->
+    <header class="header">
+        <div class="container header__inner">
+            <div class="header__logo">
+                <img src="images/logo/logo.png" alt="蓝色经济职业导航站Logo" class="header__logo-img">
+                <div class="header__logo-text-wrapper">
+                    <span class="header__logo-text">蓝色经济职业导航站</span>
+                    <span class="header__logo-sub">Blue Economy Career Navigator</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav__link">首页</a>
+                <a href="industry.html" class="nav__link">产业图谱</a>
+                <a href="career.html" class="nav__link">职业探索</a>
+                <a href="ai-match.html" class="nav__link nav__link--active">AI匹配</a>
+                <a href="about.html" class="nav__link">关于我们</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- AI功能介绍 -->
+    <section class="ai-intro">
+        <div class="container ai-intro__content">
+            <div class="ai-intro__icon">🤖</div>
+            <h1 class="ai-intro__title">AI智能职业匹配</h1>
+            <p class="ai-intro__desc">
+                基于人工智能技术，分析您的兴趣特长与职业偏好，为您推荐最适合的海洋职业发展方向。只需填写简单的信息，AI将为您生成个性化的职业建议。
+            </p>
+        </div>
+    </section>
+
+    <!-- 匹配表单 -->
+    <section class="ai-match-form">
+        <div class="container">
+            <div class="ai-match-form__wrapper">
+                <h2 class="form-title">开始您的职业匹配测试</h2>
+
+                <!--
+                    学生实训说明：
+                    这是一个纯HTML表单，action属性指向后端API地址。
+                    学生只需要学习HTML表单的基本用法，不需要写JavaScript。
+                    表单提交后，后端会处理数据并返回匹配结果。
+                -->
+                <form action="http://39.100.68.78:8087/api/ai-match" method="POST">
+                    <!-- 兴趣方向 -->
+                    <div class="form-group">
+                        <label class="form-label" for="interest">您最感兴趣的海洋产业方向</label>
+                        <select class="form-select" id="interest" name="interest" required>
+                            <option value="">请选择...</option>
+                            <option value="new-energy">海洋新能源（海上风电、潮汐能等）</option>
+                            <option value="biomedicine">海洋生物医药（药物研发、质量控制等）</option>
+                            <option value="fishery">海洋渔业（养殖、捕捞、加工等）</option>
+                            <option value="transport">海洋交通运输（航运、港口管理等）</option>
+                            <option value="oil-gas">海洋油气业（勘探、开采、工程等）</option>
+                            <option value="tourism">滨海旅游业（邮轮、度假、研学等）</option>
+                            <option value="not-sure">还不确定，希望AI推荐</option>
+                        </select>
+                    </div>
+
+                    <!-- 技能特长 -->
+                    <div class="form-group">
+                        <label class="form-label" for="skills">您的技能特长（可多选）</label>
+                        <div class="form-checkbox-group">
+                            <label class="form-checkbox">
+                                <input type="checkbox" name="skills" value="technical">
+                                <span>技术动手能力强</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="checkbox" name="skills" value="communication">
+                                <span>沟通协调能力强</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="checkbox" name="skills" value="analysis">
+                                <span>数据分析能力强</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="checkbox" name="skills" value="creativity">
+                                <span>创新思维能力强</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="checkbox" name="skills" value="leadership">
+                                <span>团队管理能力强</span>
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="checkbox" name="skills" value="outdoor">
+                                <span>适应户外作业</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 性格特点 -->
+                    <div class="form-group">
+                        <label class="form-label" for="personality">您的性格特点</label>
+                        <select class="form-select" id="personality" name="personality" required>
+                            <option value="">请选择...</option>
+                            <option value="adventurous">喜欢冒险挑战</option>
+                            <option value="stable">偏好稳定工作</option>
+                            <option value="social">喜欢与人交流</option>
+                            <option value="independent">偏好独立工作</option>
+                            <option value="team">喜欢团队协作</option>
+                        </select>
+                    </div>
+
+                    <!-- 学历背景 -->
+                    <div class="form-group">
+                        <label class="form-label" for="education">您的学历/专业背景</label>
+                        <select class="form-select" id="education" name="education" required>
+                            <option value="">请选择...</option>
+                            <option value="high-school">高中/中专</option>
+                            <option value="college">大专</option>
+                            <option value="bachelor">本科</option>
+                            <option value="master">硕士及以上</option>
+                        </select>
+                    </div>
+
+                    <!-- 其他说明 -->
+                    <div class="form-group">
+                        <label class="form-label" for="notes">其他想说的话（选填）</label>
+                        <textarea
+                            class="form-textarea"
+                            id="notes"
+                            name="notes"
+                            placeholder="例如：对某个职业特别感兴趣、有什么顾虑等..."
+                        ></textarea>
+                        <p class="form-hint">您可以补充任何想让AI了解的信息</p>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="form-submit">
+                        <button type="submit" class="submit-btn">
+                            开始AI匹配分析
+                        </button>
+                    </div>
+                </form>
+
+                <!-- 说明文字 -->
+                <p class="form-hint text-center mt-md">
+                    本测试基于AI技术进行分析，结果仅供参考。
+                    <br>
+                    实际职业选择还需结合个人实际情况综合考虑。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能说明 -->
+    <section class="ai-features">
+        <div class="container">
+            <h2 class="page-title">AI匹配能为您做什么</h2>
+            <div class="ai-features__grid">
+                <div class="ai-feature-card">
+                    <div class="ai-feature-card__icon">🎯</div>
+                    <h3 class="ai-feature-card__title">精准匹配</h3>
+                    <p class="ai-feature-card__desc">
+                        根据您的兴趣、技能和性格特点，精准推荐最适合的海洋职业方向
+                    </p>
+                </div>
+                <div class="ai-feature-card">
+                    <div class="ai-feature-card__icon">📊</div>
+                    <h3 class="ai-feature-card__title">发展分析</h3>
+                    <p class="ai-feature-card__desc">
+                        分析推荐职业的发展前景、所需技能和成长路径
+                    </p>
+                </div>
+                <div class="ai-feature-card">
+                    <div class="ai-feature-card__icon">💡</div>
+                    <h3 class="ai-feature-card__title">个性建议</h3>
+                    <p class="ai-feature-card__desc">
+                        提供针对性的学习建议和职业规划指导
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <p class="footer__copyright">
+                © 2026 蓝色经济职业导航站 | 泉州海洋职业学院课程实训项目
+            </p>
+            <p class="footer__cooperation">
+                本项目为泉州海洋职业学院×科大讯飞人工智能产业学院校企合作成果展示
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
