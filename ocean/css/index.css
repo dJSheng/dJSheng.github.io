@@ -1,0 +1,294 @@
+/* ========================================
+   首页样式 - index.css
+   蓝色经济职业导航站
+   ======================================== */
+
+/* ---------- 首页横幅 ---------- */
+.hero {
+    background: var(--gradient-primary);
+    color: var(--bg-white);
+    padding: 80px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></svg>') repeat;
+    background-size: 200px 200px;
+    animation: float 20s linear infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50px); }
+}
+
+.hero__content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero__title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 4px;
+}
+
+.hero__subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-lg);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ---------- 首页横幅按钮样式 ---------- */
+/* 探索产业按钮 - 白色实心按钮 */
+.hero .btn--primary {
+    background: var(--bg-white);
+    color: var(--primary-color);
+    border: 2px solid var(--bg-white);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.hero .btn--primary:hover {
+    background: transparent;
+    color: var(--bg-white);
+    box-shadow: none;
+    transform: translateY(-2px);
+}
+
+/* 职业探索按钮 - 透明玻璃质感按钮 */
+.hero .btn--outline {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--bg-white);
+    border: 2px solid var(--bg-white);
+    backdrop-filter: blur(10px);
+}
+
+.hero .btn--outline:hover {
+    background: var(--bg-white);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.hero__actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ---------- 特色功能介绍 ---------- */
+.features {
+    padding: var(--spacing-xl) 0;
+    background: var(--bg-white);
+}
+
+.features__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+}
+
+.feature-card {
+    text-align: center;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    background: var(--gradient-light);
+    transform: translateY(-8px);
+}
+
+.feature-card__icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--spacing-md);
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.feature-card__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.feature-card__desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+/* ---------- 产业预览 ---------- */
+.industry-preview {
+    padding: var(--spacing-xl) 0;
+}
+
+.industry-preview__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.industry-preview__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+}
+
+.industry-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.industry-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.industry-card__header {
+    background: var(--gradient-primary);
+    color: var(--bg-white);
+    padding: var(--spacing-md);
+    text-align: center;
+}
+
+.industry-card__icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.industry-card__name {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.industry-card__body {
+    padding: var(--spacing-md);
+}
+
+.industry-card__desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-sm);
+}
+
+.industry-card__link {
+    display: inline-block;
+    color: var(--primary-color);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.industry-card__link:hover {
+    color: var(--primary-dark);
+}
+
+/* ---------- 统计数据 ---------- */
+.stats {
+    background: var(--gradient-primary);
+    color: var(--bg-white);
+    padding: var(--spacing-xl) 0;
+}
+
+.stats__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    text-align: center;
+}
+
+.stat-item__number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-item__label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* ---------- 行动号召 ---------- */
+.cta {
+    padding: var(--spacing-xl) 0;
+    text-align: center;
+    background: var(--bg-white);
+}
+
+.cta__title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.cta__desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ---------- 响应式设计 ---------- */
+@media screen and (max-width: 992px) {
+    .features__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stats__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .hero {
+        padding: 60px 0;
+    }
+
+    .hero__title {
+        font-size: 2rem;
+    }
+
+    .hero__subtitle {
+        font-size: 1rem;
+    }
+
+    .features__grid,
+    .industry-preview__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .stat-item__number {
+        font-size: 2rem;
+    }
+}
