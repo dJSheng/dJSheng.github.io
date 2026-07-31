@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泉州民俗坊</title>
+    <!-- 引入外部CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- ========== 顶部横幅（position定位） ========== -->
+    <div class="top-banner">
+        <!-- 左右对称的传统纹样装饰 -->
+        <img src="images/chuantong.png" alt="传统纹样装饰" class="banner-pattern pattern-left">
+        <img src="images/chuantong.png" alt="传统纹样装饰" class="banner-pattern pattern-right">
+        <h1 class="site-title">泉州民俗坊</h1>
+        <p class="site-slogan">千年海丝 · 非遗传承</p>
+    </div>
+
+    <!-- ========== 导航栏（float布局） ========== -->
+    <nav class="main-nav w clearfix">
+        <ul class="nav-list clearfix">
+            <li><a href="#"><i class="fas fa-home"></i> 首页</a></li>
+            <li><a href="#"><i class="fas fa-mask"></i> 民俗文化</a></li>
+            <li><a href="#"><i class="fas fa-star"></i> 节庆活动</a></li>
+            <li><a href="#"><i class="fas fa-hammer"></i> 手工艺坊</a></li>
+            <li><a href="#"><i class="fas fa-landmark"></i> 关于我们</a></li>
+        </ul>
+        <div class="search-box">
+            <input type="text" placeholder="搜索民俗...">
+            <button type="button"><i class="fas fa-search"></i> 搜索</button>
+        </div>
+    </nav>
+
+    <!-- ========== 第一节：节庆文化（float布局） ========== -->
+    <section id="festival" class="w">
+        <h2 class="subtitle-title">节庆文化</h2>
+        <ul class="card-list clearfix">
+            <li class="festival-card">
+                <img src="images/tixianmuou.jpg" alt="提线木偶">
+                <h3>提线木偶</h3>
+                <p>提线木偶是泉州传统民间艺术的瑰宝，以其精巧的操控技艺和生动的艺术表现力著称。</p>
+            </li>
+            <li class="festival-card">
+                <img src="images/houdinggong.jpg" alt="火鼎公火鼎婆">
+                <h3>火鼎公火鼎婆</h3>
+                <p>火鼎公火鼎婆是闽南地区独特的民俗舞蹈，常在节庆活动中表演，寓意吉祥如意。</p>
+            </li>
+            <li class="festival-card last">
+                <img src="images/paixiongwu.jpg" alt="拍胸舞">
+                <h3>拍胸舞</h3>
+                <p>拍胸舞是一种富有节奏感的传统舞蹈，通过拍打身体表达欢快情绪，展现闽南人民的热情与活力。</p>
+            </li>
+        </ul>
+    </section>
+
+    <!-- ========== 第二节：民俗之声（position布局） ========== -->
+    <section id="culture" class="w">
+        <h2 class="subtitle-title">民俗之声</h2>
+        <!-- 父容器position:relative，子元素position:absolute实现层叠定位 -->
+        <div class="culture-stage">
+            <div class="culture-card card-left">
+                <img src="images/mianxianhu.jpg" alt="闽南话">
+                <div class="card-body">
+                    <h3>闽南话</h3>
+                    <p>古汉语活化石<br>唐宋官话的现存代表</p>
+                </div>
+            </div>
+
+            <div class="culture-card card-center">
+                <img src="images/nanyin.png" alt="南音">
+                <div class="card-body">
+                    <h3>南音</h3>
+                    <p>华夏正音<br>联合国非遗代表作</p>
+                </div>
+            </div>
+
+            <div class="culture-card card-right">
+                <img src="images/gaojiaxi.png" alt="高甲戏">
+                <div class="card-body">
+                    <h3>高甲戏</h3>
+                    <p>闽南戏曲明珠<br>源自明末的民间戏剧</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 第三节：特色美食（float布局） ========== -->
+    <section id="food" class="w">
+        <h2 class="subtitle-title">特色美食</h2>
+        <ul class="card-list clearfix">
+            <li class="food-card">
+                <img src="images/rouzong.jpg" alt="肉粽">
+                <h3>肉粽</h3>
+                <p>山珍海味交融其中，是泉州人舌尖上的乡愁。</p>
+            </li>
+            <li class="food-card">
+                <img src="images/runbing.jpg" alt="润饼皮">
+                <h3>润饼皮</h3>
+                <p>思乡的味道，闽南传统节令不可缺。</p>
+            </li>
+            <li class="food-card">
+                <img src="images/shihuagao.jpg" alt="石花膏">
+                <h3>石花膏</h3>
+                <p>原汁原味的天然冷饮，爽滑又富嚼劲。</p>
+            </li>
+            <li class="food-card last">
+                <img src="images/shuiwantang.jpg" alt="水丸汤">
+                <h3>水丸汤</h3>
+                <p>手打鱼丸，清汤鲜美，是泉州人的家常滋味。</p>
+            </li>
+            <li class="food-card">
+                <img src="images/mianxianhu.jpg" alt="面线糊">
+                <h3>面线糊</h3>
+                <p>非遗技艺传承，细面如丝，糊香柔滑。</p>
+            </li>
+            <li class="food-card">
+                <img src="images/jizhua.jpg" alt="洪濑鸡爪">
+                <h3>洪濑鸡爪</h3>
+                <p>独家卤汁，色泽诱人，有嚼头，有滋味，醇香扑鼻。</p>
+            </li>
+            <li class="food-card">
+                <img src="images/manjiangao.jpg" alt="满煎糕">
+                <h3>满煎糕</h3>
+                <p>外酥内软，甜香诱人，是街头巷尾的古早味。</p>
+            </li>
+            <li class="food-card last">
+                <img src="images/tusundong.jpg" alt="土笋冻">
+                <h3>土笋冻</h3>
+                <p>晶莹剔透，口感爽脆嫩滑，海味十足。</p>
+            </li>
+        </ul>
+    </section>
+
+    <!-- ========== 页脚 ========== -->
+    <footer class="site-footer">
+        <div class="footer-content w clearfix">
+            <div class="footer-section">
+                <h4>民俗传承</h4>
+                <p>保护非物质文化遗产<br>传承千年文化记忆</p>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <ul>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">合作机构</a></li>
+                    <li><a href="#">隐私政策</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>关注我们</h4>
+                <p>电子邮箱：qzmx@qq.com</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>2026 民俗坊 保留所有权利</p>
+            <p>网站包含 <i class="fas fa-heart"></i> 传统元素</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

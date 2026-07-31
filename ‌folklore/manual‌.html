@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泉州民俗坊 - 项目开发操作手册</title>
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ====== 全局重置 ====== */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Microsoft YaHei","微软雅黑",Arial,sans-serif;background:#f5f3f0;color:#333;line-height:1.7;font-size:15px;}
+a{text-decoration:none;color:inherit;}
+ul,li{list-style:none;}
+img{display:block;max-width:100%;}
+
+/* ====== 顶部导航栏 ====== */
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:#8b2025;display:flex;align-items:center;padding:0 20px;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,0.15);}
+.topbar .menu-btn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background .2s;}
+.topbar .menu-btn:hover{background:rgba(255,255,255,0.15);}
+.topbar .topbar-title{color:#fff;font-size:18px;font-weight:bold;margin-left:12px;flex:1;}
+.topbar .topbar-sub{color:#f5d7a0;font-size:13px;margin-left:12px;}
+
+/* ====== 阅读进度条 ====== */
+.read-progress{position:fixed;top:56px;left:0;height:3px;background:#d4a574;z-index:1001;transition:width .1s;}
+
+/* ====== 主体布局 ====== */
+.layout{display:flex;margin-top:56px;min-height:calc(100vh - 56px);}
+
+/* ====== 左侧边栏 ====== */
+.sidebar{width:280px;flex-shrink:0;background:#fff;height:calc(100vh - 56px);overflow-y:auto;overflow-x:hidden;position:sticky;top:56px;box-shadow:2px 0 14px rgba(0,0,0,0.05);transition:width .3s cubic-bezier(.4,0,.2,1),opacity .25s ease;}
+.sidebar.collapsed{width:0;opacity:0;}
+.sidebar-inner{padding:16px 0;}
+.nav-group{margin-bottom:6px;}
+.nav-group-title{padding:10px 20px;font-size:13px;font-weight:bold;color:#8b2025;background:#fdf6f0;cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none;border-left:3px solid transparent;transition:all .2s;}
+.nav-group-title:hover{background:#fce8e6;}
+.nav-group-title.active{border-left-color:#c0392b;background:#fce8e6;}
+.nav-group-title .arrow{margin-left:auto;transition:transform .25s;font-size:11px;color:#aaa;}
+.nav-group.collapsed .arrow{transform:rotate(-90deg);}
+.nav-group-items{overflow:hidden;transition:max-height .3s ease;max-height:2000px;}
+.nav-group.collapsed .nav-group-items{max-height:0;}
+.nav-item{display:block;padding:7px 20px 7px 38px;font-size:14px;color:#555;border-left:3px solid transparent;transition:all .15s;cursor:pointer;line-height:1.5;}
+.nav-item:hover{color:#c0392b;background:#fff8f6;}
+.nav-item.active{color:#c0392b;border-left-color:#c0392b;background:#fff8f6;font-weight:bold;}
+
+/* ====== 右侧主内容区 ====== */
+.main-content{flex:1;padding:28px 40px 60px;width:0;min-width:0;}
+.chapter{max-width:none;margin-bottom:50px;scroll-margin-top:72px;}
+.chapter-header{border-bottom:3px solid #c0392b;padding-bottom:12px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.chapter-number{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;background:#c0392b;color:#fff;font-size:20px;font-weight:bold;border-radius:10px;flex-shrink:0;}
+.chapter-title{font-size:26px;font-weight:bold;color:#8b2025;}
+.chapter-desc{font-size:14px;color:#888;margin-top:4px;}
+
+/* ====== 学习目标卡 ====== */
+.goal-card{background:#fdf6f0;border-left:5px solid #d4a574;border-radius:8px;padding:16px 20px;margin-bottom:24px;}
+.goal-card h4{color:#8b2025;font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.goal-card ul{padding-left:8px;}
+.goal-card li{padding:3px 0 3px 20px;position:relative;font-size:14px;color:#555;}
+.goal-card li::before{content:"";position:absolute;left:0;top:12px;width:8px;height:8px;background:#c0392b;border-radius:50%;}
+
+/* ====== 代码块 ====== */
+.code-wrapper{margin-bottom:20px;}
+.code-header{display:flex;align-items:center;justify-content:space-between;background:#2c3e50;color:#ecf0f1;padding:8px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:bold;}
+.code-header .file-tag{background:#c0392b;padding:2px 10px;border-radius:4px;font-size:12px;margin-left:10px;}
+.copy-btn{background:#34495e;color:#ecf0f1;border:1px solid #4a6278;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:12px;transition:all .2s;}
+.copy-btn:hover{background:#c0392b;border-color:#c0392b;}
+pre{background:#1e2a38;color:#e8e8e8;padding:16px 20px;border-radius:0 0 8px 8px;overflow-x:auto;font-size:13.5px;line-height:1.6;font-family:"Consolas","Courier New",monospace;}
+pre .tag{color:#e06c75;}
+pre .attr{color:#d19a66;}
+pre .val{color:#98c379;}
+pre .comment{color:#5c6370;font-style:italic;}
+pre .keyword{color:#c678dd;}
+pre .prop{color:#61afef;}
+pre .selector{color:#e06c75;}
+pre .num{color:#d19a66;}
+pre .str{color:#98c379;}
+pre .pseudo{color:#56b6c2;}
+
+/* ====== 逐行代码解释表 ====== */
+.code-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13.5px;}
+.code-table th{background:#8b2025;color:#fff;padding:10px 12px;text-align:left;font-weight:bold;}
+.code-table td{padding:8px 12px;border-bottom:1px solid #e0e0e0;vertical-align:top;}
+.code-table tr:nth-child(even){background:#faf8f6;}
+.code-table .code-cell{font-family:"Consolas",monospace;color:#c0392b;white-space:nowrap;font-size:13px;}
+.code-table .explain-cell{color:#555;line-height:1.6;}
+
+/* ====== 知识小课堂 ====== */
+.knowledge-box{background:#eaf4f4;border:1px solid #b8d8d8;border-radius:10px;padding:18px 22px;margin-bottom:24px;}
+.knowledge-box .kb-title{color:#2c7a7b;font-size:16px;font-weight:bold;margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px dashed #b8d8d8;}
+.knowledge-box h5{color:#2c7a7b;font-size:14px;margin:12px 0 6px;font-weight:bold;}
+.knowledge-box p{font-size:14px;color:#555;margin-bottom:6px;}
+.knowledge-box .demo-box{background:#fff;border-radius:6px;padding:12px 16px;margin:10px 0;font-size:13px;color:#333;border:1px solid #d0e0e0;}
+.knowledge-box code{background:#e0ebeb;padding:2px 6px;border-radius:3px;font-family:"Consolas",monospace;font-size:13px;color:#2c7a7b;}
+.knowledge-box ul{padding-left:20px;margin:6px 0;}
+.knowledge-box li{font-size:14px;color:#555;padding:2px 0;}
+
+/* ====== 易错点提醒 ====== */
+.pitfall-box{background:#fff5f5;border-left:5px solid #e53e3e;border-radius:8px;padding:16px 20px;margin-bottom:24px;}
+.pitfall-box .pf-title{color:#c53030;font-size:16px;font-weight:bold;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pitfall-box .pf-item{margin-bottom:10px;}
+.pitfall-box .pf-item:last-child{margin-bottom:0;}
+.pitfall-box .pf-q{font-size:14px;color:#c53030;font-weight:bold;margin-bottom:4px;}
+.pitfall-box .pf-a{font-size:14px;color:#555;}
+.pitfall-box .pf-a code{background:#fee;padding:1px 5px;border-radius:3px;font-family:"Consolas",monospace;color:#c0392b;font-size:13px;}
+.pitfall-box .compare{display:flex;gap:12px;margin:10px 0;}
+.pitfall-box .compare > div{flex:1;padding:10px 14px;border-radius:6px;font-size:13px;}
+.pitfall-box .wrong{background:#fee;border:1px solid #feb2b2;}
+.pitfall-box .right{background:#f0fff4;border:1px solid #9ae6b4;}
+.pitfall-box .compare .label{font-weight:bold;display:block;margin-bottom:4px;}
+.pitfall-box .wrong .label{color:#c53030;}
+.pitfall-box .right .label{color:#276749;}
+
+/* ====== 本节小结 ====== */
+.summary-box{background:#f0fff4;border:1px solid #9ae6b4;border-radius:10px;padding:18px 22px;margin-bottom:24px;}
+.summary-box .sum-title{color:#276749;font-size:16px;font-weight:bold;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.summary-box ul{padding-left:8px;}
+.summary-box li{padding:4px 0 4px 22px;position:relative;font-size:14px;color:#345;}
+.summary-box li::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;left:0;top:4px;color:#38a169;font-size:13px;}
+
+/* ====== 验收清单 ====== */
+.checklist-box{background:#ebf8ff;border:1px solid #90cdf4;border-radius:10px;padding:18px 22px;margin-bottom:24px;}
+.checklist-box .ck-title{color:#2b6cb0;font-size:16px;font-weight:bold;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.checklist-box .ck-item{padding:5px 0 5px 28px;position:relative;font-size:14px;color:#345;}
+.checklist-box .ck-item::before{content:"\f0c8";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;left:0;top:5px;color:#90cdf4;font-size:14px;}
+
+/* ====== 预期效果 ====== */
+.preview-box{background:#fff;border:2px dashed #d4a574;border-radius:10px;padding:18px 22px;margin-bottom:24px;}
+.preview-box .pv-title{color:#8b2025;font-size:16px;font-weight:bold;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.preview-box .pv-content{font-size:14px;color:#555;line-height:1.8;}
+.preview-box .pv-mock{background:#faf6f0;border-radius:8px;padding:16px;margin-top:10px;text-align:center;}
+
+/* ====== FAQ 常见问题 ====== */
+.faq-box{background:#fffbf0;border:1px solid #fbd38d;border-radius:10px;padding:18px 22px;margin-bottom:24px;}
+.faq-box .faq-title{color:#b7791f;font-size:16px;font-weight:bold;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.faq-box details{margin-bottom:10px;border:1px solid #f0e0c0;border-radius:6px;overflow:hidden;}
+.faq-box summary{padding:10px 14px;font-size:14px;font-weight:bold;color:#b7791f;cursor:pointer;background:#fffaf0;}
+.faq-box summary:hover{background:#fff5e0;}
+.faq-box details[open] summary{background:#fef5e0;border-bottom:1px solid #f0e0c0;}
+.faq-box details p{padding:10px 14px;font-size:14px;color:#555;}
+.faq-box code{background:#fefcbf;padding:1px 5px;border-radius:3px;font-family:"Consolas",monospace;color:#b7791f;font-size:13px;}
+
+/* ====== 标签参考卡 ====== */
+.tag-ref{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
+.tag-card{background:#fff;border:1px solid #e0d6cc;border-radius:8px;padding:12px 14px;transition:box-shadow .2s;}
+.tag-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+.tag-card .tc-tag{font-family:"Consolas",monospace;font-size:13px;color:#c0392b;font-weight:bold;display:inline-block;background:#fce8e6;padding:2px 8px;border-radius:4px;margin-bottom:6px;}
+.tag-card .tc-desc{font-size:13px;color:#666;line-height:1.5;}
+
+/* ====== 回到顶部 ====== */
+.back-top{position:fixed;right:28px;bottom:28px;width:46px;height:46px;background:#c0392b;color:#fff;border:none;border-radius:50%;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,0.2);opacity:0;pointer-events:none;transition:all .3s;z-index:999;}
+.back-top.show{opacity:1;pointer-events:auto;}
+.back-top:hover{background:#8b2025;transform:translateY(-3px);}
+
+/* ====== 移动端 ====== */
+@media(max-width:768px){
+  .sidebar{position:fixed;z-index:999;box-shadow:4px 0 20px rgba(0,0,0,0.15);}
+  .main-content{padding:20px 16px 40px;}
+  .topbar .topbar-sub{display:none;}
+  .code-table{font-size:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ====== 顶部导航栏 ====== -->
+<div class="topbar">
+  <button class="menu-btn" id="menuToggle" title="收起/展开目录"><i class="fas fa-bars"></i></button>
+  <span class="topbar-title">泉州民俗坊 · 项目开发操作手册</span>
+  <span class="topbar-sub">float 浮动 + position 定位</span>
+</div>
+<div class="read-progress" id="readProgress" style="width:0"></div>
+
+<!-- ====== 主体布局 ====== -->
+<div class="layout">
+
+  <!-- ====== 左侧目录 ====== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+
+      <!-- 准备阶段 -->
+      <div class="nav-group">
+        <div class="nav-group-title" onclick="toggleGroup(this)">
+          <i class="fas fa-flag-checkered"></i> 准备阶段
+          <i class="fas fa-chevron-down arrow"></i>
+        </div>
+        <div class="nav-group-items">
+          <a class="nav-item" onclick="goTo('ch1')">第1章 项目介绍与技术栈</a>
+          <a class="nav-item" onclick="goTo('ch2')">第2章 开发环境与项目搭建</a>
+        </div>
+      </div>
+
+      <!-- 基础搭建 -->
+      <div class="nav-group">
+        <div class="nav-group-title" onclick="toggleGroup(this)">
+          <i class="fas fa-cubes"></i> 基础搭建
+          <i class="fas fa-chevron-down arrow"></i>
+        </div>
+        <div class="nav-group-items">
+          <a class="nav-item" onclick="goTo('ch3')">第3章 HTML骨架与文档结构</a>
+          <a class="nav-item" onclick="goTo('ch4')">第4章 CSS全局重置与基础样式</a>
+          <a class="nav-item" onclick="goTo('ch5')">第5章 版心与清除浮动工具类</a>
+          <a class="nav-item" onclick="goTo('ch6')">第6章 通用版块标题样式</a>
+        </div>
+      </div>
+
+      <!-- 核心开发 -->
+      <div class="nav-group">
+        <div class="nav-group-title" onclick="toggleGroup(this)">
+          <i class="fas fa-code"></i> 核心开发
+          <i class="fas fa-chevron-down arrow"></i>
+        </div>
+        <div class="nav-group-items">
+          <a class="nav-item" onclick="goTo('ch7')">第7章 顶部横幅 Banner（position定位）</a>
+          <a class="nav-item" onclick="goTo('ch8')">第8章 导航栏（float浮动布局）</a>
+          <a class="nav-item" onclick="goTo('ch9')">第9章 节庆文化模块（float卡片）</a>
+          <a class="nav-item" onclick="goTo('ch10')">第10章 民俗之声模块（position定位）</a>
+          <a class="nav-item" onclick="goTo('ch11')">第11章 特色美食模块（float多行卡片）</a>
+          <a class="nav-item" onclick="goTo('ch12')">第12章 页脚区域（float三栏）</a>
+        </div>
+      </div>
+
+      <!-- 收尾完善 -->
+      <div class="nav-group">
+        <div class="nav-group-title" onclick="toggleGroup(this)">
+          <i class="fas fa-check-double"></i> 收尾完善
+          <i class="fas fa-chevron-down arrow"></i>
+        </div>
+        <div class="nav-group-items">
+          <a class="nav-item" onclick="goTo('ch13')">第13章 Font Awesome 图标集成</a>
+          <a class="nav-item" onclick="goTo('ch14')">第14章 整体检查与浏览器兼容</a>
+          <a class="nav-item" onclick="goTo('ch15')">第15章 常见问题排查与项目总结</a>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ====== 右侧主内容 ====== -->
+  <main class="main-content">
+
+<!-- ==================== 第1章 ==================== -->
+<div class="chapter" id="ch1">
+  <div class="chapter-header">
+    <span class="chapter-number">1</span>
+    <div><div class="chapter-title">项目介绍与技术栈</div><div class="chapter-desc">了解"泉州民俗坊"项目全貌、功能模块与所使用的技术</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>理解项目整体结构与每个页面模块的功能定位</li>
+      <li>掌握项目使用的技术栈：HTML5 + CSS3 + Font Awesome</li>
+      <li>明确项目中两种核心布局方式：float 浮动布局 与 position 定位布局</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">一、项目简介</h3>
+  <p style="margin-bottom:14px;color:#555;">"泉州民俗坊"是一个展示泉州民俗文化的静态展示网站，内容涵盖<strong>节庆文化</strong>（提线木偶、火鼎公火鼎婆、拍胸舞）、<strong>民俗之声</strong>（闽南话、南音、高甲戏）、<strong>特色美食</strong>（肉粽、润饼皮、石花膏等8道美食）三大主题板块，并配有顶部横幅、导航栏、搜索框和页脚。</p>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">二、页面结构一览</h3>
+  <table class="code-table">
+    <thead><tr><th style="width:18%">模块</th><th style="width:25%">布局方式</th><th>核心知识点</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">顶部横幅</td><td>position 定位</td><td>relative + absolute、渐变背景、镜像翻转</td></tr>
+      <tr><td class="code-cell">导航栏</td><td>float 浮动</td><td>左浮动菜单 + 右浮动搜索框、hover 交互</td></tr>
+      <tr><td class="code-cell">节庆文化</td><td>float 浮动</td><td>三张卡片横向排列、清除浮动、悬停动画</td></tr>
+      <tr><td class="code-cell">民俗之声</td><td>position 定位</td><td>absolute 绝对定位、三卡片层叠排列、z-index</td></tr>
+      <tr><td class="code-cell">特色美食</td><td>float 浮动</td><td>四列多行卡片网格、last 类去间距</td></tr>
+      <tr><td class="code-cell">页脚</td><td>float 浮动</td><td>三栏等宽布局、清除浮动</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">三、技术栈说明</h3>
+  <div class="tag-ref">
+    <div class="tag-card"><span class="tc-tag">HTML5</span><div class="tc-desc">语义化标签搭建页面骨架（div、nav、section、footer、ul/li）</div></div>
+    <div class="tag-card"><span class="tc-tag">CSS3</span><div class="tc-desc">外部样式表，负责所有视觉样式与布局（float、position、transition）</div></div>
+    <div class="tag-card"><span class="tc-tag">Font Awesome</span><div class="tc-desc">6.4.0 版图标库，通过 CDN 引入，提供导航、搜索、爱心等图标</div></div>
+  </div>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：float 与 position 的区别</div>
+    <p>这两个布局方式是传统 CSS 布局的两大基石，理解它们是本项目的核心：</p>
+    <h5>float 浮动</h5>
+    <p>让元素"飘"到左侧或右侧，后续元素会流过来填补空间。<strong>适合一行内多个元素横向排列</strong>（如导航菜单、卡片网格）。</p>
+    <div class="demo-box"><code>float: left;</code> → 元素靠左排列，后面的内容自动靠右流动<br><code>float: right;</code> → 元素靠右排列</div>
+    <h5>position 定位</h5>
+    <p>精确控制元素在页面中的坐标位置。<strong>适合精确定位、层叠覆盖</strong>（如横幅装饰图案、三卡片重叠排列）。</p>
+    <div class="demo-box"><code>position: relative;</code> → 相对定位（作为参照物）<br><code>position: absolute;</code> → 绝对定位（相对于最近的 relative 父元素）</div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>项目共6大模块，分为 float 和 position 两种布局方式</li>
+      <li>技术栈：HTML5 + CSS3（外部文件）+ Font Awesome 图标库</li>
+      <li>float 适合横向排列，position 适合精确定位与层叠</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">能说出每个模块使用的布局方式</div>
+    <div class="ck-item">能区分 float 和 position 的适用场景</div>
+    <div class="ck-item">了解 Font Awesome 的作用与引入方式</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第2章 ==================== -->
+<div class="chapter" id="ch2">
+  <div class="chapter-header">
+    <span class="chapter-number">2</span>
+    <div><div class="chapter-title">开发环境与项目搭建</div><div class="chapter-desc">创建项目文件夹结构，准备开发工具</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>学会创建规范的 Web 项目文件夹结构</li>
+      <li>掌握在 VS Code 中新建 HTML/CSS 文件并建立关联</li>
+      <li>了解浏览器开发者工具的基本使用</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：创建项目文件夹</h3>
+  <p style="margin-bottom:10px;color:#555;">在电脑桌面或指定位置新建一个文件夹，命名为 <code style="background:#fce8e6;padding:2px 8px;border-radius:4px;font-family:Consolas;color:#c0392b;">民俗坊</code>，然后在其内部创建以下子目录：</p>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fas fa-folder-open"></i> 项目结构<span class="file-tag">目录树</span></span></div>
+    <pre><span class="comment">民俗坊/
+├── 泉州民俗坊.html      ← 主页面文件
+├── css/
+│   └── style.css        ← 外部样式表
+└── images/              ← 图片素材文件夹
+    ├── chuantong.png    ← 传统纹样装饰图
+    ├── tixianmuou.jpg   ← 提线木偶
+    ├── houdinggong.jpg  ← 火鼎公火鼎婆
+    ├── paixiongwu.jpg   ← 拍胸舞
+    ├── mianxianhu.jpg   ← 面线糊（闽南话配图）
+    ├── nanyin.png       ← 南音
+    ├── gaojiaxi.png     ← 高甲戏
+    ├── rouzong.jpg      ← 肉粽
+    ├── runbing.jpg      ← 润饼皮
+    ├── shihuagao.jpg    ← 石花膏
+    ├── shuiwantang.jpg  ← 水丸汤
+    ├── jizhua.jpg       ← 洪濑鸡爪
+    ├── manjiangao.jpg   ← 满煎糕
+    └── tusundong.jpg    ← 土笋冻</span></pre>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：创建文件</h3>
+  <p style="margin-bottom:10px;color:#555;">用 VS Code 打开"民俗坊"文件夹，新建以下文件：</p>
+  <table class="code-table">
+    <thead><tr><th style="width:25%">文件名</th><th style="width:15%">位置</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">泉州民俗坊.html</td><td>根目录</td><td>主页面，所有 HTML 结构写在这里</td></tr>
+      <tr><td class="code-cell">style.css</td><td>css/ 目录</td><td>所有 CSS 样式写在这里</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤三：建立 HTML 与 CSS 的关联</h3>
+  <p style="margin-bottom:10px;color:#555;">在 HTML 文件的 <code style="background:#fce8e6;padding:2px 8px;border-radius:4px;font-family:Consolas;color:#c0392b;">&lt;head&gt;</code> 中使用 <code style="background:#fce8e6;padding:2px 8px;border-radius:4px;font-family:Consolas;color:#c0392b;">link</code> 标签引入外部 CSS：</p>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">head 部分</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val">"viewport"</span> <span class="attr">content</span>=<span class="val">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span>泉州民俗坊<span class="tag">&lt;/title&gt;</span>
+    <span class="comment">&lt;!-- 引入外部CSS --&gt;</span>
+    <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"css/style.css"</span><span class="tag">&gt;</span>
+    <span class="comment">&lt;!-- 引入Font Awesome图标库 --&gt;</span>
+    <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span></pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">&lt;meta charset="UTF-8"&gt;</td><td class="explain-cell">设置字符编码为 UTF-8，确保中文正常显示</td></tr>
+      <tr><td class="code-cell">&lt;meta name="viewport" ...&gt;</td><td class="explain-cell">视口设置，使页面在移动端正确缩放</td></tr>
+      <tr><td class="code-cell">&lt;title&gt;泉州民俗坊&lt;/title&gt;</td><td class="explain-cell">浏览器标签页显示的标题文字</td></tr>
+      <tr><td class="code-cell">rel="stylesheet"</td><td class="explain-cell">告诉浏览器这是一个样式表文件</td></tr>
+      <tr><td class="code-cell">href="css/style.css"</td><td class="explain-cell">CSS 文件的相对路径（css 文件夹下的 style.css）</td></tr>
+      <tr><td class="code-cell">Font Awesome CDN</td><td class="explain-cell">通过 CDN 链接引入图标库，无需下载到本地</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：相对路径</div>
+    <p><code>href="css/style.css"</code> 使用的是<strong>相对路径</strong>——以当前 HTML 文件所在位置为起点去找目标文件。</p>
+    <div class="demo-box">
+      <code>css/style.css</code> → 当前目录下的 css 子目录中的 style.css<br>
+      <code>images/rouzong.jpg</code> → 当前目录下的 images 子目录中的图片<br>
+      <code>../style.css</code> → 上一级目录中的 style.css（<code>../</code> 表示返回上一级）
+    </div>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">CSS 文件路径写错导致样式不生效？</div>
+      <div class="pf-a">最常见的错误是路径写成了 <code>style.css</code> 而不是 <code>css/style.css</code>。因为 style.css 放在 css 文件夹里面，必须加上文件夹名。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">CSS 文件修改后页面没变化？</div>
+      <div class="pf-a">按 <code>Ctrl + Shift + R</code> 强制刷新清除缓存，或在 VS Code 中使用 Live Server 插件自动刷新。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>项目结构：HTML 在根目录，CSS 在 css/ 子目录，图片在 images/ 子目录</li>
+      <li>用 &lt;link&gt; 标签的 href 属性引入外部 CSS，注意相对路径</li>
+      <li>Font Awesome 通过 CDN 链接引入，不需要下载</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">项目文件夹及子目录创建完成</div>
+    <div class="ck-item">HTML 文件和 CSS 文件已创建</div>
+    <div class="ck-item">HTML 中通过 link 标签正确引入了 CSS</div>
+    <div class="ck-item">所有图片素材已放入 images 文件夹</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第3章 ==================== -->
+<div class="chapter" id="ch3">
+  <div class="chapter-header">
+    <span class="chapter-number">3</span>
+    <div><div class="chapter-title">HTML 骨架与文档结构</div><div class="chapter-desc">搭建完整的页面 HTML 结构框架</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 HTML5 文档基本骨架（DOCTYPE、html、head、body）</li>
+      <li>理解语义化标签的使用场景（nav、section、footer）</li>
+      <li>搭建完整的页面主体结构，为后续 CSS 样式打好基础</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：编写 HTML 基本骨架</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">文档骨架</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val">"zh-CN"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+    <span class="comment">&lt;!-- head 内容见第2章 --&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+    <span class="comment">&lt;!-- 所有页面内容写在这里 --&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:30%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">&lt;!DOCTYPE html&gt;</td><td class="explain-cell">文档类型声明，告诉浏览器使用 HTML5 标准解析页面</td></tr>
+      <tr><td class="code-cell">&lt;html lang="zh-CN"&gt;</td><td class="explain-cell">根元素，lang="zh-CN" 声明页面语言为简体中文</td></tr>
+      <tr><td class="code-cell">&lt;head&gt;</td><td class="explain-cell">头部区域，存放元信息（编码、标题、外部引入），不显示在页面上</td></tr>
+      <tr><td class="code-cell">&lt;body&gt;</td><td class="explain-cell">主体区域，所有可见内容都写在这里</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：编写 body 主体结构</h3>
+  <p style="margin-bottom:10px;color:#555;">在 <code style="background:#fce8e6;padding:2px 8px;border-radius:4px;font-family:Consolas;color:#c0392b;">&lt;body&gt;</code> 中按从上到下的顺序编写各模块。先写出整体框架（注释占位），后续章节再逐一填充：</p>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">body 主体结构</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="tag">&lt;body&gt;</span>
+
+    <span class="comment">&lt;!-- ========== 顶部横幅（position定位） ========== --&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"top-banner"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"images/chuantong.png"</span> <span class="attr">alt</span>=<span class="val">"传统纹样装饰"</span> <span class="attr">class</span>=<span class="val">"banner-pattern pattern-left"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"images/chuantong.png"</span> <span class="attr">alt</span>=<span class="val">"传统纹样装饰"</span> <span class="attr">class</span>=<span class="val">"banner-pattern pattern-right"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h1</span> <span class="attr">class</span>=<span class="val">"site-title"</span><span class="tag">&gt;</span>泉州民俗坊<span class="tag">&lt;/h1&gt;</span>
+        <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="val">"site-slogan"</span><span class="tag">&gt;</span>千年海丝 · 非遗传承<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+
+    <span class="comment">&lt;!-- ========== 导航栏（float布局） ========== --&gt;</span>
+    <span class="tag">&lt;nav</span> <span class="attr">class</span>=<span class="val">"main-nav w clearfix"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="val">"nav-list clearfix"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-home"</span><span class="tag">&gt;&lt;/i&gt;</span> 首页<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+            <span class="comment">&lt;!-- 其他菜单项... --&gt;</span>
+        <span class="tag">&lt;/ul&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"search-box"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="val">"text"</span> <span class="attr">placeholder</span>=<span class="val">"搜索民俗..."</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="val">"button"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-search"</span><span class="tag">&gt;&lt;/i&gt;</span> 搜索<span class="tag">&lt;/button&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/nav&gt;</span>
+
+    <span class="comment">&lt;!-- ========== 各内容板块 ========== --&gt;</span>
+    <span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="val">"festival"</span> <span class="attr">class</span>=<span class="val">"w"</span><span class="tag">&gt;</span> ... <span class="tag">&lt;/section&gt;</span>
+    <span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="val">"culture"</span> <span class="attr">class</span>=<span class="val">"w"</span><span class="tag">&gt;</span> ... <span class="tag">&lt;/section&gt;</span>
+    <span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="val">"food"</span> <span class="attr">class</span>=<span class="val">"w"</span><span class="tag">&gt;</span> ... <span class="tag">&lt;/section&gt;</span>
+
+    <span class="comment">&lt;!-- ========== 页脚 ========== --&gt;</span>
+    <span class="tag">&lt;footer</span> <span class="attr">class</span>=<span class="val">"site-footer"</span><span class="tag">&gt;</span> ... <span class="tag">&lt;/footer&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span></pre>
+  </div>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：语义化标签</div>
+    <p>HTML5 提供了一系列有语义含义的标签，相比通用的 <code>&lt;div&gt;</code>，它们能让代码结构更清晰，也对搜索引擎和无障碍阅读更友好：</p>
+    <div class="demo-box">
+      <code>&lt;nav&gt;</code> → 导航区域<br>
+      <code>&lt;section&gt;</code> → 页面中的一个内容区块<br>
+      <code>&lt;footer&gt;</code> → 页脚区域<br>
+      <code>&lt;div&gt;</code> → 通用容器（没有特定语义，用于布局分组）
+    </div>
+    <p>本项目中的选择原则：导航用 <code>nav</code>，内容板块用 <code>section</code>，页脚用 <code>footer</code>，其余布局容器用 <code>div</code>。</p>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">忘记写 &lt;!DOCTYPE html&gt; 会怎样？</div>
+      <div class="pf-a">浏览器可能进入"怪异模式"（Quirks Mode），导致部分 CSS 表现异常。必须在第一行声明 DOCTYPE。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">class 属性可以写多个值吗？</div>
+      <div class="pf-a">可以！用空格分隔，如 <code>class="main-nav w clearfix"</code> 表示元素同时拥有三个类名。CSS 中任何一个类选择器都能匹配到它。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>HTML 文档由 DOCTYPE、html、head、body 四部分组成</li>
+      <li>使用语义化标签：nav、section、footer 提升代码可读性</li>
+      <li>class 属性支持多类名（空格分隔），可同时应用多个样式</li>
+      <li>页面结构从上到下：横幅 → 导航 → 内容板块 → 页脚</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">HTML 文档骨架完整（DOCTYPE、html、head、body）</div>
+    <div class="ck-item">body 中按顺序写出6大模块的容器结构</div>
+    <div class="ck-item">每个模块使用注释标明名称和布局方式</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第4章 ==================== -->
+<div class="chapter" id="ch4">
+  <div class="chapter-header">
+    <span class="chapter-number">4</span>
+    <div><div class="chapter-title">CSS 全局重置与基础样式</div><div class="chapter-desc">编写 reset 重置、body 基础样式与元素默认值清除</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>理解 CSS Reset（全局重置）的作用与原理</li>
+      <li>掌握 box-sizing: border-box 的含义</li>
+      <li>设置 body 字体、颜色、背景色等基础样式</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：全局重置</h3>
+  <p style="margin-bottom:10px;color:#555;">在 style.css 的<strong>最顶部</strong>写入以下代码，消除所有浏览器默认的内外边距：</p>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">style.css 开头</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* ---------- 1. 全局重置与基础样式 ---------- */</span>
+<span class="selector">*</span> {
+    <span class="prop">margin</span>: <span class="num">0</span>;
+    <span class="prop">padding</span>: <span class="num">0</span>;
+    <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">*</td><td class="explain-cell">通配选择器，匹配页面上所有 HTML 元素</td></tr>
+      <tr><td class="code-cell">margin: 0</td><td class="explain-cell">清除所有元素的外边距（不同浏览器默认值不一致）</td></tr>
+      <tr><td class="code-cell">padding: 0</td><td class="explain-cell">清除所有元素的内边距</td></tr>
+      <tr><td class="code-cell">box-sizing: border-box</td><td class="explain-cell">让元素的 width/height 包含 padding 和 border，简化尺寸计算</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：盒模型与 box-sizing</div>
+    <p>每个 HTML 元素都是一个"盒子"，由四层组成（从内到外）：</p>
+    <div class="demo-box" style="text-align:center;font-weight:bold;color:#8b2025;">
+      margin（外边距）→ border（边框）→ padding（内边距）→ content（内容区）
+    </div>
+    <h5>不设 box-sizing（默认 content-box）：</h5>
+    <p>你写的 <code>width: 280px</code> 只包含内容区，加上 padding 和 border 后实际宽度会变大，容易超出预期导致布局错位。</p>
+    <h5>设了 box-sizing: border-box：</h5>
+    <p>你写的 <code>width: 280px</code> 就是最终占据的宽度，padding 和 border 向内挤压内容区，计算更直观。</p>
+    <div class="demo-box">
+      假设 width:280px、padding:10px、border:5px：<br>
+      content-box → 实际宽度 = 280 + 10×2 + 5×2 = <strong>310px</strong>（超了！）<br>
+      border-box → 实际宽度 = <strong>280px</strong>（内容区自动缩为 250px）
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：body 与基础元素样式</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">基础样式</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">body</span> {
+    <span class="prop">font-family</span>: <span class="str">"Microsoft YaHei"</span>, <span class="str">"微软雅黑"</span>, Arial, sans-serif;
+    <span class="prop">color</span>: <span class="num">#333</span>;
+    <span class="prop">background-color</span>: <span class="num">#faf6f0</span>;
+    <span class="prop">line-height</span>: <span class="num">1.6</span>;
+}
+
+<span class="selector">a</span> {
+    <span class="prop">text-decoration</span>: <span class="val">none</span>;
+    <span class="prop">color</span>: <span class="val">inherit</span>;
+}
+
+<span class="selector">ul, li</span> {
+    <span class="prop">list-style</span>: <span class="val">none</span>;
+}
+
+<span class="selector">img</span> {
+    <span class="prop">display</span>: <span class="val">block</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:40%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">font-family: "Microsoft YaHei", ...</td><td class="explain-cell">设置正文字体，优先使用微软雅黑，找不到则降级到 Arial</td></tr>
+      <tr><td class="code-cell">color: #333</td><td class="explain-cell">正文颜色为深灰色（比纯黑柔和，阅读更舒适）</td></tr>
+      <tr><td class="code-cell">background-color: #faf6f0</td><td class="explain-cell">页面背景为淡米黄色，呼应传统民俗的温暖色调</td></tr>
+      <tr><td class="code-cell">line-height: 1.6</td><td class="explain-cell">行高为字号的1.6倍，文字间距舒适不拥挤</td></tr>
+      <tr><td class="code-cell">a { text-decoration: none }</td><td class="explain-cell">去掉所有超链接默认的下划线</td></tr>
+      <tr><td class="code-cell">a { color: inherit }</td><td class="explain-cell">链接颜色继承父元素（不使用默认蓝色）</td></tr>
+      <tr><td class="code-cell">ul, li { list-style: none }</td><td class="explain-cell">去掉列表默认的黑点项目符号</td></tr>
+      <tr><td class="code-cell">img { display: block }</td><td class="explain-cell">图片转为块级元素，消除底部默认的3px间隙</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：为什么 img 要设 display:block？</div>
+    <p><code>&lt;img&gt;</code> 是<strong>行内元素</strong>（inline），默认按照文字基线对齐，会在图片底部产生约 3-4px 的空白间隙，影响布局精度。</p>
+    <p>设为 <code>display: block</code> 后，图片变为块级元素，底部间隙消失，方便精确控制高度和排列。</p>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">不写全局重置会有什么问题？</div>
+      <div class="pf-a">不同浏览器对 h1、ul、p 等标签有不同的默认 margin/padding，不重置会导致页面在不同浏览器中表现不一致，出现难以排查的间距偏差。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">font-family 多个字体怎么选？</div>
+      <div class="pf-a">从左到右依次尝试：用户电脑装了"Microsoft YaHei"就用它，没装就试"微软雅黑"，再没有就用 Arial，最后 sans-serif 兜底。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>通配符 * 重置所有元素的 margin/padding，消除浏览器差异</li>
+      <li>box-sizing: border-box 让宽度计算更直观</li>
+      <li>body 设置字体、颜色、背景、行高等全局基础样式</li>
+      <li>a 去下划线、ul 去项目符号、img 转块级——三个常见默认值清除</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">* 全局重置代码已写在 CSS 最顶部</div>
+    <div class="ck-item">body 字体、颜色、背景、行高设置完成</div>
+    <div class="ck-item">a、ul/li、img 默认样式已清除</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第5章 ==================== -->
+<div class="chapter" id="ch5">
+  <div class="chapter-header">
+    <span class="chapter-number">5</span>
+    <div><div class="chapter-title">版心与清除浮动工具类</div><div class="chapter-desc">编写 .w 版心和 .clearfix 两个最重要的通用工具类</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>理解"版心"概念及其在网页布局中的作用</li>
+      <li>掌握 margin: 0 auto 实现水平居中的原理</li>
+      <li>理解浮动带来的"高度塌陷"问题及 clearfix 解决方案</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：版心工具类 .w</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">版心</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 版心：固定宽度并水平居中 */</span>
+<span class="selector">.w</span> {
+    <span class="prop">width</span>: <span class="num">1200px</span>;
+    <span class="prop">margin</span>: <span class="num">0</span> <span class="val">auto</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">width: 1200px</td><td class="explain-cell">内容区域固定宽度 1200px（适合 PC 端标准设计稿宽度）</td></tr>
+      <tr><td class="code-cell">margin: 0 auto</td><td class="explain-cell">上下外边距为0，左右外边距自动（auto）→ 实现水平居中</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：margin: 0 auto 居中原理</div>
+    <p><code>auto</code> 的含义是"自动分配剩余空间"。当元素有固定宽度时，浏览器会计算父容器宽度减去元素宽度后的剩余空间，然后平均分给左右外边距。</p>
+    <div class="demo-box">
+      屏幕宽 1920px，元素宽 1200px<br>
+      剩余空间 = 1920 - 1200 = 720px<br>
+      左 margin = 右 margin = 720 ÷ 2 = <strong>360px</strong> → 元素居中
+    </div>
+    <p><strong>注意：</strong>只有块级元素且设置了明确 width 时，<code>margin: auto</code> 才能居中。行内元素和没有宽度的块级元素不会生效。</p>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：清除浮动工具类 .clearfix</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">清除浮动</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 清除浮动通用工具类（解决父元素高度塌陷） */</span>
+<span class="selector">.clearfix::after</span> {
+    <span class="prop">content</span>: <span class="str">""</span>;
+    <span class="prop">display</span>: <span class="val">block</span>;
+    <span class="prop">clear</span>: <span class="val">both</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">::after</td><td class="explain-cell">伪元素，在元素内部最后面插入一个看不见的"虚拟元素"</td></tr>
+      <tr><td class="code-cell">content: ""</td><td class="explain-cell">虚拟元素的内容为空（必须有 content 属性，伪元素才会生成）</td></tr>
+      <tr><td class="code-cell">display: block</td><td class="explain-cell">让虚拟元素变成块级元素，独占一行</td></tr>
+      <tr><td class="code-cell">clear: both</td><td class="explain-cell">清除左右两侧的浮动影响，撑开父元素高度</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：浮动高度塌陷问题</div>
+    <h5>问题演示</h5>
+    <p>当一个父容器 <code>&lt;ul&gt;</code> 里面的子元素 <code>&lt;li&gt;</code> 都设�� <code>float: left</code>，子元素会脱离正常文档流。父容器找不到子元素来撑高度，<strong>高度变为 0</strong>，导致后面的内容"顶上来"，布局全部乱掉。</p>
+    <h5>解决原理</h5>
+    <p><code>.clearfix::after</code> 在父容器末尾插入一个块级虚拟元素，它不受浮动影响（因为 clear:both），它会占据正常的文档流位置，从而"撑"出父容器的真实高度。</p>
+    <div class="demo-box">
+      <strong>使用方法：</strong>给包含浮动子元素的父容器加上 class="clearfix" 即可。<br>
+      本项目中 <code>nav、ul、footer-content</code> 都需要加 clearfix。
+    </div>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">忘加 clearfix 导致布局塌陷？</div>
+      <div class="pf-a">
+        <div class="compare">
+          <div class="wrong"><span class="label">错误：没加 clearfix</span>父元素高度为0，背景色/边框不显示，下方元素错位顶上来</div>
+          <div class="right"><span class="label">正确：加了 clearfix</span>父元素正常包裹浮动子元素，高度和样式正常</div>
+        </div>
+      </div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">content: "" 能省略吗？</div>
+      <div class="pf-a">不能！<code>content</code> 属性是伪元素生成的必要条件，没有它 <code>::after</code> 根本不会出现在页面上，即使为空字符串也必须写。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>.w 版心类：固定 1200px 宽 + margin:0 auto 水平居中</li>
+      <li>margin:auto 居中原理：自动平分剩余空间，前提是元素有固定宽度</li>
+      <li>.clearfix::after 通过插入虚拟块级元素 + clear:both 解决高度塌陷</li>
+      <li>凡是内部有 float 子元素的容器，都要加 clearfix 类</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">.w 版心工具类已定义</div>
+    <div class="ck-item">.clearfix 清除浮动工具类已定义</div>
+    <div class="ck-item">理解了 margin:auto 居中和高度塌陷的原理</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第6章 ==================== -->
+<div class="chapter" id="ch6">
+  <div class="chapter-header">
+    <span class="chapter-number">6</span>
+    <div><div class="chapter-title">通用版块标题样式</div><div class="chapter-desc">编写 .subtitle-title 统一标题及下方装饰横线</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握伪元素 ::after 创建装饰性内容的技巧</li>
+      <li>理解 margin: auto 在块级元素中实现居中的原理</li>
+      <li>学会用统一的类名实现"一处定义，多处复用"</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">完整代码</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">版块标题</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* ---------- 2. 通用版块标题 ---------- */</span>
+<span class="selector">.subtitle-title</span> {
+    <span class="prop">text-align</span>: <span class="val">center</span>;
+    <span class="prop">color</span>: <span class="num">#8b2025</span>;                 <span class="comment">/* 统一主色：中国红 */</span>
+    <span class="prop">font-size</span>: <span class="num">32px</span>;
+    <span class="prop">font-weight</span>: <span class="val">bold</span>;
+    <span class="prop">margin-bottom</span>: <span class="num">30px</span>;
+}
+
+<span class="comment">/* 标题下方装饰横线（margin:auto实现居中） */</span>
+<span class="selector">.subtitle-title::after</span> {
+    <span class="prop">content</span>: <span class="str">""</span>;
+    <span class="prop">display</span>: <span class="val">block</span>;
+    <span class="prop">width</span>: <span class="num">80px</span>;
+    <span class="prop">height</span>: <span class="num">4px</span>;
+    <span class="prop">margin</span>: <span class="num">12px</span> <span class="val">auto</span> <span class="num">0</span>;     <span class="comment">/* 上下间距12px，左右自动居中 */</span>
+    <span class="prop">background-color</span>: <span class="num">#c0392b</span>;
+    <span class="prop">border-radius</span>: <span class="num">2px</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:38%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">text-align: center</td><td class="explain-cell">标题文字居中对齐</td></tr>
+      <tr><td class="code-cell">color: #8b2025</td><td class="explain-cell">���题颜色为深红色（中国红主题色）</td></tr>
+      <tr><td class="code-cell">font-size: 32px</td><td class="explain-cell">标题字号较大，视觉突出</td></tr>
+      <tr><td class="code-cell">margin-bottom: 30px</td><td class="explain-cell">标题与下方内容保持 30px 间距</td></tr>
+      <tr><td class="code-cell">::after（伪元素）</td><td class="explain-cell">在标题文字下方插入一条装饰横线，无需写额外的 HTML 标签</td></tr>
+      <tr><td class="code-cell">width: 80px; height: 4px</td><td class="explain-cell">横线宽80px、高4px</td></tr>
+      <tr><td class="code-cell">margin: 12px auto 0</td><td class="explain-cell">上边距12px（与文字间隔），左右auto（居中），下边距0</td></tr>
+      <tr><td class="code-cell">background-color: #c0392b</td><td class="explain-cell">横线颜色为亮红色</td></tr>
+      <tr><td class="code-cell">border-radius: 2px</td><td class="explain-cell">横线两端微微圆角，更精致</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：伪元素 ::after 的妙用</div>
+    <p>伪元素 <code>::after</code> 可以在不修改 HTML 的前提下，用 CSS 在元素内部追加一个虚拟内容。常见用途：</p>
+    <ul>
+      <li><strong>装饰性元素：</strong>横线、图标、小圆点（本项目的标题装饰线）</li>
+      <li><strong>清除浮动：</strong>上一章的 clearfix 就是 ::after 的经典应用</li>
+      <li><strong>内容插入：</strong>用 content 属性插入文字或符号</li>
+    </ul>
+    <p>本项目节庆文化、民俗之声、特色美食三个板块的标题都使用 <code>class="subtitle-title"</code>，一处定义，三处复用。</p>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">装饰横线不居中？</div>
+      <div class="pf-a">因为横线是块级元素且有固定宽度 80px，必须用 <code>margin: 12px auto 0</code> 让左右外边距自动分配。如果写成 <code>margin: 12px 0 0</code> 会靠左。</div>
+    </div>
+  </div>
+
+  <div class="preview-box">
+    <div class="pv-title"><i class="fas fa-eye"></i> 预期效果</div>
+    <div class="pv-content">
+      <div style="text-align:center;padding:20px 0;">
+        <span style="font-size:32px;font-weight:bold;color:#8b2025;">节庆文化</span>
+        <div style="width:80px;height:4px;margin:12px auto 0;background:#c0392b;border-radius:2px;"></div>
+      </div>
+      <span style="color:#888;">↑ 标题居中，下方一条居中的红色短装饰线</span>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>.subtitle-title 统一了所有板块标题的样式</li>
+      <li>::after 伪元素创建装饰横线，不需要额外 HTML</li>
+      <li>margin: auto 实现块级元素水平居中（前提：有固定 width）</li>
+      <li>统一类名实现"一次定义，多处复用"，减少代码冗余</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">.subtitle-title 标题样式已定义</div>
+    <div class="ck-item">.subtitle-title::after 装饰横线已定义</div>
+    <div class="ck-item">三个 section 的 h2 都使用 class="subtitle-title"</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第7章 ==================== -->
+<div class="chapter" id="ch7">
+  <div class="chapter-header">
+    <span class="chapter-number">7</span>
+    <div><div class="chapter-title">顶部横幅 Banner（position 定位）</div><div class="chapter-desc">实现带传统纹样装饰的红色渐变横幅</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 position: relative / absolute 的定位原理与配合使用</li>
+      <li>学会 linear-gradient 实现线性渐变背景</li>
+      <li>理解 transform: scaleX(-1) 实现水平镜像翻转</li>
+      <li>掌握 opacity 透明度控制和 z-index 层级</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：HTML 结构</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">顶部横幅</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">&lt;!-- ========== 顶部横幅（position定位） ========== --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"top-banner"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"images/chuantong.png"</span> <span class="attr">alt</span>=<span class="val">"传统纹样装饰"</span> <span class="attr">class</span>=<span class="val">"banner-pattern pattern-left"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"images/chuantong.png"</span> <span class="attr">alt</span>=<span class="val">"传统纹样装饰"</span> <span class="attr">class</span>=<span class="val">"banner-pattern pattern-right"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h1</span> <span class="attr">class</span>=<span class="val">"site-title"</span><span class="tag">&gt;</span>泉州民俗坊<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="val">"site-slogan"</span><span class="tag">&gt;</span>千年海丝 · 非遗传承<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:38%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">class="top-banner"</td><td class="explain-cell">横幅容器，设为 position:relative 作为定位参照物</td></tr>
+      <tr><td class="code-cell">两张 chuantong.png</td><td class="explain-cell">同一张传统纹样图片，分别放在左右两侧做装饰</td></tr>
+      <tr><td class="code-cell">pattern-left / pattern-right</td><td class="explain-cell">控制左右定位的类名，配合 banner-pattern 公共样式</td></tr>
+      <tr><td class="code-cell">site-title</td><td class="explain-cell">网站主标题"泉州民俗坊"</td></tr>
+      <tr><td class="code-cell">site-slogan</td><td class="explain-cell">副标题"千年海丝 · 非遗传承"</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：横幅容器样式</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">横幅容器</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">.top-banner</span> {
+    <span class="prop">position</span>: <span class="val">relative</span>;
+    <span class="prop">height</span>: <span class="num">160px</span>;
+    <span class="prop">background</span>: <span class="val">linear-gradient(135deg, #c0392b 0%, #8b2025 100%)</span>;
+    <span class="prop">overflow</span>: <span class="val">hidden</span>;
+    <span class="prop">border-bottom</span>: <span class="num">4px</span> <span class="val">solid</span> <span class="num">#d4a574</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:42%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">position: relative</td><td class="explain-cell">相对定位，自身不偏移，但作为子元素 absolute 定位的参照物</td></tr>
+      <tr><td class="code-cell">height: 160px</td><td class="explain-cell">横幅固定高度 160px</td></tr>
+      <tr><td class="code-cell">linear-gradient(135deg, ...)</td><td class="explain-cell">135度角渐变，从左上亮红 #c0392b 到右下深红 #8b2025</td></tr>
+      <tr><td class="code-cell">overflow: hidden</td><td class="explain-cell">超出横幅范围的内容隐藏（防止纹样图片溢出）</td></tr>
+      <tr><td class="code-cell">border-bottom: 4px solid #d4a574</td><td class="explain-cell">底部金色边框线，呼应传统色调</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：linear-gradient 线性渐变</div>
+    <p>语法：<code>linear-gradient(角度, 起始颜色, 结束颜色)</code></p>
+    <div class="demo-box">
+      <code>linear-gradient(135deg, #c0392b 0%, #8b2025 100%)</code><br>
+      <strong>135deg</strong> → 渐变方向从左上到右下<br>
+      <strong>#c0392b 0%</strong> → 起点位置（0%）为亮红色<br>
+      <strong>#8b2025 100%</strong> → 终点位置（100%）为深红色<br>
+      <strong>效果</strong> → 从亮到深的红色渐变背景
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤三：纹样装饰图定位</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">装饰纹样</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 传统纹样装饰：左右对称定位 */</span>
+<span class="selector">.banner-pattern</span> {
+    <span class="prop">position</span>: <span class="val">absolute</span>;
+    <span class="prop">top</span>: <span class="num">15px</span>;
+    <span class="prop">width</span>: <span class="num">120px</span>;
+    <span class="prop">opacity</span>: <span class="num">0.25</span>;
+}
+
+<span class="selector">.pattern-left</span> {
+    <span class="prop">left</span>: <span class="num">40px</span>;
+}
+
+<span class="selector">.pattern-right</span> {
+    <span class="prop">right</span>: <span class="num">40px</span>;
+    <span class="prop">transform</span>: <span class="val">scaleX(-1)</span>;     <span class="comment">/* 水平镜像翻转 */</span>
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:38%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">position: absolute</td><td class="explain-cell">绝对定位，相对于最近的 relative 父元素（.top-banner）定位</td></tr>
+      <tr><td class="code-cell">top: 15px</td><td class="explain-cell">距横幅顶部 15px</td></tr>
+      <tr><td class="code-cell">width: 120px</td><td class="explain-cell">纹样图片宽度 120px</td></tr>
+      <tr><td class="code-cell">opacity: 0.25</td><td class="explain-cell">透明度 25%，让纹样作为半透明背景装饰不抢主角</td></tr>
+      <tr><td class="code-cell">.pattern-left left: 40px</td><td class="explain-cell">左纹样距横幅左侧 40px</td></tr>
+      <tr><td class="code-cell">.pattern-right right: 40px</td><td class="explain-cell">右纹样距横幅右侧 40px</td></tr>
+      <tr><td class="code-cell">transform: scaleX(-1)</td><td class="explain-cell">水平翻转图片，让左右纹样对称（同一张图实现镜像效果）</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：relative + absolute 黄金搭档</div>
+    <p>这是网页定位最常用的组合模式：</p>
+    <h5>position: relative（参照物）</h5>
+    <p>父元素设为 relative，它自己不产生偏移（没有 top/left），但成为了子元素 absolute 定位的<strong>参照坐标系原点</strong>。</p>
+    <h5>position: absolute（被定位元素）</h5>
+    <p>子元素设为 absolute 后脱离文档流，通过 top/left/right/bottom 相对于父元素精确定位。</p>
+    <div class="demo-box">
+      <strong>如果没有 relative 父元素？</strong><br>
+      absolute 元素会一直往上找，最终相对于整个浏览器窗口（body）定位，这通常不是你想要的。
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤四：标题和副标题</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">标题文字</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">.site-title</span> {
+    <span class="prop">position</span>: <span class="val">relative</span>;
+    <span class="prop">color</span>: <span class="num">#fff</span>;
+    <span class="prop">font-size</span>: <span class="num">44px</span>;
+    <span class="prop">text-align</span>: <span class="val">center</span>;
+    <span class="prop">line-height</span>: <span class="num">100px</span>;       <span class="comment">/* 文字偏上 */</span>
+    <span class="prop">text-shadow</span>: <span class="val">2px 2px 8px rgba(0, 0, 0, 0.4)</span>;
+}
+
+<span class="selector">.site-slogan</span> {
+    <span class="prop">position</span>: <span class="val">relative</span>;
+    <span class="prop">color</span>: <span class="num">#f5d7a0</span>;
+    <span class="prop">font-size</span>: <span class="num">16px</span>;
+    <span class="prop">text-align</span>: <span class="val">center</span>;
+    <span class="prop">letter-spacing</span>: <span class="num">6px</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:40%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">position: relative</td><td class="explain-cell">标题设 relative 是为了让 z-index 高于装饰图（纹样是 absolute）</td></tr>
+      <tr><td class="code-cell">color: #fff</td><td class="explain-cell">白色文字，在红色背景上清晰可见</td></tr>
+      <tr><td class="code-cell">line-height: 100px</td><td class="explain-cell">行高100px（等于横幅高度的62%），让文字偏上为副标题留空间</td></tr>
+      <tr><td class="code-cell">text-shadow: 2px 2px 8px rgba(...)</td><td class="explain-cell">文字阴影：右偏2px、下偏2px、模糊8px、黑色半透明</td></tr>
+      <tr><td class="code-cell">letter-spacing: 6px</td><td class="explain-cell">字符间距6px，让副标题更有呼吸感</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">纹样图片把标题文字遮住了？</div>
+      <div class="pf-a">纹样是 absolute（脱离文档流，层级较高），标题需要设 <code>position: relative</code> 才能出现在纹样之上。或者用 <code>z-index</code> 控制层级。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">scaleX(-1) 导致图片消失？</div>
+      <div class="pf-a">检查是否同时设了其他 transform 属性。多个 transform 要写在一起，如 <code>transform: scaleX(-1) translateY(0)</code>，不能分开写（后者会覆盖前者）。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>relative + absolute 是定位的黄金搭档：父设relative做参照，子设absolute精确定位</li>
+      <li>linear-gradient 实现渐变背景，可指定角度和多个颜色节点</li>
+      <li>transform: scaleX(-1) 水平翻转图片，一张图实现左右对称装饰</li>
+      <li>opacity 控制透明度，text-shadow 给文字添加立体阴影</li>
+      <li>letter-spacing 控制字符间距</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">横幅红色渐变背景正常显示</div>
+    <div class="ck-item">左右纹样图片对称显示、半透明</div>
+    <div class="ck-item">主标题白色居中、有阴影效果</div>
+    <div class="ck-item">副标题金色、字符间距适中</div>
+    <div class="ck-item">底部金色边框线显示</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第8章 ==================== -->
+<div class="chapter" id="ch8">
+  <div class="chapter-header">
+    <span class="chapter-number">8</span>
+    <div><div class="chapter-title">导航栏（float 浮动布局）</div><div class="chapter-desc">实现左侧菜单 + 右侧搜索框的浮动布局</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 float: left / float: right 实现左右分栏布局</li>
+      <li>理解 transition 过渡动画在 hover 交互中的应用</li>
+      <li>掌握 input + button 组合搜索框的样式处理</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：HTML 结构</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">导航栏</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">&lt;!-- ========== 导航栏（float布局） ========== --&gt;</span>
+<span class="tag">&lt;nav</span> <span class="attr">class</span>=<span class="val">"main-nav w clearfix"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="val">"nav-list clearfix"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-home"</span><span class="tag">&gt;&lt;/i&gt;</span> 首页<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-mask"</span><span class="tag">&gt;&lt;/i&gt;</span> 民俗文化<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-star"</span><span class="tag">&gt;&lt;/i&gt;</span> 节庆活动<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-hammer"</span><span class="tag">&gt;&lt;/i&gt;</span> 手工艺坊<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-landmark"</span><span class="tag">&gt;&lt;/i&gt;</span> 关于我们<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"search-box"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="val">"text"</span> <span class="attr">placeholder</span>=<span class="val">"搜索民俗..."</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="val">"button"</span><span class="tag">&gt;&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-search"</span><span class="tag">&gt;&lt;/i&gt;</span> 搜索<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/nav&gt;</span></pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:38%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">class="main-nav w clearfix"</td><td class="explain-cell">三个类：main-nav（导航样式）、w（版心1200px居中）、clearfix（清除浮动）</td></tr>
+      <tr><td class="code-cell">&lt;ul class="nav-list clearfix"&gt;</td><td class="explain-cell">菜单列表，左浮动；clearfix 清除内部 li 的浮动</td></tr>
+      <tr><td class="code-cell">&lt;i class="fas fa-home"&gt;&lt;/i&gt;</td><td class="explain-cell">Font Awesome 图标，fa-home 是房子图标</td></tr>
+      <tr><td class="code-cell">class="search-box"</td><td class="explain-cell">搜索框容器，右浮动</td></tr>
+      <tr><td class="code-cell">placeholder="搜索民俗..."</td><td class="explain-cell">输入框的占位提示文字</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：导航栏容器与菜单样式</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">导航菜单</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">.main-nav</span> {
+    <span class="prop">height</span>: <span class="num">60px</span>;
+}
+
+<span class="comment">/* 导航菜单左浮动 */</span>
+<span class="selector">.nav-list</span> {
+    <span class="prop">float</span>: <span class="val">left</span>;
+}
+
+<span class="selector">.nav-list li</span> {
+    <span class="prop">float</span>: <span class="val">left</span>;
+    <span class="prop">margin-right</span>: <span class="num">35px</span>;
+}
+
+<span class="selector">.nav-list li a</span> {
+    <span class="prop">display</span>: <span class="val">block</span>;
+    <span class="prop">line-height</span>: <span class="num">60px</span>;
+    <span class="prop">font-size</span>: <span class="num">16px</span>;
+    <span class="prop">color</span>: <span class="num">#333</span>;
+    <span class="prop">transition</span>: <span class="val">color 0.3s</span>;
+}
+
+<span class="selector">.nav-list li a:hover</span> {
+    <span class="prop">color</span>: <span class="num">#c0392b</span>;
+    <span class="prop">border-bottom</span>: <span class="num">3px</span> <span class="val">solid</span> <span class="num">#c0392b</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:38%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">height: 60px</td><td class="explain-cell">导航栏固定高度 60px</td></tr>
+      <tr><td class="code-cell">.nav-list float: left</td><td class="explain-cell">整个菜单列表靠左浮动，与右侧搜索框形成左右分栏</td></tr>
+      <tr><td class="code-cell">.nav-list li float: left</td><td class="explain-cell">每个菜单项也左浮动，实现横向排列</td></tr>
+      <tr><td class="code-cell">margin-right: 35px</td><td class="explain-cell">菜单项之间间隔 35px</td></tr>
+      <tr><td class="code-cell">display: block</td><td class="explain-cell">a 标签转为块级元素，才能设置 line-height</td></tr>
+      <tr><td class="code-cell">line-height: 60px</td><td class="explain-cell">行高等于导航栏高度，文字垂直居中</td></tr>
+      <tr><td class="code-cell">transition: color 0.3s</td><td class="explain-cell">颜色变化时用 0.3 秒过渡，更柔和</td></tr>
+      <tr><td class="code-cell">a:hover { color + border-bottom }</td><td class="explain-cell">鼠标悬停时变红色 + 底部出现红色下划线</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：float 实现左右分栏</div>
+    <p>核心思路：一个元素 float:left（靠左），另一个 float:right（靠右），它们就在同一行内分居两侧。中间的空白由版心宽度自动填充。</p>
+    <div class="demo-box">
+      <code>nav（宽1200px）</code><br>
+      ├─ ul.nav-list → <code>float: left</code>（菜单靠左）<br>
+      └─ div.search-box → <code>float: right</code>（搜索框靠右）<br>
+      <strong>效果</strong>：菜单在左、搜索框在右，自动分栏
+    </div>
+    <p><strong>注意：</strong>nav 容器必须加 <code>clearfix</code>，否则内部浮动元素会导致 nav 高度塌陷。</p>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤三：搜索框样式</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">搜索框</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 搜索框右浮动 */</span>
+<span class="selector">.search-box</span> {
+    <span class="prop">float</span>: <span class="val">right</span>;
+    <span class="prop">margin-top</span>: <span class="num">11px</span>;
+}
+
+<span class="selector">.search-box input</span> {
+    <span class="prop">float</span>: <span class="val">left</span>;
+    <span class="prop">width</span>: <span class="num">180px</span>;
+    <span class="prop">height</span>: <span class="num">38px</span>;
+    <span class="prop">padding</span>: <span class="num">0</span> <span class="num">15px</span>;
+    <span class="prop">border</span>: <span class="num">2px</span> <span class="val">solid</span> <span class="num">#c0392b</span>;
+    <span class="prop">border-radius</span>: <span class="num">20px</span> <span class="num">0</span> <span class="num">0</span> <span class="num">20px</span>;
+    <span class="prop">outline</span>: <span class="val">none</span>;
+}
+
+<span class="selector">.search-box button</span> {
+    <span class="prop">float</span>: <span class="val">left</span>;
+    <span class="prop">height</span>: <span class="num">38px</span>;
+    <span class="prop">padding</span>: <span class="num">0</span> <span class="num">18px</span>;
+    <span class="prop">border</span>: <span class="val">none</span>;
+    <span class="prop">border-radius</span>: <span class="num">0</span> <span class="num">20px</span> <span class="num">20px</span> <span class="num">0</span>;
+    <span class="prop">background-color</span>: <span class="num">#c0392b</span>;
+    <span class="prop">color</span>: <span class="num">#fff</span>;
+    <span class="prop">cursor</span>: <span class="val">pointer</span>;
+    <span class="prop">font-size</span>: <span class="num">14px</span>;
+}
+
+<span class="selector">.search-box button:hover</span> {
+    <span class="prop">background-color</span>: <span class="num">#8b2025</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:40%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">float: right</td><td class="explain-cell">搜索框整体靠右浮动</td></tr>
+      <tr><td class="code-cell">margin-top: 11px</td><td class="explain-cell">垂直居中调整（(60-38)/2 = 11px）</td></tr>
+      <tr><td class="code-cell">input float: left</td><td class="explain-cell">输入框左浮动，与按钮横向紧贴</td></tr>
+      <tr><td class="code-cell">border-radius: 20px 0 0 20px</td><td class="explain-cell">输入框左侧圆角（左上、左下20px，右侧直角）</td></tr>
+      <tr><td class="code-cell">outline: none</td><td class="explain-cell">去掉输入框获得焦点时的默认蓝色外框</td></tr>
+      <tr><td class="code-cell">button float: left</td><td class="explain-cell">按钮紧贴输入框右侧</td></tr>
+      <tr><td class="code-cell">border-radius: 0 20px 20px 0</td><td class="explain-cell">按钮右侧圆角（右上、右下20px，左侧直角），与输入框拼成胶囊形</td></tr>
+      <tr><td class="code-cell">cursor: pointer</td><td class="explain-cell">鼠标悬停时变为手型光标，提示可点击</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：border-radius 四值写法</div>
+    <p><code>border-radius</code> 的四个值按<strong>顺时针</strong>方向对应四个角：</p>
+    <div class="demo-box">
+      <code>border-radius: 左上 右上 右下 左下</code><br><br>
+      <code>20px 0 0 20px</code> → 只有左上和左下圆角（输入框左侧）<br>
+      <code>0 20px 20px 0</code> → 只有右上和右下圆角（按钮右侧）<br>
+      <strong>拼在一起</strong> → 形成完整的胶囊形搜索框
+    </div>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">搜索框的 input 和 button 之间有缝隙？</div>
+      <div class="pf-a">HTML 中 input 和 button 标签之间的空格/换行会被渲染成间距。解决方法：两个标签之间不留空格，或者都用 float:left 紧贴。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">菜单文字没有垂直居中？</div>
+      <div class="pf-a">检查 a 标签是否设了 <code>display: block</code>。行内元素无法设置 line-height 生效，必须先转成块级元素。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>float:left + float:right 实现导航菜单和搜索框左右分栏</li>
+      <li>li 也用 float:left 实现菜单项横向排列</li>
+      <li>display:block 让 a 标签可设 line-height 实现文字垂直居中</li>
+      <li>transition 实现颜色平滑过渡，hover 变色变下划线</li>
+      <li>border-radius 四值分别控制四个角的圆角半径</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">5个菜单项横向排列在左侧</div>
+    <div class="ck-item">每个菜单项前有对应的 Font Awesome 图标</div>
+    <div class="ck-item">搜索框在右侧，输入框+按钮紧贴成胶囊形</div>
+    <div class="ck-item">菜单 hover 变红 + 出现下划线</div>
+    <div class="ck-item">按钮 hover 变深红色</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第9章 ==================== -->
+<div class="chapter" id="ch9">
+  <div class="chapter-header">
+    <span class="chapter-number">9</span>
+    <div><div class="chapter-title">节庆文化模块（float 卡片）</div><div class="chapter-desc">实现三张节庆文化卡片横向排列</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 float 卡片布局的完整流程（浮动 + 间距 + 去尾）</li>
+      <li>理解 card-list 宽度计算原理（卡片宽×数量 + 间距×数量）</li>
+      <li>掌握 box-shadow 阴影和 transform:hover 动画效果</li>
+      <li>学会 object-fit: cover 控制图片填充方式</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：HTML 结构</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">节庆文化</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">&lt;!-- ========== 第一节：节庆文化（float布局） ========== --&gt;</span>
+<span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="val">"festival"</span> <span class="attr">class</span>=<span class="val">"w"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h2</span> <span class="attr">class</span>=<span class="val">"subtitle-title"</span><span class="tag">&gt;</span>节庆文化<span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="val">"card-list clearfix"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"festival-card"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"images/tixianmuou.jpg"</span> <span class="attr">alt</span>=<span class="val">"提线木偶"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;h3&gt;</span>提线木偶<span class="tag">&lt;/h3&gt;</span>
+            <span class="tag">&lt;p&gt;</span>提线木偶是泉州传统民间艺术的瑰宝...<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;/li&gt;</span>
+        <span class="comment">&lt;!-- 火鼎公火鼎婆、拍胸舞卡片结构相同 --&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"festival-card last"</span><span class="tag">&gt;&lt;!-- 最后一张加 last 类 --&gt;</span>
+            <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"images/paixiongwu.jpg"</span> <span class="attr">alt</span>=<span class="val">"拍胸舞"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;h3&gt;</span>拍胸舞<span class="tag">&lt;/h3&gt;</span>
+            <span class="tag">&lt;p&gt;</span>拍胸舞是一种富有节奏感的传统舞蹈...<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/section&gt;</span></pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">id="festival"</td><td class="explain-cell">板块唯一标识，用于 CSS 精确匹配（#festival）</td></tr>
+      <tr><td class="code-cell">class="w"</td><td class="explain-cell">版心工具类，1200px 居中</td></tr>
+      <tr><td class="code-cell">class="card-list clearfix"</td><td class="explain-cell">卡片列表容器，clearfix 清除内部 li 浮动</td></tr>
+      <tr><td class="code-cell">class="festival-card"</td><td class="explain-cell">卡片公共样式类（浮动、宽度、阴影等）</td></tr>
+      <tr><td class="code-cell">class="festival-card last"</td><td class="explain-cell">每行最后一张卡片额外加 last 类，去掉右侧间距</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：卡片列表宽度计算</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">卡片列表</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 节庆文化：3张卡片整体居中（280*3 + 26*2 = 892px） */</span>
+<span class="selector">#festival .card-list</span> {
+    <span class="prop">width</span>: <span class="num">892px</span>;
+    <span class="prop">margin</span>: <span class="num">0</span> <span class="val">auto</span>;
+}
+
+<span class="selector">.card-list</span> {
+    <span class="prop">padding</span>: <span class="num">10px</span> <span class="num">0</span> <span class="num">30px</span>;
+}</pre>
+  </div>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：卡片布局的宽度计算</div>
+    <p>3张卡片横向排列，每张宽280px，卡片间距26px。列表总宽度 = 所有卡片宽度 + 所有间距：</p>
+    <div class="demo-box">
+      <strong>公式：</strong>总宽度 = 卡片数 × 卡片宽 + 间距数 × 间��<br>
+      <strong>注意：</strong>间距数 = 卡片数 - 1（最后一张右边没有间距）<br><br>
+      3张卡片：280×3 + 26×2 = <strong>840 + 52 = 892px</strong><br>
+      <strong>最后一张用 .last 类去掉 margin-right</strong>，所以只需算2个间距
+    </div>
+    <p>设为 892px + margin:0 auto → 整组卡片在版心(1200px)中居中显示。</p>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤三：卡片公共样式</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">卡片样式</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 卡片公共样式 */</span>
+<span class="selector">.festival-card,
+.food-card</span> {
+    <span class="prop">float</span>: <span class="val">left</span>;
+    <span class="prop">width</span>: <span class="num">280px</span>;
+    <span class="prop">margin</span>: <span class="num">0</span> <span class="num">26px</span> <span class="num">26px</span> <span class="num">0</span>;
+    <span class="prop">background-color</span>: <span class="num">#fff</span>;
+    <span class="prop">border-radius</span>: <span class="num">10px</span>;
+    <span class="prop">box-shadow</span>: <span class="num">0</span> <span class="num">4px</span> <span class="num">12px</span> <span class="val">rgba(0, 0, 0, 0.08)</span>;
+    <span class="prop">overflow</span>: <span class="val">hidden</span>;
+    <span class="prop">transition</span>: <span class="val">transform 0.3s, box-shadow 0.3s</span>;
+}
+
+<span class="comment">/* 每行最后一张卡片去除右侧间距 */</span>
+<span class="selector">.festival-card.last,
+.food-card.last</span> {
+    <span class="prop">margin-right</span>: <span class="num">0</span>;
+}
+
+<span class="comment">/* 鼠标悬停：轻微上浮 + 加深阴影 */</span>
+<span class="selector">.festival-card:hover,
+.food-card:hover</span> {
+    <span class="prop">transform</span>: <span class="val">translateY(-8px)</span>;
+    <span class="prop">box-shadow</span>: <span class="num">0</span> <span class="num">12px</span> <span class="num">24px</span> <span class="val">rgba(0, 0, 0, 0.15)</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:42%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">float: left</td><td class="explain-cell">卡片左浮动，横向排列</td></tr>
+      <tr><td class="code-cell">width: 280px</td><td class="explain-cell">每张卡片固定宽度 280px</td></tr>
+      <tr><td class="code-cell">margin: 0 26px 26px 0</td><td class="explain-cell">上0、右26px、下26px、左0（右侧和下方留间距）</td></tr>
+      <tr><td class="code-cell">box-shadow: 0 4px 12px rgba(0,0,0,0.08)</td><td class="explain-cell">卡片阴影：右偏0、下偏4px、模糊12px、黑色8%透明度</td></tr>
+      <tr><td class="code-cell">overflow: hidden</td><td class="explain-cell">超出卡片范围的内容裁剪（配合圆角和图片放大效果）</td></tr>
+      <tr><td class="code-cell">transition: transform 0.3s, ...</td><td class="explain-cell">transform和box-shadow变化时用0.3秒过渡</td></tr>
+      <tr><td class="code-cell">.last margin-right: 0</td><td class="explain-cell">每行最后一张去掉右侧间距，防止超出容器宽度</td></tr>
+      <tr><td class="code-cell">hover translateY(-8px)</td><td class="explain-cell">鼠标悬停时卡片向上移动8px</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：box-shadow 阴影详解</div>
+    <p>语法：<code>box-shadow: 水平偏移 垂直偏移 模糊半径 颜色</code></p>
+    <div class="demo-box">
+      <code>0 4px 12px rgba(0,0,0,0.08)</code><br>
+      <strong>0</strong> → 水平偏移0（阴影在正下方）<br>
+      <strong>4px</strong> → 向下偏移4px<br>
+      <strong>12px</strong> → 模糊半径12px（越大越柔和）<br>
+      <strong>rgba(0,0,0,0.08)</strong> → 黑色，透明度8%（非常淡）<br><br>
+      悬停时加深：<code>0 12px 24px rgba(0,0,0,0.15)</code> → 偏移和模糊都增大，透明度变15%
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤四：卡片图片与文字</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">图片与文字</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">.festival-card img,
+.food-card img</span> {
+    <span class="prop">width</span>: <span class="num">100%</span>;
+    <span class="prop">height</span>: <span class="num">180px</span>;
+    <span class="prop">object-fit</span>: <span class="val">cover</span>;
+    <span class="prop">transition</span>: <span class="val">transform 0.3s</span>;
+}
+
+<span class="selector">.festival-card:hover img,
+.food-card:hover img</span> {
+    <span class="prop">transform</span>: <span class="val">scale(1.05)</span>;
+}
+
+<span class="selector">.festival-card h3,
+.food-card h3</span> {
+    <span class="prop">margin</span>: <span class="num">12px</span> <span class="num">0</span> <span class="num">8px</span>;
+    <span class="prop">text-align</span>: <span class="val">center</span>;
+    <span class="prop">font-size</span>: <span class="num">18px</span>;
+    <span class="prop">color</span>: <span class="num">#8b2025</span>;
+}
+
+<span class="selector">.festival-card p,
+.food-card p</span> {
+    <span class="prop">padding</span>: <span class="num">0</span> <span class="num">15px</span> <span class="num">15px</span>;
+    <span class="prop">font-size</span>: <span class="num">14px</span>;
+    <span class="prop">color</span>: <span class="num">#666</span>;
+    <span class="prop">text-align</span>: <span class="val">justify</span>;
+    <span class="prop">text-indent</span>: <span class="num">2em</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:38%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">width: 100%; height: 180px</td><td class="explain-cell">图片宽度撑满卡片（280px），高度固定 180px</td></tr>
+      <tr><td class="code-cell">object-fit: cover</td><td class="explain-cell">图片等比例缩放裁剪填满区域，不变形不留白</td></tr>
+      <tr><td class="code-cell">hover scale(1.05)</td><td class="explain-cell">悬停时图片放大到 105%（配合 overflow:hidden 裁剪）</td></tr>
+      <tr><td class="code-cell">color: #8b2025</td><td class="explain-cell">卡片标题用主题深红色</td></tr>
+      <tr><td class="code-cell">text-align: justify</td><td class="explain-cell">两端对齐（描述文字左右两边都对齐）</td></tr>
+      <tr><td class="code-cell">text-indent: 2em</td><td class="explain-cell">首行缩进2个字符（中文段落标准格式）</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：object-fit: cover</div>
+    <p>图片原始比例和容器比例不一致时，<code>object-fit</code> 决定如何处理：</p>
+    <ul>
+      <li><code>cover</code> → 等比例缩放并裁剪，完全填满容器（可能裁掉部分画面）</li>
+      <li><code>contain</code> → 等比例缩放，完整显示，可能有留白</li>
+      <li><code>fill</code> → 拉伸变形填满（不推荐，图片会变形）</li>
+    </ul>
+    <p>卡片图片统一用 <code>cover</code>，确保不同��例的图片都能统一高度、完整填充。</p>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">忘加 .last 类导致最后一张卡片换行？</div>
+      <div class="pf-a">每张卡片有 margin-right:26px，最后一张也有就会超出容器宽度被挤到下一行。<strong>必须给每行最后一张加 .last 类</strong>去掉右侧间距。</div>
+      <div class="compare">
+        <div class="wrong"><span class="label">错误</span>3张卡片都有 margin-right:26px → 总宽 280×3+26×3=918px &gt; 892px，第三张被挤到第二行</div>
+        <div class="right"><span class="label">正确</span>第三张加 .last 去掉 margin-right → 总宽 280×3+26×2=892px，正好一行</div>
+      </div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">图片放大效果溢出卡片？</div>
+      <div class="pf-a">卡片必须设 <code>overflow: hidden</code>，否则 hover 时 scale(1.05) 放大的图片会超出卡片圆角边界。</div>
+    </div>
+  </div>
+
+  <div class="preview-box">
+    <div class="pv-title"><i class="fas fa-eye"></i> 预期效果</div>
+    <div class="pv-content">
+      三张白色卡片横向居中排列，每张含：上方图片（180px高）→ 红色标题 → 灰色描述。<br>
+      鼠标悬停时：卡片上浮8px + 阴影加深 + 图片放大5%。
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>float:left 实现卡片横向排列，clearfix 防止父容器塌陷</li>
+      <li>卡片列表宽度 = 卡片数×卡片宽 + (卡片数-1)×间距</li>
+      <li>.last 类去掉每行最后一张的 margin-right，防止超出宽度</li>
+      <li>box-shadow 控制阴影，hover 时加深增强立体感</li>
+      <li>transform: translateY 上浮 + scale 图片放大，overflow:hidden 裁剪</li>
+      <li>object-fit: cover 保证图片等比例填充不变形</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">三张卡片在同一行居中排列</div>
+    <div class="ck-item">卡片有圆角和阴影</div>
+    <div class="ck-item">图片高度统一为180px，无变形</div>
+    <div class="ck-item">标题红色居中，描述文字首行缩进</div>
+    <div class="ck-item">hover 时卡片上浮、阴影加深、图片放大</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第10章 ==================== -->
+<div class="chapter" id="ch10">
+  <div class="chapter-header">
+    <span class="chapter-number">10</span>
+    <div><div class="chapter-title">民俗之声模块（position 定位）</div><div class="chapter-desc">用绝对定位实现三张文化卡片横向层叠排列</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 position:absolute 三卡片横向排列的定位方法</li>
+      <li>深入理解 transform: translateX(-50%) 实现居中的原理</li>
+      <li>掌握 z-index 层级控制和 hover 提层技巧</li>
+      <li>理解 transform 组合写法（translateX + translateY 同时使用）</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：HTML 结构</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">民俗之声</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">&lt;!-- ========== 第二节：民俗之声（position布局） ========== --&gt;</span>
+<span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="val">"culture"</span> <span class="attr">class</span>=<span class="val">"w"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h2</span> <span class="attr">class</span>=<span class="val">"subtitle-title"</span><span class="tag">&gt;</span>民俗之声<span class="tag">&lt;/h2&gt;</span>
+    <span class="comment">&lt;!-- 父容器 relative，子元素 absolute --&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"culture-stage"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"culture-card card-left"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"images/mianxianhu.jpg"</span> <span class="attr">alt</span>=<span class="val">"闽南话"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"card-body"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;h3&gt;</span>闽南话<span class="tag">&lt;/h3&gt;</span>
+                <span class="tag">&lt;p&gt;</span>古汉语活化石<span class="tag">&lt;br&gt;</span>唐宋官话的现存代表<span class="tag">&lt;/p&gt;</span>
+            <span class="tag">&lt;/div&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+        <span class="comment">&lt;!-- 南音(card-center)、高甲戏(card-right)结构相同 --&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/section&gt;</span></pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">class="culture-stage"</td><td class="explain-cell">舞台容器，设为 position:relative 作为三张卡片的定位参照</td></tr>
+      <tr><td class="code-cell">card-left / card-center / card-right</td><td class="explain-cell">三个类分别控制左、中、右卡片的精确定位</td></tr>
+      <tr><td class="code-cell">class="card-body"</td><td class="explain-cell">卡片文字内容区域容器</td></tr>
+      <tr><td class="code-cell">&lt;br&gt;</td><td class="explain-cell">换行标签，让描述文字分两行显示</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：舞台容器（定位参照物）</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">舞台容器</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">.culture-stage</span> {
+    <span class="prop">position</span>: <span class="val">relative</span>;       <span class="comment">/* 相对定位，做参照物 */</span>
+    <span class="prop">height</span>: <span class="num">380px</span>;
+    <span class="prop">margin-bottom</span>: <span class="num">40px</span>;
+    <span class="prop">overflow</span>: <span class="val">hidden</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">position: relative</td><td class="explain-cell">设为相对定位，作为内部 absolute 卡片的定位坐标系</td></tr>
+      <tr><td class="code-cell">height: 380px</td><td class="explain-cell">舞台高度 380px（卡片高度 + top偏移 + hover上浮空间）</td></tr>
+      <tr><td class="code-cell">overflow: hidden</td><td class="explain-cell">超出舞台范围的内容裁剪隐藏</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤三：卡片基础样式</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">文化卡片</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 文化卡片：绝对定位，三张横向均分 */</span>
+<span class="selector">.culture-card</span> {
+    <span class="prop">position</span>: <span class="val">absolute</span>;
+    <span class="prop">width</span>: <span class="num">300px</span>;
+    <span class="prop">top</span>: <span class="num">40px</span>;
+    <span class="prop">background-color</span>: <span class="num">#fff</span>;
+    <span class="prop">border-radius</span>: <span class="num">12px</span>;
+    <span class="prop">box-shadow</span>: <span class="num">0</span> <span class="num">6px</span> <span class="num">20px</span> <span class="val">rgba(0, 0, 0, 0.1)</span>;
+    <span class="prop">overflow</span>: <span class="val">hidden</span>;
+    <span class="prop">transition</span>: <span class="val">transform 0.3s, box-shadow 0.3s</span>;
+}
+
+<span class="selector">.culture-card:hover</span> {
+    <span class="prop">z-index</span>: <span class="num">10</span>;                    <span class="comment">/* 悬停时提到最上层 */</span>
+    <span class="prop">transform</span>: <span class="val">translateY(-10px)</span>;
+    <span class="prop">box-shadow</span>: <span class="num">0</span> <span class="num">16px</span> <span class="num">36px</span> <span class="val">rgba(0, 0, 0, 0.2)</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width":40%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">position: absolute</td><td class="explain-cell">绝对定位，脱离文档流，精确定位到指定坐标</td></tr>
+      <tr><td class="code-cell">width: 300px</td><td class="explain-cell">每张文化卡片宽 300px</td></tr>
+      <tr><td class="code-cell">top: 40px</td><td class="explain-cell">所有卡片距舞台顶部 40px（统一高度对齐）</td></tr>
+      <tr><td class="code-cell">border-radius: 12px</td><td class="explain-cell">比节庆卡片圆角更大（12px vs 10px），视觉更柔和</td></tr>
+      <tr><td class="code-cell">hover z-index: 10</td><td class="explain-cell">悬停时层级提到10，确保浮在其他卡片之上</td></tr>
+      <tr><td class="code-cell">hover translateY(-10px)</td><td class="explain-cell">悬停时上浮10px（比节庆卡片的8px更大）</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤四：三卡片精确定位（核心）</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">三卡片定位</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 左卡片 */</span>
+<span class="selector">.card-left</span> {
+    <span class="prop">left</span>: <span class="num">100px</span>;
+}
+
+<span class="comment">/* 中间卡片：居中定位 */</span>
+<span class="selector">.card-center</span> {
+    <span class="prop">left</span>: <span class="num">50%</span>;                     <span class="comment">/* 先靠到容器50%位置 */</span>
+    <span class="prop">transform</span>: <span class="val">translateX(-50%)</span>;    <span class="comment">/* 再向左移自身宽度的一半 */</span>
+    <span class="prop">z-index</span>: <span class="num">2</span>;
+}
+
+<span class="comment">/* 居中卡片 hover 必须保留 translateX(-50%) */</span>
+<span class="selector">.card-center:hover</span> {
+    <span class="prop">transform</span>: <span class="val">translateX(-50%) translateY(-10px)</span>;
+}
+
+<span class="comment">/* 右卡片 */</span>
+<span class="selector">.card-right</span> {
+    <span class="prop">right</span>: <span class="num">100px</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:42%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">.card-left left: 100px</td><td class="explain-cell">左卡片距舞台左侧 100px</td></tr>
+      <tr><td class="code-cell">.card-center left: 50%</td><td class="explain-cell">中间卡片左边缘移到容器50%的位置</td></tr>
+      <tr><td class="code-cell">transform: translateX(-50%)</td><td class="explain-cell">向左偏移自身宽度的50%，实现真正居中</td></tr>
+      <tr><td class="code-cell">z-index: 2</td><td class="explain-cell">中间卡片层级最高（默认在最上层）</td></tr>
+      <tr><td class="code-cell">hover translateX(-50%) translateY(-10px)</td><td class="explain-cell">hover时必须同时保留两个位移，否则会偏移</td></tr>
+      <tr><td class="code-cell">.card-right right: 100px</td><td class="explain-cell">右卡片距舞台右侧 100px</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：left:50% + translateX(-50%) 居中大法</div>
+    <p>这是 CSS 中最经典的<strong>绝对定位居中</strong>方案，分两步：</p>
+    <h5>第一步：left: 50%</h5>
+    <p>让元素左边缘移动到父容器的50%位置。但此时元素整体偏右——因为它的左边缘在中间，身体全部在右半边。</p>
+    <h5>第二步：transform: translateX(-50%)</h5>
+    <p><code>-50%</code> 的参照物是<strong>元素自身的宽度</strong>（不是父容器！），向左移动自身宽度的一半，正好让元素中心对齐父容器中心。</p>
+    <div class="demo-box">
+      卡片宽300px，舞台宽1200px：<br>
+      left:50% → 左边缘在 600px 处<br>
+      translateX(-50%) → 向左移 150px（300px的一半）<br>
+      最终左边缘在 450px，右边缘在 750px → <strong>居中</strong>
+    </div>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">中间卡片 hover 时向右偏移了？</div>
+      <div class="pf-a">这是一个非常常见的 bug！中间卡片原本有 <code>transform: translateX(-50%)</code> 来居中，如果 hover 时只写 <code>transform: translateY(-10px)</code>，会<strong>覆盖</strong>掉原来的 translateX(-50%)，导致卡片向右偏移。</div>
+      <div class="compare">
+        <div class="wrong"><span class="label">错误写法</span><code>.card-center:hover { transform: translateY(-10px); }</code><br>→ translateX(-50%) 被覆盖，卡片向右偏移</div>
+        <div class="right"><span class="label">正确写法</span><code>.card-center:hover { transform: translateX(-50%) translateY(-10px); }</code><br>→ 两个变换都保留，既居中又上浮</div>
+      </div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">卡片标题颜色不一样？</div>
+      <div class="pf-a">这是有意设计的：左卡片 h3 是红色 #c0392b，中间是蓝色 #2980b9，右卡片是绿色 #27ae60——用颜色区分三种文化类型。</div>
+    </div>
+  </div>
+
+  <div class="preview-box">
+    <div class="pv-title"><i class="fas fa-eye"></i> 预期效果</div>
+    <div class="pv-content">
+      三张白色卡片在舞台上横向排列：左(距左100px)、中(居中)、右(距右100px)。<br>
+      中间卡片层级最高（z-index:2），与左右卡片可能有轻微重叠。<br>
+      悬停时卡片上浮10px、阴影加深、提到最上层。
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>父容器 culture-stage 设 position:relative 做定位参照</li>
+      <li>三张卡片用 position:absolute + left/right 精确定位</li>
+      <li>中间卡片用 left:50% + translateX(-50%) 实现居中</li>
+      <li>hover 时 transform 必须保留所有原有变换，否则会偏移</li>
+      <li>z-index 控制层级，hover 时提层确保浮在最上方</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">三张文化卡片在舞台上横向排列</div>
+    <div class="ck-item">中间卡片精确居中</div>
+    <div class="ck-item">三张卡片标题颜色分别为红/蓝/绿</div>
+    <div class="ck-item">hover 时卡片上浮且不偏移</div>
+    <div class="ck-item">hover 的卡片浮在其他卡片之上</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第11章 ==================== -->
+<div class="chapter" id="ch11">
+  <div class="chapter-header">
+    <span class="chapter-number">11</span>
+    <div><div class="chapter-title">特色美食模块（float 多行卡片）</div><div class="chapter-desc">实现8张美食卡片分两行四列排列</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 float 多行多列卡片网格布局的实现方法</li>
+      <li>理解每行最后一张去 margin-right 的通用模式</li>
+      <li>复习卡片公共样式复用，体会"DRY"（不重复）原则</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：HTML 结构</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">特色美食</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">&lt;!-- ========== 第三节：特色美食（float布局） ========== --&gt;</span>
+<span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="val">"food"</span> <span class="attr">class</span>=<span class="val">"w"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h2</span> <span class="attr">class</span>=<span class="val">"subtitle-title"</span><span class="tag">&gt;</span>特色美食<span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;ul</span> <span class="attr">class</span>=<span class="val">"card-list clearfix"</span><span class="tag">&gt;</span>
+        <span class="comment">&lt;!-- 第一行4张 --&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card"</span><span class="tag">&gt;</span>肉粽<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card"</span><span class="tag">&gt;</span>润饼皮<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card"</span><span class="tag">&gt;</span>石花膏<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card last"</span><span class="tag">&gt;</span>水丸汤<span class="tag">&lt;/li&gt;</span>
+        <span class="comment">&lt;!-- 第二行4张 --&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card"</span><span class="tag">&gt;</span>面线糊<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card"</span><span class="tag">&gt;</span>洪濑鸡爪<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card"</span><span class="tag">&gt;</span>满煎糕<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val">"food-card last"</span><span class="tag">&gt;</span>土笋冻<span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/section&gt;</span></pre>
+  </div>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：float 多行自动换行</div>
+    <p>当 float:left 的元素排满一行后，会<strong>自动换到下一行</strong>继续排列。这就是 float 实现多行卡片网格的原理。</p>
+    <p>关键：容器宽度必须精确容纳每行的卡片（卡片宽×列数 + 间距×(列数-1)），否则会出现错位。</p>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：列表宽度计算</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">美食列表</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">/* 特色美食：4张卡片撑满版心（280*4 + 26*3 = 1198px） */</span>
+<span class="selector">#food .card-list</span> {
+    <span class="prop">width</span>: <span class="num">1198px</span>;
+    <span class="prop">margin</span>: <span class="num">0</span> <span class="val">auto</span>;
+}</pre>
+  </div>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：4列宽度计算</div>
+    <div class="demo-box">
+      <strong>每行4张卡片</strong>：280×4 + 26×3 = 1120 + 78 = <strong>1198px</strong><br>
+      <strong>间距数 = 3</strong>（第4张用 .last 去掉右侧间距）<br>
+      <strong>1198px ≈ 版心 1200px</strong>（差2px是留出边距余量）
+    </div>
+    <p>8张卡片分两行，每行4张。第4张和第8张都加 <code>.last</code> 类去掉右侧间距。</p>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">第二行卡片位置错乱了？</div>
+      <div class="pf-a">检查第一行第4张是否加了 <code>.last</code> 类。如果没加，它有 margin-right:26px 导致第一行超出1198px，第二行卡片会被挤到不同位置。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">为什么美食卡片和节庆卡片可以用同一套样式？</div>
+      <div class="pf-a">因为它们用了<strong>相同的选择器组</strong>：<code>.festival-card, .food-card { ... }</code>。这是一种 DRY（Don't Repeat Yourself）设计——公共样式只写一次，两个类名共享。</div>
+    </div>
+  </div>
+
+  <div class="preview-box">
+    <div class="pv-title"><i class="fas fa-eye"></i> 预期效果</div>
+    <div class="pv-content">
+      8张美食卡片分两行排列，每行4张整齐对齐。<br>
+      所有卡片复用节庆卡片的公共样式（浮动、阴影、hover动画）。<br>
+      描述文字首行缩进2em，中文段落格式。
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>float:left 元素排满一行后自动换行，实现多行网格</li>
+      <li>8张卡片 = 2行×4列，每行第4张加 .last 去间距</li>
+      <li>列表宽度 = 卡片宽×4 + 间距×3 = 1198px</li>
+      <li>美食卡片复用节庆卡片样式，体现 DRY 原则</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">8张美食卡片分两行四列排列</div>
+    <div class="ck-item">���行第4张卡片加了 .last 类</div>
+    <div class="ck-item">所有卡片 hover 动画正常（上浮+阴影+图片放大）</div>
+    <div class="ck-item">卡片样式与节庆卡片一致（复用公共样式）</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第12章 ==================== -->
+<div class="chapter" id="ch12">
+  <div class="chapter-header">
+    <span class="chapter-number">12</span>
+    <div><div class="chapter-title">页脚区域（float 三栏）</div><div class="chapter-desc">实现深色背景三栏页脚布局</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 float 三栏等宽布局的实现方法</li>
+      <li>学会 border-left 装饰性左边框设计</li>
+      <li>理解页脚的信息分区设计原则</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤一：HTML 结构</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">页脚</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="comment">&lt;!-- ========== 页脚 ========== --&gt;</span>
+<span class="tag">&lt;footer</span> <span class="attr">class</span>=<span class="val">"site-footer"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"footer-content w clearfix"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"footer-section"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;h4&gt;</span>民俗传承<span class="tag">&lt;/h4&gt;</span>
+            <span class="tag">&lt;p&gt;</span>保护非物质文化遗产<span class="tag">&lt;br&gt;</span>传承千年文化记忆<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"footer-section"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;h4&gt;</span>快速链接<span class="tag">&lt;/h4&gt;</span>
+            <span class="tag">&lt;ul&gt;</span>
+                <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>联系我们<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+                <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>合作机构<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+                <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val">"#"</span><span class="tag">&gt;</span>隐私政策<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+            <span class="tag">&lt;/ul&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"footer-section"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;h4&gt;</span>关注我们<span class="tag">&lt;/h4&gt;</span>
+            <span class="tag">&lt;p&gt;</span>电子邮箱：qzmx@qq.com<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val">"copyright"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;p&gt;</span>2026 民俗坊 保留所有权利<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;p&gt;</span>网站包含 <span class="tag">&lt;i</span> <span class="attr">class</span>=<span class="val">"fas fa-heart"</span><span class="tag">&gt;&lt;/i&gt;</span> 传统元素<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/footer&gt;</span></pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:35%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">class="site-footer"</td><td class="explain-cell">页脚最外层容器，深色背景</td></tr>
+      <tr><td class="code-cell">class="footer-content w clearfix"</td><td class="explain-cell">内容区版心居中 + 清除浮动</td></tr>
+      <tr><td class="code-cell">class="footer-section"</td><td class="explain-cell">三栏区块，每栏宽400px左浮动</td></tr>
+      <tr><td class="code-cell">class="copyright"</td><td class="explain-cell">版权信息区域，居中显示</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤二：页脚容器与三栏布局</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">页脚布局</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">.site-footer</span> {
+    <span class="prop">background-color</span>: <span class="num">#2c3e50</span>;
+    <span class="prop">color</span>: <span class="num">#ecf0f1</span>;
+    <span class="prop">padding</span>: <span class="num">40px</span> <span class="num">0</span> <span class="num">20px</span>;
+    <span class="prop">margin-top</span>: <span class="num">20px</span>;
+}
+
+<span class="selector">.footer-content</span> {
+    <span class="prop">padding-bottom</span>: <span class="num">30px</span>;
+    <span class="prop">border-bottom</span>: <span class="num">1px</span> <span class="val">solid</span> <span class="num">#3d566e</span>;
+}
+
+<span class="comment">/* 三个区块等宽左浮动 */</span>
+<span class="selector">.footer-section</span> {
+    <span class="prop">float</span>: <span class="val">left</span>;
+    <span class="prop">width</span>: <span class="num">400px</span>;
+    <span class="prop">padding</span>: <span class="num">0</span> <span class="num">20px</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:38%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">background: #2c3e50</td><td class="explain-cell">深蓝灰色背景（与上方浅色页面形成对比）</td></tr>
+      <tr><td class="code-cell">color: #ecf0f1</td><td class="explain-cell">浅色文字（在深色背景上清晰可读）</td></tr>
+      <tr><td class="code-cell">padding: 40px 0 20px</td><td class="explain-cell">上40px、左右0、下20px的内边距</td></tr>
+      <tr><td class="code-cell">border-bottom: 1px solid #3d566e</td><td class="explain-cell">内容区底部分隔线（比背景稍亮的深蓝灰色）</td></tr>
+      <tr><td class="code-cell">float: left; width: 400px</td><td class="explain-cell">三栏各400px左浮动（400×3=1200px 刚好等于版心宽度）</td></tr>
+      <tr><td class="code-cell">padding: 0 20px</td><td class="explain-cell">每栏左右各20px内边距，内容不紧贴边缘</td></tr>
+    </tbody>
+  </table>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：三栏等宽布局计算</div>
+    <p>版心宽度1200px，三栏等宽 → 每栏 1200÷3 = <strong>400px</strong></p>
+    <div class="demo-box">
+      footer-section 1 (400px) | footer-section 2 (400px) | footer-section 3 (400px)<br>
+      总宽度 = 400×3 = 1200px（正好填满版心）<br>
+      <strong>注意：</strong>因为设了 box-sizing:border-box，padding 不会额外增加宽度
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">步骤三：标题装饰与版权区</h3>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-css3-alt"></i> CSS<span class="file-tag">页脚细节</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="selector">.footer-section h4</span> {
+    <span class="prop">margin-bottom</span>: <span class="num">15px</span>;
+    <span class="prop">padding-left</span>: <span class="num">12px</span>;
+    <span class="prop">font-size</span>: <span class="num">18px</span>;
+    <span class="prop">color</span>: <span class="num">#e74c3c</span>;
+    <span class="prop">border-left</span>: <span class="num">3px</span> <span class="val">solid</span> <span class="num">#e74c3c</span>;
+}
+
+<span class="selector">.footer-section ul li a:hover</span> {
+    <span class="prop">color</span>: <span class="num">#e74c3c</span>;
+}
+
+<span class="selector">.copyright</span> {
+    <span class="prop">margin-top</span>: <span class="num">20px</span>;
+    <span class="prop">text-align</span>: <span class="val">center</span>;
+    <span class="prop">font-size</span>: <span class="num">13px</span>;
+    <span class="prop">color</span>: <span class="num">#95a5a6</span>;
+    <span class="prop">line-height</span>: <span class="num">2</span>;
+}
+
+<span class="selector">.copyright .fa-heart</span> {
+    <span class="prop">color</span>: <span class="num">#e74c3c</span>;
+}</pre>
+  </div>
+
+  <table class="code-table">
+    <thead><tr><th style="width:40%">代码</th><th>解释</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">border-left: 3px solid #e74c3c</td><td class="explain-cell">h4 左侧红色竖线装饰（常见设计手法）</td></tr>
+      <tr><td class="code-cell">padding-left: 12px</td><td class="explain-cell">标题文字距左边框 12px（不紧贴竖线）</td></tr>
+      <tr><td class="code-cell">color: #e74c3c</td><td class="explain-cell">标题红色，在深色背景上突出</td></tr>
+      <tr><td class="code-cell">copyright text-align: center</td><td class="explain-cell">版权信息居中显示</td></tr>
+      <tr><td class="code-cell">.fa-heart color: #e74c3c</td><td class="explain-cell">心形图标单独设为红色</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">footer-content 忘加 clearfix？</div>
+      <div class="pf-a">三个 footer-section 都是 float:left，父容器不加 clearfix 会高度塌陷，导致 border-bottom 分隔线贴在顶部，版权区和内容区之间没有间距。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">三栏总宽度超出版心？</div>
+      <div class="pf-a">检查是否设了 box-sizing:border-box。如果没设，padding:0 20px 会额外增加40px宽度，导致三栏总宽 1240px &gt; 1200px，第三栏被挤到下一行。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>三栏 float:left + 等宽 400px 实现页脚三列布局（400×3=1200px）</li>
+      <li>box-sizing:border-box 确保三栏含 padding 后不超出版心</li>
+      <li>border-left 竖线是常见的标题装饰手法</li>
+      <li>深色背景 + 浅色文字保证可读性对比</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">页脚深色背景正常显示</div>
+    <div class="ck-item">三栏内容等宽并排</div>
+    <div class="ck-item">每栏标题有左侧红色竖线装饰</div>
+    <div class="ck-item">链接 hover 变红色</div>
+    <div class="ck-item">版权信息居中、心形图标红色</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第13章 ==================== -->
+<div class="chapter" id="ch13">
+  <div class="chapter-header">
+    <span class="chapter-number">13</span>
+    <div><div class="chapter-title">Font Awesome 图标集成</div><div class="chapter-desc">了解图标库的引入方式与项目中使用的图标清单</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握 Font Awesome 图标库的 CDN 引入方法</li>
+      <li>理解图标类名的命名规则（fas/far/fa-xxx）</li>
+      <li>了解项目中使用的所有图标及其用途</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">引入方式</h3>
+  <p style="margin-bottom:10px;color:#555;">在 HTML 的 <code style="background:#fce8e6;padding:2px 8px;border-radius:4px;font-family:Consolas;color:#c0392b;">&lt;head&gt;</code> 中添加以下 CDN 链接：</p>
+  <div class="code-wrapper">
+    <div class="code-header"><span><i class="fab fa-html5"></i> HTML<span class="file-tag">CDN引入</span></span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+    <pre><span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val">"stylesheet"</span> <span class="attr">href</span>=<span class="val">"https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"</span><span class="tag">&gt;</span></pre>
+  </div>
+
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：Font Awesome 使用方法</div>
+    <h5>图标类名规则</h5>
+    <p>每个图标由两部分组成：<code>样式前缀 + 图标名</code></p>
+    <div class="demo-box">
+      <code>&lt;i class="fas fa-home"&gt;&lt;/i&gt;</code><br>
+      <strong>fas</strong> → Font Awesome Solid（实心样式）<br>
+      <strong>fa-home</strong> → 房子图标<br>
+      <strong>far</strong> → Font Awesome Regular（线条样式）<br>
+      <strong>fab</strong> → Font Awesome Brands（品牌图标）
+    </div>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">项目图标清单</h3>
+  <table class="code-table">
+    <thead><tr><th style="width:30%">图标类名</th><th style="width:15%">显示</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">fas fa-home</td><td><i class="fas fa-home"></i></td><td>导航-首页</td></tr>
+      <tr><td class="code-cell">fas fa-mask</td><td><i class="fas fa-mask"></i></td><td>导航-民俗文化</td></tr>
+      <tr><td class="code-cell">fas fa-star</td><td><i class="fas fa-star"></i></td><td>导航-节庆活动</td></tr>
+      <tr><td class="code-cell">fas fa-hammer</td><td><i class="fas fa-hammer"></i></td><td>导航-手工艺坊</td></tr>
+      <tr><td class="code-cell">fas fa-landmark</td><td><i class="fas fa-landmark"></i></td><td>导航-关于我们</td></tr>
+      <tr><td class="code-cell">fas fa-search</td><td><i class="fas fa-search"></i></td><td>搜索按钮</td></tr>
+      <tr><td class="code-cell">fas fa-heart</td><td><i class="fas fa-heart"></i></td><td>页脚版权区</td></tr>
+    </tbody>
+  </table>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">图标显示为方框或空白？</div>
+      <div class="pf-a">①检查 CDN 链接是否正确引入；②检查类名是否拼写正确（如 fas 不是 fa-solid）；③确认网络能访问 CDN。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>Font Awesome 通过 CDN link 标签引入，无需下载</li>
+      <li>图标类名 = 样式前缀(fas/far/fab) + 图标名(fa-xxx)</li>
+      <li>项目共使用7个图标：5个导航 + 1个搜索 + 1个爱心</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">CDN 链接在 head 中正确引入</div>
+    <div class="ck-item">所有导航菜单项前有图标</div>
+    <div class="ck-item">搜索按钮和页脚心形图标正常显示</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第14章 ==================== -->
+<div class="chapter" id="ch14">
+  <div class="chapter-header">
+    <span class="chapter-number">14</span>
+    <div><div class="chapter-title">整体检查与浏览器兼容</div><div class="chapter-desc">全页面检查清单与跨浏览器兼容性验证</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>学会系统性检查网页各模块是否正常</li>
+      <li>了解主流浏览器的兼容性测试方法</li>
+      <li>掌握使用浏览器开发者工具调试布局问题</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">全页面检查清单</h3>
+  <table class="code-table">
+    <thead><tr><th style="width:25%">模块</th><th>检查项</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">顶部横幅</td><td>渐变背景正常、左右纹样对称半透明、标题居中、副标题金色</td></tr>
+      <tr><td class="code-cell">导航栏</td><td>5个菜单横向排列、hover 变红、搜索框右侧胶囊形</td></tr>
+      <tr><td class="code-cell">节庆文化</td><td>3张卡片一行居中、hover 上浮+阴影+图片放大</td></tr>
+      <tr><td class="code-cell">民俗之声</td><td>3张卡片定位正确、中间居中、hover 不偏移</td></tr>
+      <tr><td class="code-cell">特色美食</td><td>8张卡片2行4列、每行第4张无右间距</td></tr>
+      <tr><td class="code-cell">页脚</td><td>深色背景、三栏等宽、标题有红色竖线、版权居中</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">浏览器开发者工具使用</h3>
+  <div class="knowledge-box">
+    <div class="kb-title"><i class="fas fa-lightbulb"></i> 知识小课堂：F12 开发者工具</div>
+    <p>在浏览器中按 <code>F12</code> 打开开发者工具，常用���能：</p>
+    <ul>
+      <li><strong>Elements（元素）</strong> → 查看 HTML 结构和应用的 CSS 规则</li>
+      <li><strong>点击元素</strong> → 右侧 Styles 面板显示所有匹配的 CSS，可实时修改预览</li>
+      <li><strong>Computed（计算值）</strong> → 查看元素最终的盒模型尺寸（width/height/margin/padding）</li>
+      <li><strong>取消勾选 CSS</strong> → 临时禁用某条样式，查看效果变化</li>
+    </ul>
+    <p><strong>调试技巧：</strong>遇到布局问题时，先在开发者工具中选中出问题的元素，查看它的实际宽度和外边距是否符合预期。</p>
+  </div>
+
+  <div class="pitfall-box">
+    <div class="pf-title"><i class="fas fa-exclamation-triangle"></i> 易错点提醒</div>
+    <div class="pf-item">
+      <div class="pf-q">Chrome 正常但 IE 显示异常？</div>
+      <div class="pf-a">本项目使用了 flex 布局的部分（如本手册的顶部导航）在 IE 中可能有兼容问题。但核心的 float 和 position 布局在所有浏览器中都兼容。教学项目主要保证 Chrome/Edge/Firefox 正常即可。</div>
+    </div>
+    <div class="pf-item">
+      <div class="pf-q">修改 CSS 后没生效？</div>
+      <div class="pf-a">浏览器缓存了旧 CSS。按 <code>Ctrl+Shift+R</code> 强制刷新，或使用 Live Server 插件。</div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-clipboard-check"></i> 本节小结</div>
+    <ul>
+      <li>按模块逐一检查页面各部分是否正常显示</li>
+      <li>用 F12 开发者工具查看元素样式和盒模型</li>
+      <li>float 和 position 布局在主流浏览器中兼容性良好</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-tasks"></i> 验收清单</div>
+    <div class="ck-item">在 Chrome/Edge 中打开页面，所有模块正常</div>
+    <div class="ck-item">所有图片正常加载（无裂图）</div>
+    <div class="ck-item">所有 hover 动画效果正常</div>
+    <div class="ck-item">页面在不同分辨率下版心居中</div>
+  </div>
+</div>
+
+
+<!-- ==================== 第15章 ==================== -->
+<div class="chapter" id="ch15">
+  <div class="chapter-header">
+    <span class="chapter-number">15</span>
+    <div><div class="chapter-title">常见问题排查与项目总结</div><div class="chapter-desc">汇总开发中的高频问题与解决方案，总结核心知识点</div></div>
+  </div>
+
+  <div class="goal-card">
+    <h4><i class="fas fa-bullseye"></i> 学习目标</h4>
+    <ul>
+      <li>掌握常见布局问题的排查思路和解决方法</li>
+      <li>系统回顾项目中涉及的所有 CSS 知识点</li>
+      <li>能够独立完成类似布局的静态网页开发</li>
+    </ul>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">一、高频问题排查</h3>
+
+  <div class="faq-box">
+    <div class="faq-title"><i class="fas fa-question-circle"></i> 常见问题（点击展开）</div>
+
+    <details open>
+      <summary>Q1：卡片排列错位 / 换行不正常？</summary>
+      <p>
+        <strong>排查步骤：</strong><br>
+        1. F12 选中卡片，查看 width 和 margin-right 是否正确<br>
+        2. 检查每行最后一张是否加了 <code>.last</code> 类<br>
+        3. 计算列表宽度是否 = 卡片数×卡片宽 + (卡片数-1)×间距<br>
+        4. 检查是否设了 <code>box-sizing: border-box</code>
+      </p>
+    </details>
+
+    <details>
+      <summary>Q2：父元素背景/边框消失，下方内容顶上来？</summary>
+      <p>
+        典型的<strong>浮动高度塌陷</strong>问题。给包含浮动子元素的父容器加上 <code>class="clearfix"</code> 即可解决。
+      </p>
+    </details>
+
+    <details>
+      <summary>Q3：中间卡片 hover 时向右偏移？</summary>
+      <p>
+        中间卡片用 <code>transform: translateX(-50%)</code> 居中，hover 的 transform 必须保留它：<br>
+        <code>transform: translateX(-50%) translateY(-10px);</code>
+      </p>
+    </details>
+
+    <details>
+      <summary>Q4：图片底部有不明间隙？</summary>
+      <p>
+        img 是行内元素，底部有基线对齐间隙。全局 CSS 中已设 <code>img { display: block; }</code> 可解决。
+      </p>
+    </details>
+
+    <details>
+      <summary>Q5：CSS 修改后页面不变？</summary>
+      <p>
+        浏览器缓存了旧 CSS。按 <code>Ctrl + Shift + R</code> 强制刷新清除缓存。
+      </p>
+    </details>
+
+    <details>
+      <summary>Q6：Font Awesome 图标不显示？</summary>
+      <p>
+        ①检查 CDN link 是否在 head 中；②检查类名拼写（<code>fas fa-home</code> 不是 <code>fa fa-home</code>）；③检查网络连接。
+      </p>
+    </details>
+
+    <details>
+      <summary>Q7：搜索框 input 和 button 之间有缝隙？</summary>
+      <p>
+        HTML 中两个标签之间的空格/换行被渲染为间距。解决：标签间不留空格，或都用 float:left 紧贴。
+      </p>
+    </details>
+  </div>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">二、核心知识点回顾</h3>
+
+  <table class="code-table">
+    <thead><tr><th style="width:20%">知识领域</th><th style="width:30%">核心概念</th><th>项目中应用</th></tr></thead>
+    <tbody>
+      <tr><td class="code-cell">盒模型</td><td>margin/padding/border/content</td><td>全局重置、box-sizing、卡片间距</td></tr>
+      <tr><td class="code-cell">浮动布局</td><td>float:left/right、clearfix</td><td>导航、节庆卡片、美食卡片、页脚三栏</td></tr>
+      <tr><td class="code-cell">定位布局</td><td>relative/absolute、z-index</td><td>横幅纹样、民俗之声三卡片</td></tr>
+      <tr><td class="code-cell">变换</td><td>transform: translate/scale</td><td>卡片hover上浮、图片放大、居中</td></tr>
+      <tr><td class="code-cell">过渡</td><td>transition</td><td>菜单变色、卡片hover动画</td></tr>
+      <tr><td class="code-cell">伪元素</td><td>::after、content</td><td>装饰横线、清除浮动</td></tr>
+      <tr><td class="code-cell">渐变</td><td>linear-gradient</td><td>横幅红色渐变背景</td></tr>
+      <tr><td class="code-cell">阴影</td><td>box-shadow</td><td>卡片立体阴影</td></tr>
+      <tr><td class="code-cell">居中</td><td>margin:auto、left:50%+translateX(-50%)</td><td>版心居中、中间卡片定位</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin:20px 0 12px;font-size:18px;color:#8b2025;">三、项目总结</h3>
+  <div class="summary-box">
+    <div class="sum-title"><i class="fas fa-trophy"></i> 你学到了什么</div>
+    <ul>
+      <li>掌握了 float 浮动布局：左浮动排列、右浮动分栏、clearfix 清除浮动</li>
+      <li>掌握了 position 定位布局：relative+absolute 黄金搭档、z-index 层级控制</li>
+      <li>掌握了 transform 变换：translate 平移、scale 缩放、组合写法</li>
+      <li>掌握了 CSS 常用技巧：渐变、阴影、圆角、过渡、伪元素</li>
+      <li>理解了盒模型和 box-sizing 的重要性</li>
+      <li>学会了"版心+清除浮动"两大通用工具类的设计思路</li>
+      <li>具备了从零搭建一个完整静态展示页面的能力</li>
+    </ul>
+  </div>
+
+  <div class="checklist-box">
+    <div class="ck-title"><i class="fas fa-graduation-cap"></i> 最终验收清单</div>
+    <div class="ck-item">页面完整打开，所有6大模块正常显示</div>
+    <div class="ck-item">所有图片正常加载</div>
+    <div class="ck-item">所有 hover 交互动画正常</div>
+    <div class="ck-item">没有布局错位、塌陷、溢出等问题</div>
+    <div class="ck-item">代码结构清晰，注释完整</div>
+    <div class="ck-item">能独立解释每段 CSS 代码的作用</div>
+  </div>
+</div>
+
+  </main>
+</div>
+
+<!-- ====== 回到顶部按钮 ====== -->
+<button class="back-top" id="backTop" title="回到顶部"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+// ====== 目录导航 ======
+function goTo(id){
+    var el = document.getElementById(id);
+    if(el){
+        el.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    // 移动端点击后收起侧边栏
+    if(window.innerWidth <= 768){
+        document.getElementById('sidebar').classList.add('collapsed');
+        try{ localStorage.setItem('manual_sidebar','collapsed'); }catch(e){}
+    }
+}
+
+// ====== 目录分组折叠 ======
+function toggleGroup(titleEl){
+    var group = titleEl.parentElement;
+    group.classList.toggle('collapsed');
+}
+
+// ====== 侧边栏整体收起/展开 ======
+var sidebar = document.getElementById('sidebar');
+var menuBtn = document.getElementById('menuToggle');
+
+// 读取上次状态
+try{
+    if(localStorage.getItem('manual_sidebar') === 'collapsed'){
+        sidebar.classList.add('collapsed');
+    }
+}catch(e){}
+
+menuBtn.addEventListener('click', function(){
+    sidebar.classList.toggle('collapsed');
+    try{
+        localStorage.setItem('manual_sidebar', sidebar.classList.contains('collapsed') ? 'collapsed' : 'open');
+    }catch(e){}
+});
+
+// ====== 阅读进度条 ======
+var progress = document.getElementById('readProgress');
+window.addEventListener('scroll', function(){
+    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var percent = (scrollTop / scrollHeight) * 100;
+    progress.style.width = percent + '%';
+
+    // 回到顶部按钮显隐
+    var backTop = document.getElementById('backTop');
+    if(scrollTop > 300){
+        backTop.classList.add('show');
+    }else{
+        backTop.classList.remove('show');
+    }
+});
+
+// ====== 回到顶部 ======
+document.getElementById('backTop').addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+});
+
+// ====== 代码复制 ======
+function copyCode(btn){
+    var pre = btn.parentElement.nextElementSibling;
+    var text = pre.innerText;
+    if(navigator.clipboard){
+        navigator.clipboard.writeText(text).then(function(){
+            btn.innerText = '已复制';
+            setTimeout(function(){ btn.innerText = '复制'; }, 2000);
+        });
+    }else{
+        var range = document.createRange();
+        range.selectNode(pre);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        btn.innerText = '已复制';
+        setTimeout(function(){ btn.innerText = '复制'; }, 2000);
+    }
+}
+
+// ====== 高亮当前章节 ======
+var chapters = document.querySelectorAll('.chapter');
+var navItems = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', function(){
+    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    var currentId = '';
+    chapters.forEach(function(ch){
+        if(ch.offsetTop - 80 <= scrollTop){
+            currentId = ch.id;
+        }
+    });
+    navItems.forEach(function(item){
+        item.classList.remove('active');
+    });
+    if(currentId){
+        var activeItem = document.querySelector('.nav-item[onclick="goTo(\'' + currentId + '\')"]');
+        if(activeItem) activeItem.classList.add('active');
+    }
+});
+</script>
+
+</body>
+</html>

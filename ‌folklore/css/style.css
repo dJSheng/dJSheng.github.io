@@ -1,0 +1,395 @@
+/* ===================================================================
+   泉州民俗坊 - 主样式表
+   布局方式：float（浮动）+ position（定位）
+   设计理念：统一配色、语义化命名、结构清晰，适合教学演示
+   =================================================================== */
+
+/* ---------- 1. 全局重置与基础样式 ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    color: #333;
+    background-color: #faf6f0;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul, li {
+    list-style: none;
+}
+
+img {
+    display: block;
+}
+
+/* 版心：固定宽度并水平居中 */
+.w {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+/* 清除浮动通用工具类（解决父元素高度塌陷） */
+.clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+
+/* ---------- 2. 通用版块标题 ---------- */
+.subtitle-title {
+    text-align: center;
+    color: #8b2025;                 /* 统一主色：中国红 */
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+/* 标题下方装饰横线（margin:auto实现居中，滚动时不抖动） */
+.subtitle-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 4px;
+    margin: 12px auto 0;           /* 上下间距12px，左右自动居中 */
+    background-color: #c0392b;
+    border-radius: 2px;
+}
+
+
+/* ---------- 3. 顶部横幅（position定位） ---------- */
+.top-banner {
+    position: relative;
+    height: 160px;
+    background: linear-gradient(135deg, #c0392b 0%, #8b2025 100%);
+    overflow: hidden;
+    border-bottom: 4px solid #d4a574;
+}
+
+/* 传统纹样装饰：左右对称定位 */
+.banner-pattern {
+    position: absolute;
+    top: 15px;
+    width: 120px;
+    opacity: 0.25;
+}
+
+.pattern-left {
+    left: 40px;
+}
+
+.pattern-right {
+    right: 40px;
+    transform: scaleX(-1);         /* 水平镜像翻转，实现左右对称 */
+}
+
+.site-title {
+    position: relative;
+    color: #fff;
+    font-size: 44px;
+    text-align: center;
+    line-height: 100px;           /* 文字偏上，为副标题留出空间 */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.site-slogan {
+    position: relative;
+    color: #f5d7a0;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 6px;
+}
+
+
+/* ---------- 4. 导航栏（float布局） ---------- */
+.main-nav {
+    height: 60px;
+ 
+}
+
+/* 导航菜单左浮动 */
+.nav-list {
+    float: left;
+}
+
+.nav-list li {
+    float: left;
+    margin-right: 35px;
+}
+
+.nav-list li a {
+    display: block;
+    line-height: 60px;
+    font-size: 16px;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.nav-list li a:hover {
+    color: #c0392b;
+    border-bottom: 3px solid #c0392b;
+}
+
+/* 搜索框右浮动 */
+.search-box {
+    float: right;
+    margin-top: 11px;
+}
+
+.search-box input {
+    float: left;
+    width: 180px;
+    height: 38px;
+    padding: 0 15px;
+    border: 2px solid #c0392b;
+    border-radius: 20px 0 0 20px;
+    outline: none;
+}
+
+.search-box button {
+    float: left;
+    height: 38px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 0 20px 20px 0;
+    background-color: #c0392b;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-box button:hover {
+    background-color: #8b2025;
+}
+
+
+/* ---------- 5. 通用卡片样式（抽离公共样式，减少冗余） ---------- */
+/* 节庆文化：3张卡片整体居中（280*3 + 26*2 = 892px） */
+#festival .card-list {
+    width: 892px;
+    margin: 0 auto;
+}
+
+/* 特色美食：4张卡片撑满版心（280*4 + 26*3 = 1198px） */
+#food .card-list {
+    width: 1198px;
+    margin: 0 auto;
+}
+
+.card-list {
+    padding: 10px 0 30px;
+}
+
+/* 卡片公共样式：浮动布局、统一外观 */
+.festival-card,
+.food-card {
+    float: left;
+    width: 280px;
+    margin: 0 26px 26px 0;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* 每行最后一张卡片去除右侧间距 */
+.festival-card.last,
+.food-card.last {
+    margin-right: 0;
+}
+
+/* 鼠标悬停：轻微上浮 + 加深阴影 */
+.festival-card:hover,
+.food-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 卡片图片统一样式 */
+.festival-card img,
+.food-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.festival-card:hover img,
+.food-card:hover img {
+    transform: scale(1.05);
+}
+
+/* 卡片标题 */
+.festival-card h3,
+.food-card h3 {
+    margin: 12px 0 8px;
+    text-align: center;
+    font-size: 18px;
+    color: #8b2025;
+}
+
+/* 卡片描述 */
+.festival-card p,
+.food-card p {
+    padding: 0 15px 15px;
+    font-size: 14px;
+    color: #666;
+    text-align: justify;
+    text-indent: 2em;
+}
+
+.food-card p {
+    text-indent: 2em;
+}
+
+
+/* ---------- 6. 民俗之声（position定位布局） ---------- */
+.culture-stage {
+    position: relative;             /* 父元素相对定位，作为定位参照 */
+    height: 380px;
+    margin-bottom: 40px;
+    overflow: hidden;
+}
+
+/* 文化卡片：绝对定位，三张横向均分 */
+.culture-card {
+    position: absolute;
+    width: 300px;
+    top: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.culture-card:hover {
+    z-index: 10;                    /* 悬停时提到最上层 */
+    transform: translateY(-10px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+}
+
+.culture-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.culture-card .card-body {
+    padding: 15px;
+    text-align: center;
+}
+
+.culture-card .card-body h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.culture-card .card-body p {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.8;
+}
+
+/* 三张卡片的具体定位坐标（整齐横向排列，不旋转） */
+.card-left {
+    left: 100px;
+}
+
+.card-left .card-body h3 {
+    color: #c0392b;
+}
+
+.card-center {
+    left: 50%;                     /* 居中定位 */
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+/* 中心卡片悬停：必须保留 translateX(-50%)，否则会向右偏移 */
+.card-center:hover {
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.card-center .card-body h3 {
+    color: #2980b9;
+}
+
+.card-right {
+    right: 100px;
+}
+
+.card-right .card-body h3 {
+    color: #27ae60;
+}
+
+
+/* ---------- 7. 页脚（float布局） ---------- */
+.site-footer {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 40px 0 20px;
+    margin-top: 20px;
+}
+
+.footer-content {
+    padding-bottom: 30px;
+    border-bottom: 1px solid #3d566e;
+}
+
+/* 三个区块等宽左浮动 */
+.footer-section {
+    float: left;
+    width: 400px;
+    padding: 0 20px;
+}
+
+.footer-section h4 {
+    margin-bottom: 15px;
+    padding-left: 12px;
+    font-size: 18px;
+    color: #e74c3c;
+    border-left: 3px solid #e74c3c;
+}
+
+.footer-section p {
+    font-size: 14px;
+    color: #bdc3c7;
+    line-height: 2;
+}
+
+.footer-section ul li {
+    margin-bottom: 8px;
+}
+
+.footer-section ul li a {
+    font-size: 14px;
+    color: #bdc3c7;
+    transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+    color: #e74c3c;
+}
+
+.copyright {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #95a5a6;
+    line-height: 2;
+}
+
+.copyright .fa-heart {
+    color: #e74c3c;
+}
