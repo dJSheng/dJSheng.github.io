@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>for循环与range()函数</title>
+<style>
+  :root{
+    --blue:#1E4FA8; --blue-dark:#0E3F8C; --blue-mid:#3D7BD9;
+    --blue-light:#E8EFF8; --blue-bg:#F0F5FC;
+    --red:#D9534F; --yellow:#FFC107; --ink:#1A2230; --ink-sub:#4A5568; --ink-dim:#8B97A8;
+    --line:#D6DCE5; --bg:#F7F9FC; --card:#FFFFFF;
+    --green:#2E9E5B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Microsoft YaHei","PingFang SC","Source Han Sans SC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;}
+  header{background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;padding:34px 40px 28px;}
+  header h1{font-size:30px;letter-spacing:1px;}
+  header p{opacity:.85;margin-top:8px;font-size:15px;}
+  nav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px;padding:10px 24px;box-shadow:0 2px 8px rgba(30,79,168,.06);}
+  nav a{color:var(--blue);text-decoration:none;font-size:14px;padding:6px 14px;border-radius:999px;transition:.2s;}
+  nav a:hover{background:var(--blue-light);}
+  main{max-width:1120px;margin:0 auto;padding:28px 24px 80px;}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 34px;margin-bottom:34px;box-shadow:0 4px 18px rgba(14,63,140,.05);}
+  h2{font-size:23px;color:var(--blue-dark);border-left:6px solid var(--blue);padding-left:14px;margin-bottom:6px;}
+  .sub{color:var(--ink-dim);font-size:14px;margin-bottom:20px;padding-left:20px;}
+  h3{font-size:17px;color:var(--blue);margin:18px 0 10px;}
+  .code{background:#F6F8FA;border:1px solid var(--line);border-radius:10px;padding:16px 20px;font-family:"JetBrains Mono","Consolas",monospace;font-size:16px;line-height:1.9;overflow-x:auto;}
+  .code .kw{color:#CF222E;font-weight:600;} .code .fn{color:#8250DF;} .code .num{color:#0550AE;} .code .str{color:#0A3069;} .code .cm{color:#6E7781;font-style:italic;}
+  button{cursor:pointer;font-family:inherit;}
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:15px;transition:.2s;}
+  .btn:hover{background:var(--blue-dark);}
+  .btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue);}
+  .btn.ghost:hover{background:var(--blue-light);}
+  .btn.warn{background:var(--red);}
+  .btn.warn:hover{background:#B03A36;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0;}
+  .tip{background:var(--blue-bg);border-left:4px solid var(--blue-mid);border-radius:0 8px 8px 0;padding:12px 16px;font-size:14.5px;color:var(--ink-sub);margin:14px 0;}
+  .warn-tip{background:#FDF2F2;border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:12px 16px;font-size:14.5px;color:#8C2F2B;margin:14px 0;}
+  .warn-tip b{color:var(--red);}
+
+  /* ================= 执行控制条 ================= */
+  .ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--blue-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:14px 0;}
+  .ctrl .btn{padding:8px 18px;font-size:14.5px;}
+  .progress{margin-left:auto;font-size:13px;color:var(--ink-sub);white-space:nowrap;}
+  .progress b{color:var(--blue);font-size:16px;}
+  .speed-group{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--ink-sub);}
+  .spd{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;color:var(--ink-sub);transition:.2s;}
+  .spd.on{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+  /* ================= 执行三件套：代码面板 / 变量面板 / 终端 ================= */
+  .exec{display:flex;gap:18px;flex-wrap:wrap;align-items:stretch;margin:14px 0;}
+  .exec-left{flex:1.35;min-width:380px;display:flex;flex-direction:column;gap:14px;}
+  .exec-right{flex:1;min-width:300px;display:flex;flex-direction:column;gap:12px;}
+
+  .codebox{background:#F6F8FA;border:1px solid var(--line);border-radius:10px;padding:10px 6px;font-family:"JetBrains Mono","Consolas",monospace;font-size:15.5px;line-height:1.5;overflow-x:auto;}
+  .codebox .cb-title{font-size:12.5px;color:var(--ink-dim);padding:0 10px 6px;font-family:"Microsoft YaHei",sans-serif;font-weight:600;}
+  .cl{display:block;position:relative;padding:3px 14px 3px 46px;white-space:pre;border-left:4px solid transparent;border-radius:6px;transition:background .25s,border-color .25s;}
+  .cl .ln{position:absolute;left:0;top:3px;width:36px;text-align:center;color:var(--ink-dim);font-size:13px;user-select:none;}
+  .cl .kw{color:#CF222E;font-weight:600;} .cl .fn{color:#8250DF;} .cl .num{color:#0550AE;} .cl .str{color:#0A3069;} .cl .cm{color:#6E7781;font-style:italic;}
+  .cl.active{background:#FFF3CD;border-left-color:var(--yellow);}
+  .cl.active .ln{color:#B07D00;font-weight:700;}
+
+  .vars-panel{border:1.5px solid var(--line);border-radius:10px;background:#fff;overflow:hidden;}
+  .vars-title{background:var(--blue-bg);padding:6px 14px;font-size:13.5px;font-weight:700;color:var(--blue-dark);border-bottom:1px solid var(--line);}
+  .vars{padding:10px 14px;display:flex;flex-direction:column;gap:8px;min-height:60px;}
+  .vars-empty{color:var(--ink-dim);font-size:13.5px;}
+  .var{display:flex;align-items:baseline;gap:10px;font-family:"JetBrains Mono","Consolas",monospace;font-size:15px;animation:pop .3s;padding:3px 6px;border-radius:6px;flex-wrap:wrap;}
+  .var .vn{flex:0 0 auto;background:var(--blue-light);color:var(--blue-dark);border-radius:6px;padding:1px 10px;font-weight:700;}
+  .var .vv{color:var(--ink);font-weight:600;word-break:break-all;}
+  .var.flash{animation:vflash .6s;}
+  @keyframes vflash{0%{background:#EDF8F1;}100%{background:transparent;}}
+
+  .term{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;}
+  .term-bar{background:var(--blue-bg);color:var(--ink-sub);font-size:13px;padding:6px 14px;border-bottom:1px solid var(--line);font-weight:600;}
+  .term-body{padding:10px 14px;font-family:"JetBrains Mono","Consolas",monospace;font-size:15px;min-height:58px;max-height:200px;overflow-y:auto;}
+  .tline{animation:pop .25s;color:var(--ink);}
+  .tline.thint{color:var(--ink-dim);font-size:13.5px;}
+
+  .stage-msg{min-height:40px;font-size:15.5px;font-weight:600;color:var(--blue-dark);background:var(--blue-bg);border-radius:8px;padding:8px 14px;}
+  .loop-count{font-size:15px;color:var(--ink-sub);}
+  .loop-count b{color:var(--blue);font-size:22px;}
+
+  /* ===== 模块1：点名动画 ===== */
+  .rollcall{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;}
+  .student{width:86px;text-align:center;padding:10px 6px;border:2px solid var(--line);border-radius:10px;background:#fff;transition:.3s;font-size:14px;}
+  .student .face{font-size:26px;}
+  .student.cur{border-color:var(--blue);background:var(--blue-light);transform:scale(1.12);box-shadow:0 4px 12px rgba(30,79,168,.25);}
+  .student.done{border-color:var(--green);background:#EDF8F1;color:var(--green);}
+
+  /* ===== 模块2：range生成器 ===== */
+  .range-inputs{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;margin:14px 0;}
+  .rng-field{display:flex;flex-direction:column;gap:6px;}
+  .rng-field label{font-size:13.5px;color:var(--ink-sub);font-weight:600;}
+  .rng-field input{width:110px;padding:9px 12px;font-size:16px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;}
+  .rng-field input:focus{outline:none;border-color:var(--blue);}
+  .seq{display:flex;gap:8px;flex-wrap:wrap;min-height:56px;margin:16px 0;padding:14px;background:var(--blue-bg);border-radius:10px;align-items:center;}
+  .seq .chip{min-width:44px;text-align:center;background:#fff;border:2px solid var(--blue-mid);color:var(--blue-dark);font-weight:700;font-size:17px;border-radius:8px;padding:6px 10px;}
+  .seq .chip.first{border-color:var(--green);color:var(--green);}
+  .seq .ghost{border:2px dashed var(--red);color:var(--red);background:#FDF2F2;font-weight:700;font-size:15px;border-radius:8px;padding:6px 10px;}
+  .seq .rstep{font-size:13px;color:var(--green);font-weight:700;}
+  .popin{animation:pop .25s;}
+  @keyframes pop{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .seq-empty{color:var(--ink-dim);font-size:14.5px;}
+
+  /* ===== 模块3：累加器动画 ===== */
+  .acc-wrap{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;margin-top:6px;}
+  .jar-zone{flex:0 0 220px;text-align:center;}
+  .jar{width:150px;height:170px;margin:0 auto;border:5px solid var(--blue);border-top:none;border-radius:0 0 26px 26px;position:relative;background:linear-gradient(#fff,#F0F5FC);overflow:hidden;}
+  .jar .fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,#7FA8E0,#1E4FA8);transition:height .45s;height:0;}
+  .jar .val{position:absolute;top:42%;left:0;right:0;font-size:27px;font-weight:800;color:var(--blue-dark);}
+  .jar-cap{width:170px;height:14px;margin:0 auto;background:var(--blue-dark);border-radius:8px 8px 0 0;}
+  .coin{font-size:26px;display:inline-block;transition:.4s;}
+  .trace-zone{flex:1;min-width:340px;}
+  table.trace{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:10px;}
+  table.trace th{background:var(--blue);color:#fff;padding:8px;font-weight:600;}
+  table.trace td{border:1px solid var(--line);padding:7px 8px;text-align:center;}
+  table.trace tr.cur td{background:#FFF3CD;font-weight:700;}
+  table.trace tr.done td{background:#EDF8F1;}
+  table.trace tr.dots td{background:#fff;color:var(--ink-dim);font-size:13px;padding:5px;}
+  .trace-note{font-size:14px;color:var(--ink-sub);background:var(--blue-bg);border-radius:8px;padding:8px 14px;min-height:40px;}
+
+  /* ===== 模块4：真题 ===== */
+  .blank{display:inline-block;min-width:74px;border:none;border-bottom:3px solid var(--blue);background:var(--blue-light);font-family:"Consolas",monospace;font-size:16px;text-align:center;color:var(--blue-dark);font-weight:700;padding:2px 6px;border-radius:6px 6px 0 0;}
+  .blank:focus{outline:2px solid var(--blue);}
+  .blank.ok{border-bottom-color:var(--green);background:#EDF8F1;color:var(--green);}
+  .blank.no{border-bottom-color:var(--red);background:#FDF2F2;color:var(--red);animation:shake .3s;}
+  @keyframes shake{25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+  .verdict{font-size:16px;font-weight:700;margin:12px 0;min-height:26px;}
+  .verdict.ok{color:var(--green);} .verdict.no{color:var(--red);}
+  .exam-tag{display:inline-block;background:var(--red);color:#fff;font-size:12.5px;border-radius:999px;padding:3px 12px;margin-bottom:10px;}
+  .chiprow{display:flex;flex-wrap:wrap;gap:6px;padding:12px;background:var(--blue-bg);border-radius:10px;}
+  .chiprow-note{font-size:13.5px;color:var(--ink-sub);margin-bottom:6px;}
+  .pchip{min-width:40px;text-align:center;padding:4px 8px;border:1.5px solid var(--line);border-radius:7px;background:#fff;color:var(--ink-dim);font-family:"Consolas",monospace;font-weight:700;font-size:14.5px;transition:.3s;}
+  .pchip.lit{border-color:var(--blue);color:var(--blue-dark);transform:scale(1.04);}
+  .pchip.lit.last{background:var(--blue);color:#fff;box-shadow:0 3px 8px rgba(30,79,168,.3);}
+
+  /* ===== 模块5 ===== */
+  .qa{border:1.5px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+  .qa-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--blue-bg);cursor:pointer;user-select:none;}
+  .qa-head b{color:var(--blue-dark);font-size:16px;}
+  .qa-head span{color:var(--ink-dim);font-size:13px;}
+  .qa-body{display:none;padding:16px 20px;border-top:1px dashed var(--line);}
+  .qa.open .qa-body{display:block;}
+  .qa-body .wrong{color:var(--red);font-size:14.5px;margin-bottom:8px;}
+  .qa-body .right{color:var(--green);font-size:15px;font-weight:600;}
+  footer{text-align:center;color:var(--ink-dim);font-size:13px;padding:20px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1> for循环与range()函数</h1>
+  <p>福建省普通高中学业水平考试 · 信息技术</p>
+</header>
+
+<nav>
+  <a href="#m1">① 循环是什么</a>
+  <a href="#m2">② range()生成器</a>
+  <a href="#m3">③ 累加器模型</a>
+  <a href="#m4">④ 真题实战</a>
+  <a href="#m5">⑤ 课堂互动</a>
+</nav>
+
+<main>
+
+<!-- 说明条 -->
+<div class="tip" style="margin-bottom:26px;font-size:15px">
+  🖥 <b>怎么"看"程序执行：</b>每个演示都配了三样东西——<b>代码面板</b>（黄色高亮 = 正在执行的行）、<b>内存变量面板</b>（程序此刻记住了什么）、<b>输出区</b>（print 真正打印的内容）。用 <b>⏭ 单步</b> 可以一步一步走，特别适合课堂提问"下一行会发生什么？"
+</div>
+
+<!-- ============ 模块1：班长点名 ============ -->
+<section id="m1">
+  <h2>① 循环是什么？—— 班长点名</h2>
+  <p class="sub">for 变量 in 序列：序列里有几个元素，循环体就执行几次</p>
+
+  <div class="ctrl" id="rcCtrl">
+    <button class="btn" data-act="play">▶ 播放</button>
+    <button class="btn ghost" data-act="step">⏭ 单步</button>
+    <button class="btn ghost" data-act="reset">↺ 重置</button>
+    <div class="speed-group">速度
+      <button class="spd" data-v="1400">慢</button>
+      <button class="spd on" data-v="900">中</button>
+      <button class="spd" data-v="400">快</button>
+    </div>
+    <span class="progress" id="rcProg"></span>
+  </div>
+
+  <div class="exec">
+    <div class="exec-left">
+      <div class="codebox" id="rcCode">
+        <div class="cb-title">f1.py</div>
+        <div class="cl" data-l="1"><span class="ln">1</span>name_list = <span class="str">['林晓','陈宇','黄欣','郑凯','吴倩','王磊']</span></div>
+        <div class="cl" data-l="2"><span class="ln">2</span><span class="kw">for</span> name <span class="kw">in</span> name_list:</div>
+        <div class="cl" data-l="3"><span class="ln">3</span>    <span class="fn">print</span>(name + <span class="str">"：到！"</span>)  <span class="cm"># 循环体（缩进4格）</span></div>
+      </div>
+      <div class="term">
+        <div class="term-bar">▶ 输出 · print 的内容逐行显示</div>
+        <div class="term-body" id="rcTerm"></div>
+      </div>
+    </div>
+    <div class="exec-right">
+      <div class="vars-panel">
+        <div class="vars-title">📦 内存变量（程序此刻记得的）</div>
+        <div class="vars" id="rcVars"></div>
+      </div>
+      <div class="stage-msg" id="rcMsg">点击"▶ 播放"看程序逐行执行。</div>
+      <div class="rollcall" id="rcList"></div>
+      <p class="loop-count">已执行循环体：<b id="rcCount">0</b> 次（花名册共 6 人）</p>
+    </div>
+  </div>
+
+  <div class="tip">💡 班长（for）拿着花名册（序列），每念到一个名字（变量取值），那位同学答一声"到"（循环体执行一次）。念完为止——<b>这就是循环</b>。注意看：第 2 行每圈都会重新执行一次（↺ 跳回循环头取下一个名字）。</div>
+</section>
+
+<!-- ============ 模块2：range生成器 ============ -->
+<section id="m2">
+  <h2>② range() —— 自动出号的"数列生成器"</h2>
+  <p class="sub">range(起点, 终点, 步长)：从起点开始，每次加步长，到终点前停止</p>
+
+  <div class="range-inputs">
+    <div class="rng-field"><label>起点 start</label><input type="number" id="rStart" value="1"></div>
+    <div class="rng-field"><label>终点 stop（取不到！）</label><input type="number" id="rStop" value="10"></div>
+    <div class="rng-field"><label>步长 step</label><input type="number" id="rStep" value="1"></div>
+    <button class="btn" id="rGen">生成序列 ⚙</button>
+    <button class="btn ghost" id="rQuiz">来道学考题 🎯</button>
+  </div>
+
+  <div class="stage-msg" id="rMsg">点击"生成序列"，看出号过程。</div>
+  <div class="code" id="rCode">range(1, 10, 1)</div>
+  <div class="seq" id="rSeq"><span class="seq-empty">点击"生成序列"看出号结果</span></div>
+  <p class="loop-count">已出号：<b id="rCount">0</b> 个 → 循环体将执行同样次数</p>
+
+  <div class="warn-tip" id="rWarn" style="display:none"></div>
+  <div class="tip">口诀：<b>含头不含尾，步长定间隔</b>。绿色是第一个数（含头），红色虚线是"差一步却永远进不了门"的终点（不含尾）。每两个数之间的 <b style="color:var(--green)">+步长</b>，就是"每次加步长"的可视化。</div>
+</section>
+
+<!-- ============ 模块3：累加器 ============ -->
+<section id="m3">
+  <h2>③ 累加器模型 —— 存钱罐</h2>
+  <p class="sub">定盒子 → 定范围 → 定加谁：学考压轴填空题的万能钥匙</p>
+
+  <div class="ctrl" id="acCtrl">
+    <button class="btn" data-act="play">▶ 播放</button>
+    <button class="btn ghost" data-act="step">⏭ 单步</button>
+    <button class="btn ghost" data-act="reset">↺ 重置</button>
+    <button class="btn ghost" id="acFast">⏩ 直接看结果</button>
+    <div class="speed-group">速度
+      <button class="spd" data-v="1400">慢</button>
+      <button class="spd on" data-v="900">中</button>
+      <button class="spd" data-v="400">快</button>
+    </div>
+    <span class="progress" id="acProg"></span>
+  </div>
+
+  <div class="exec">
+    <div class="exec-left">
+      <div class="codebox" id="acCode">
+        <div class="cb-title">f2.py · 求 1+2+…+100</div>
+        <div class="cl" data-l="1"><span class="ln">1</span>s = <span class="num">0</span>  <span class="cm"># ① 定盒子：准备空存钱罐</span></div>
+        <div class="cl" data-l="2"><span class="ln">2</span><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">101</span>):  <span class="cm"># ② 定范围</span></div>
+        <div class="cl" data-l="3"><span class="ln">3</span>    s = s + i  <span class="cm"># ③ 定加谁：每圈把 i 存进罐子</span></div>
+        <div class="cl" data-l="4"><span class="ln">4</span><span class="fn">print</span>(s)</div>
+      </div>
+      <div class="term">
+        <div class="term-bar">▶ 输出</div>
+        <div class="term-body" id="acTerm"></div>
+      </div>
+    </div>
+    <div class="exec-right">
+      <div class="vars-panel">
+        <div class="vars-title">📦 内存变量</div>
+        <div class="vars" id="acVars"></div>
+      </div>
+      <div class="jar-zone">
+        <div class="jar-cap"></div>
+        <div class="jar"><div class="fill" id="jarFill"></div><div class="val" id="jarVal">0</div></div>
+        <p style="margin-top:6px;font-size:13.5px;color:var(--ink-sub)">存钱罐 s 当前的值</p>
+        <div style="margin-top:4px;font-size:14.5px">本圈存入：<span class="coin" id="coin">🪙</span> <b id="coinVal" style="color:var(--blue)">—</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-wrap">
+    <div class="trace-zone">
+      <b style="color:var(--blue-dark)">变量跟踪表（前 8 圈慢镜头，之后自动快进）</b>
+      <table class="trace">
+        <tr><th>第几圈</th><th>i 的值</th><th>s = s + i</th><th>s 新值</th></tr>
+        <tbody id="traceBody"></tbody>
+      </table>
+      <p class="trace-note" id="acNote">点击"▶ 播放"：先慢放前 8 圈，再自动快进到第 100 圈。</p>
+    </div>
+  </div>
+
+  <div class="warn-tip">⚠ <b>易错点：</b>漏写 <b>s = 0</b>，计算机会问"s 是谁？"（NameError）；把它缩进循环体里，则每圈都被清零，最后只剩 100。看左侧变量面板：s 必须在循环<b>前</b>就存在。</div>
+</section>
+
+<!-- ============ 模块4：真题实战 ============ -->
+<section id="m4">
+  <h2>④ 学考压轴填空题实战</h2>
+  <p class="sub">（模拟卷真题 · 考生文件夹403/f4.py）求 30~100 能被 3 整除的数的和</p>
+
+  <span class="exam-tag">真题题型 · 3 空</span>
+  <div class="code" style="font-size:17px">
+    <span class="cm"># 求30~100能被3整除的数的和</span><br>
+    s = <input class="blank" id="b1" maxlength="6" placeholder="〈1〉"><br>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">30</span>, <span class="num">100</span>, <input class="blank" id="b2" maxlength="6" placeholder="〈2〉" style="min-width:56px">):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;s = s + <input class="blank" id="b3" maxlength="6" placeholder="〈3〉" style="min-width:56px"><br>
+    <span class="fn">print</span>(<span class="str">"30~100能被3整除的数的和为"</span>, s)
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" id="exCheck">提交答案 ✔</button>
+    <button class="btn ghost" id="exHint">按口诀提示 💡</button>
+    <button class="btn ghost" id="exShow">查看答案</button>
+    <button class="btn warn" id="exRun" disabled>运行程序 ▶</button>
+  </div>
+  <div class="verdict" id="exVerdict"></div>
+  <div class="tip" id="exHintBox" style="display:none">
+    ① <b>定盒子</b>：〈1〉累加器初始化，填 <b>0</b>；② <b>定范围</b>：能被3整除的数每隔3个取一个，〈2〉步长填 <b>3</b>；③ <b>定加谁</b>：把当前的数存进罐子，〈3〉填 <b>i</b>。
+  </div>
+
+  <!-- 运行过程可视化面板 -->
+  <div id="exRunWrap" style="display:none">
+    <div class="ctrl" id="exCtrl">
+      <button class="btn" data-act="play">▶ 播放</button>
+      <button class="btn ghost" data-act="step">⏭ 单步</button>
+      <button class="btn ghost" data-act="reset">↺ 重置</button>
+      <div class="speed-group">速度
+        <button class="spd" data-v="1400">慢</button>
+        <button class="spd on" data-v="800">中</button>
+        <button class="spd" data-v="350">快</button>
+      </div>
+      <span class="progress" id="exProg"></span>
+    </div>
+
+    <div class="exec">
+      <div class="exec-left">
+        <div class="codebox" id="exCode">
+          <div class="cb-title">f4.py · 你填好答案后的程序</div>
+          <div class="cl" data-l="1"><span class="ln">1</span>s = <span class="num">0</span>  <span class="cm"># ① 定盒子</span></div>
+          <div class="cl" data-l="2"><span class="ln">2</span><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">30</span>, <span class="num">100</span>, <span class="num">3</span>):  <span class="cm"># ② 定范围</span></div>
+          <div class="cl" data-l="3"><span class="ln">3</span>    s = s + i  <span class="cm"># ③ 定加谁</span></div>
+          <div class="cl" data-l="4"><span class="ln">4</span><span class="fn">print</span>(<span class="str">"30~100能被3整除的数的和为"</span>, s)</div>
+        </div>
+        <div class="term">
+          <div class="term-bar">▶ 输出</div>
+          <div class="term-body" id="exTerm"></div>
+        </div>
+      </div>
+      <div class="exec-right">
+        <div class="vars-panel">
+          <div class="vars-title">📦 内存变量</div>
+          <div class="vars" id="exVars"></div>
+        </div>
+        <div class="stage-msg" id="exNote">点击"运行程序"。</div>
+        <div>
+          <div class="chiprow-note">🟦 被点亮的数才会被加进 s（30 起，每隔 3 个取一个，31、32 都被跳过）</div>
+          <div class="chiprow" id="exChips"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 模块5：课堂互动 ============ -->
+<section id="m5">
+  <h2>⑤ 课堂互动三连问</h2>
+  <p class="sub">点击展开每道题的"预判错误 → 引导思路 → 正确答案"</p>
+
+  <div class="qa">
+    <div class="qa-head"><b>问1 · range(1, 9, 3)：i 取到哪些数？循环几次？</b><span>点击展开 ▼</span></div>
+    <div class="qa-body">
+      <p class="wrong">✘ 预判错误："取 1~9，执行 9 次" 或 "取到 9"</p>
+      <p>🖐 引导：掰手指数——1（+3）→ 4（+3）→ 7（+3）→ 10 超了，停！</p>
+      <p class="right">✔ i 取 1、4、7，共 3 次。口诀：含头不含尾，步长定间隔。（可回到模块②输入 1,9,3 验证）</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="qa-head"><b>问2 · 小明的程序报错了，错在哪？</b><span>点击展开 ▼</span></div>
+    <div class="qa-body">
+      <div class="code" style="margin-bottom:10px"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">101</span>):<br>&nbsp;&nbsp;&nbsp;&nbsp;s = s + i<br><span class="fn">print</span>(s)</div>
+      <p class="wrong">✘ 预判错误："缩进错了！""range 写错了！"</p>
+      <p>🖐 引导：存钱罐还没准备，怎么往里存钱？想想模块③的变量面板——第 1 行之前 s 存在吗？</p>
+      <p class="right">✔ 漏写 s = 0，执行 s = s + i 时内存里根本没有 s，报 NameError。初始化必须写在循环<b>前面</b>。</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="qa-head"><b>问3 · 想让 i 从 10 倒数到 1，range 怎么写？</b><span>点击展开 ▼</span></div>
+    <div class="qa-body">
+      <p class="wrong">✘ 预判错误："range(10, 1)" —— 程序不报错，但一个数都不生成（默认步长+1，越走离1越远，空转）</p>
+      <p>🖐 引导：让步长变成负数，就能倒着走。</p>
+      <p class="right">✔ range(10, 0, -1) → 10, 9, …, 1。规则不变：含头不含尾，终点写 0 才能取到 1。（可在模块②验证）</p>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top:20px;font-size:16px"><b>本课口诀：</b>定盒子 → 定范围 → 定加谁。学考循环填空题，三步拿下！</div>
+</section>
+
+</main>
+
+<footer>福建省高中信息技术学考复习课 · for循环与range()函数 · 交互式演示页（执行过程可视化版）</footer>
+
+<script>
+/* ================= 通用工具 ================= */
+function $(id){return document.getElementById(id);}
+
+/* 终端输出 */
+const termUtil={
+  print(id,text){
+    const body=$(id); const h=body.querySelector('.thint'); if(h)h.remove();
+    const l=document.createElement('div'); l.className='tline'; l.textContent=text;
+    body.appendChild(l); body.scrollTop=body.scrollHeight;
+  },
+  clear(id){ $(id).innerHTML='<div class="tline thint">（print 的输出会逐行显示在这里）</div>'; }
+};
+
+/* 变量面板 */
+const varUtil={
+  set(id,name,val,flash){
+    const box=$(id); const e=box.querySelector('.vars-empty'); if(e)e.remove();
+    let row=box.querySelector('.var[data-n="'+name+'"]');
+    if(!row){
+      row=document.createElement('div'); row.className='var'; row.dataset.n=name;
+      row.innerHTML='<span class="vn">'+name+'</span><span class="vv"></span>';
+      row.querySelector('.vv').innerHTML=val; box.appendChild(row);
+    }else{
+      row.querySelector('.vv').innerHTML=val;
+    }
+    if(flash){ row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash'); }
+  },
+  clear(id){ $(id).innerHTML='<div class="vars-empty">（暂无变量）</div>'; }
+};
+
+/* 高亮代码行 */
+function hl(id,line){
+  document.querySelectorAll('#'+id+' .cl').forEach(el=>{
+    el.classList.toggle('active', +el.dataset.l===line);
+  });
+}
+
+/* ================= 微型执行引擎 ================= */
+function createEngine(){
+  return {
+    steps:[], idx:0, timer:null, playing:false, speed:900, onState:null,
+    add(fn){ this.steps.push(fn); },
+    _tick(){
+      if(this.idx<this.steps.length){ this.steps[this.idx++](); this.sync(); }
+      else{ this.pause(); }
+    },
+    play(){
+      if(this.playing||this.idx>=this.steps.length)return;
+      this.playing=true; this.sync();
+      this.timer=setInterval(()=>this._tick(), this.speed);
+    },
+    pause(){ this.playing=false; if(this.timer){clearInterval(this.timer);this.timer=null;} this.sync(); },
+    stepOnce(){ this.pause(); if(this.idx<this.steps.length){ this.steps[this.idx++](); } this.sync(); },
+    reset(fn){ this.pause(); this.idx=0; if(fn)fn(); this.sync(); },
+    setSpeed(v){
+      this.speed=v;
+      if(this.playing){ clearInterval(this.timer); this.timer=null; this.playing=false; this.play(); }
+    },
+    sync(){ if(this.onState)this.onState(this); }
+  };
+}
+
+/* 控制条绑定 */
+function bindCtrl(ctrlId,eng,progId,resetFn){
+  const c=$(ctrlId), pb=c.querySelector('[data-act=play]');
+  pb.onclick=()=>{
+    if(eng.playing){ eng.pause(); }
+    else{ if(eng.idx>=eng.steps.length){ eng.reset(resetFn); } eng.play(); }
+  };
+  c.querySelector('[data-act=step]').onclick=()=>eng.stepOnce();
+  c.querySelector('[data-act=reset]').onclick=()=>eng.reset(resetFn);
+  c.querySelectorAll('.spd').forEach(b=>{
+    b.onclick=()=>{
+      c.querySelectorAll('.spd').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); eng.setSpeed(+b.dataset.v);
+    };
+  });
+  eng.onState=e=>{
+    pb.textContent = e.playing ? '⏸ 暂停' : (e.idx>=e.steps.length ? '↺ 重新播放' : '▶ 播放');
+    pb.classList.toggle('warn', e.playing);
+    $(progId).innerHTML='执行进度 <b>'+e.idx+'</b> / '+e.steps.length+' 步';
+  };
+}
+
+/* ================= 模块1：点名（逐行执行可视化） ================= */
+const names=["林晓","陈宇","黄欣","郑凯","吴倩","王磊"];
+const faces=["👩","👩‍🎓","🧑","👩","👨‍🎓","👩‍💻"];
+const rcEng=createEngine();
+
+function rcRender(){
+  $('rcList').innerHTML=names.map((n,i)=>
+    '<div class="student" id="stu'+i+'"><div class="face">'+faces[i]+'</div>'+n+'</div>').join('');
+}
+function rcMark(i,cls){
+  const el=$('stu'+i);
+  if(el){ el.className='student '+(cls==='cur'?'cur':'done'); }
+}
+function rcReset(){
+  rcRender(); termUtil.clear('rcTerm'); varUtil.clear('rcVars'); hl('rcCode',0);
+  $('rcCount').textContent='0';
+  $('rcMsg').innerHTML='点击 <b>▶ 播放</b> 看程序逐行执行；或用 <b>⏭ 单步</b> 一步一步走（适合课堂提问）。';
+}
+
+rcEng.add(()=>{ hl('rcCode',1);
+  varUtil.set('rcVars','name_list',"['林晓','陈宇','黄欣','郑凯','吴倩','王磊']");
+  $('rcMsg').textContent='第 1 行：创建花名册 name_list —— 6 个名字装进列表（这就是循环的"序列"）。';
+});
+names.forEach((n,k)=>{
+  rcEng.add(()=>{ hl('rcCode',2); rcMark(k,'cur'); varUtil.set('rcVars','name','"'+n+'"');
+    $('rcMsg').innerHTML='↺ 第 2 行：回到 for，从花名册取出下一个 → <b>name = "'+n+'"</b>（第 '+(k+1)+' 圈）';
+  });
+  rcEng.add(()=>{ hl('rcCode',3); rcMark(k,'done'); termUtil.print('rcTerm',n+'：到！');
+    $('rcCount').textContent=k+1;
+    $('rcMsg').innerHTML='第 3 行：执行循环体 print(name + "：到！") → 输出区多了一行。执行完 ↺ 跳回第 2 行。';
+  });
+});
+rcEng.add(()=>{ hl('rcCode',2);
+  $('rcMsg').innerHTML='第 2 行：花名册已取空，取不到下一个 → <b>循环正常结束</b> ✔（name 保留最后一个值）';
+});
+rcEng.add(()=>{ hl('rcCode',0);
+  $('rcMsg').innerHTML='程序运行完毕：循环体恰好执行 <b>6 次</b> —— 序列里有几个元素，循环体就执行几次。';
+});
+bindCtrl('rcCtrl',rcEng,'rcProg',rcReset);
+rcReset();
+
+/* ================= 模块2：range 逐个出号 ================= */
+let rAnim=null;
+function genRange(start,stop,step){
+  const seq=[];
+  if(step>0){ for(let x=start;x<stop;x+=step){ seq.push(x); if(seq.length>60)break; } }
+  else if(step<0){ for(let x=start;x>stop;x+=step){ seq.push(x); if(seq.length>60)break; } }
+  return seq;
+}
+function showRange(start,stop,step){
+  $('rStart').value=start; $('rStop').value=stop; $('rStep').value=step;
+  $('rCode').textContent='range('+start+', '+stop+', '+step+')';
+  const box=$('rSeq'), warn=$('rWarn'), cnt=$('rCount'), rmsg=$('rMsg');
+  warn.style.display='none';
+  if(rAnim){clearInterval(rAnim); rAnim=null;}
+
+  if(step===0){
+    box.innerHTML='<span class="seq-empty">步长不能为 0，程序会直接报错（ValueError）！</span>';
+    cnt.textContent=0; rmsg.textContent='出号失败：步长为 0，Python 直接抛出 ValueError。';
+    return;
+  }
+  const seq=genRange(start,stop,step);
+  if(seq.length===0){
+    box.innerHTML='<span class="ghost">∅ 一个数都没有（空转）</span>';
+    warn.style.display='block';
+    warn.innerHTML= step>0
+      ? '⚠ 起点 '+start+' 已经 ≥ 终点 '+stop+'，正步长越走离终点越远——<b>序列是空的！</b>想倒数？步长要用负数，例如 range('+start+', '+stop+', -1)。'
+      : '⚠ 起点 '+start+' 已经 ≤ 终点 '+stop+'，负步长也走不到——<b>序列是空的！</b>';
+    cnt.textContent=0; rmsg.textContent='一个号都没出——循环体一次都不执行（空转）。';
+    return;
+  }
+  /* 构建隐藏元素，逐个显示 */
+  let html='';
+  seq.forEach((v,i)=>{
+    if(i>0) html+='<span class="rstep" style="visibility:hidden">+'+Math.abs(step)+'</span>';
+    html+='<span class="chip'+(i===0?' first':'')+'" style="visibility:hidden">'+v+'</span>';
+  });
+  html+='<span class="ghost" style="visibility:hidden" title="终点取不到">'+stop+' ✗</span>';
+  box.innerHTML=html;
+  cnt.textContent=0;
+  rmsg.textContent='开始出号：从 '+start+' 出发，每次 +'+step+'……';
+
+  const chips=box.children;
+  let shown=0, got=0;
+  rAnim=setInterval(()=>{
+    if(shown>=chips.length){
+      clearInterval(rAnim); rAnim=null;
+      rmsg.innerHTML='出号完毕！共 <b>'+seq.length+'</b> 个号——for 循环体将执行 <b>'+seq.length+'</b> 次。'+seq[seq.length-1]+' 之后的 <b style="color:var(--red)">'+stop+' 永远取不到</b>（含头不含尾）。';
+      return;
+    }
+    const el=chips[shown];
+    el.style.visibility='visible';
+    el.classList.add('popin');
+    if(el.classList.contains('chip')){
+      got++; cnt.textContent=got;
+      if(got<seq.length){
+        const next=seq[got];
+        rmsg.innerHTML='当前出号：<b>'+el.textContent+'</b>，下一个 = '+el.textContent+' + '+Math.abs(step)+' = <b>'+next+'</b>（< '+stop+' ✔ 继续）';
+      }
+    }
+    shown++;
+  },240);
+}
+$('rGen').onclick=()=>{
+  showRange(+$('rStart').value, +$('rStop').value, +$('rStep').value);
+};
+const quizSet=[[1,10,1],[0,5,1],[2,11,2],[1,9,3],[10,0,-1],[30,100,3],[1,101,2],[5,1,1]];
+$('rQuiz').onclick=()=>{
+  const q=quizSet[Math.floor(Math.random()*quizSet.length)];
+  showRange(q[0],q[1],q[2]);
+};
+
+/* ================= 模块3：累加器（逐行执行 + 快慢镜头） ================= */
+const acEng=createEngine();
+const traceRows=[[1,1,'0 + 1',1],[2,2,'1 + 2',3],[3,3,'3 + 3',6],[4,4,'6 + 4',10],[5,5,'10 + 5',15],[6,6,'15 + 6',21],[7,7,'21 + 7',28],[8,8,'28 + 8',36]];
+
+function acJar(ratio,val){
+  $('jarFill').style.height=Math.min(ratio*100,100)+'%';
+  $('jarVal').textContent=val;
+}
+function acTraceCurToDone(){
+  document.querySelectorAll('#traceBody tr.cur').forEach(r=>r.className='done');
+}
+function acTrace(n,iv,expr,sv,cls){
+  acTraceCurToDone();
+  const tr=$('traceBody').insertRow(); tr.className=cls||'cur';
+  tr.innerHTML='<td>'+n+'</td><td>'+iv+'</td><td>s = '+expr+'</td><td><b>'+sv+'</b></td>';
+}
+function acTraceDots(){
+  if($('traceBody').querySelector('.dots'))return;
+  acTraceCurToDone();
+  const tr=$('traceBody').insertRow(); tr.className='dots';
+  tr.innerHTML='<td colspan="4">⋮ 中间各圈同理（快进，执行过程完全一样）</td>';
+}
+function acReset(){
+  termUtil.clear('acTerm'); varUtil.clear('acVars'); hl('acCode',0);
+  $('traceBody').innerHTML='';
+  acJar(0,0); $('coinVal').textContent='—';
+  $('acNote').innerHTML='点击 <b>▶ 播放</b>：先慢放前 8 圈，再自动快进到第 100 圈。也可 <b>⏭ 单步</b> 精讲。';
+}
+
+acEng.add(()=>{ hl('acCode',1); varUtil.set('acVars','s','0');
+  $('acNote').innerHTML='第 1 行 · <b>① 定盒子</b>：创建变量 s，初始值 0（空存钱罐就位）。';
+});
+for(let n=1;n<=8;n++){
+  const oldS=n*(n-1)/2, newS=n*(n+1)/2;
+  acEng.add(()=>{ hl('acCode',2);
+    acTrace(n,n,oldS+' + '+n,newS,'cur');
+    varUtil.set('acVars','i',String(n));
+    $('coinVal').textContent='+'+n;
+    $('acNote').innerHTML='第 2 行 · <b>② 定范围</b>：range(1, 101) 取出下一个 → <b>i = '+n+'</b>（第 '+n+' 圈）';
+  });
+  acEng.add(()=>{ hl('acCode',3);
+    varUtil.set('acVars','s',String(newS),true); acJar(newS/5050,newS);
+    $('acNote').innerHTML='第 3 行 · <b>③ 定加谁</b>：s = '+oldS+' + '+n+' = <b>'+newS+'</b>，硬币落罐 ↺ 回到第 2 行取下一个 i。';
+  });
+}
+[[10,55],[25,325],[50,1275],[75,2875],[99,4950]].forEach(pair=>{
+  const n=pair[0], sN=pair[1];
+  acEng.add(()=>{ hl('acCode',2); acTraceDots();
+    varUtil.set('acVars','i',String(n)); $('coinVal').textContent='+'+n;
+    $('acNote').innerHTML='⏩ 快进 · 第 '+n+' 圈：i = '+n+'（过程与前 8 圈完全一样，只是提速）';
+  });
+  acEng.add(()=>{ hl('acCode',3);
+    varUtil.set('acVars','s',String(sN),true); acJar(sN/5050,sN);
+    $('acNote').innerHTML='⏩ s = '+(sN-n)+' + '+n+' = <b>'+sN+'</b>，罐子越来越满……';
+  });
+});
+acEng.add(()=>{ hl('acCode',2);
+  acTrace(100,100,'4950 + 100',5050,'cur');
+  varUtil.set('acVars','i','100'); $('coinVal').textContent='+100';
+  $('acNote').innerHTML='第 2 行：取出最后一个数 <b>i = 100</b>（含头不含尾：终点 101 本身取不到）。';
+});
+acEng.add(()=>{ hl('acCode',3);
+  varUtil.set('acVars','s','5050',true); acJar(1,5050);
+  $('acNote').innerHTML='第 3 行：s = 4950 + 100 = <b>5050</b> 🎉 罐子存满！';
+});
+acEng.add(()=>{ hl('acCode',2);
+  $('acNote').innerHTML='第 2 行：range 里的 100 个数全部取完，下一个不存在 → <b>跳出循环</b>（i、s 保留最后的值）';
+});
+acEng.add(()=>{ hl('acCode',4);
+  termUtil.print('acTerm','5050');
+  $('acNote').innerHTML='第 4 行：循环<b>结束后</b>才执行 print(s) → 输出 <b>5050</b>。验算（高斯公式）：(1+100)×100÷2 = 5050 ✔';
+});
+acEng.add(()=>{ hl('acCode',0);
+  $('acNote').innerHTML='程序结束。三步口诀：<b>定盒子 → 定范围 → 定加谁</b>，一共循环了 100 次。';
+});
+bindCtrl('acCtrl',acEng,'acProg',acReset);
+acReset();
+
+$('acFast').onclick=()=>{
+  acEng.pause();
+  termUtil.clear('acTerm'); varUtil.clear('acVars'); hl('acCode',0);
+  const b=$('traceBody'); b.innerHTML='';
+  traceRows.forEach(r=>{
+    const tr=b.insertRow(); tr.className='done';
+    tr.innerHTML='<td>'+r[0]+'</td><td>'+r[1]+'</td><td>s = '+r[2]+'</td><td><b>'+r[3]+'</b></td>';
+  });
+  const d=b.insertRow(); d.className='dots';
+  d.innerHTML='<td colspan="4">⋮ 中间各圈同理</td>';
+  const last=b.insertRow(); last.className='done';
+  last.innerHTML='<td>100</td><td>100</td><td>s = 4950 + 100</td><td><b>5050</b></td>';
+  acJar(1,5050); $('coinVal').textContent='+100';
+  varUtil.set('acVars','s','5050'); varUtil.set('acVars','i','100');
+  termUtil.print('acTerm','5050');
+  $('acNote').innerHTML='最终结果：s = <b>5050</b>（1~100 的和）。想看逐圈过程，点"↺ 重置"后再"▶ 播放"。';
+};
+
+/* ================= 模块4：真题填空 + 运行过程可视化 ================= */
+const answers={b1:['0'], b2:['3'], b3:['i']};
+$('exHint').onclick=()=>{ $('exHintBox').style.display='block'; };
+$('exCheck').onclick=()=>{
+  let allOk=true;
+  ['b1','b2','b3'].forEach(id=>{
+    const el=$(id);
+    const val=el.value.trim().replace(/\s/g,'');
+    const ok=answers[id].includes(val);
+    el.classList.remove('ok','no'); void el.offsetWidth;
+    el.classList.add(ok?'ok':'no');
+    if(!ok)allOk=false;
+  });
+  const v=$('exVerdict');
+  if(allOk){
+    v.className='verdict ok';
+    v.textContent='✔ 三空全对！口诀立功：定盒子、定范围、定加谁。点击"运行程序"逐行看执行过程。';
+    $('exRun').disabled=false;
+  }else{
+    v.className='verdict no';
+    v.textContent='✘ 还有空不对（红色处）。想想口诀三步走，或点"按口诀提示"。';
+    $('exRun').disabled=true;
+    $('exRunWrap').style.display='none';
+  }
+};
+$('exShow').onclick=()=>{
+  $('b1').value='0'; $('b2').value='3'; $('b3').value='i';
+  ['b1','b2','b3'].forEach(id=>{const el=$(id);el.classList.remove('no');el.classList.add('ok');});
+  $('exRun').disabled=false;
+  const v=$('exVerdict');
+  v.className='verdict ok';
+  v.textContent='答案已填入：s=0（定盒子）、步长3（定范围）、加 i（定加谁）。点击"运行程序"看执行过程。';
+};
+
+/* 运行可视化 */
+const exEng=createEngine();
+const exNums=[];
+for(let n=30;n<=99;n+=3)exNums.push(n);
+function exSumTo(k){
+  let s=0; for(let i=0;i<=k;i++)s+=exNums[i]; return s;
+}
+function exRenderChips(){
+  $('exChips').innerHTML=exNums.map(v=>'<span class="pchip">'+v+'</span>').join('');
+}
+function exLit(k){
+  const ch=$('exChips').children;
+  for(let i=0;i<ch.length;i++){
+    ch[i].classList.toggle('lit', i<=k);
+    ch[i].classList.toggle('last', i===k);
+  }
+}
+function exReset(){
+  exRenderChips(); termUtil.clear('exTerm'); varUtil.clear('exVars'); hl('exCode',0);
+  $('exNote').textContent='点击"▶ 播放"：先慢放前 3 圈，再快进到最后一圈。';
+}
+exEng.add(()=>{ hl('exCode',1); varUtil.set('exVars','s','0');
+  $('exNote').innerHTML='第 1 行 · <b>① 定盒子</b>：s = 0，空罐子就位。';
+});
+[0,1,2].forEach(k=>{
+  exEng.add(()=>{ hl('exCode',2); exLit(k); varUtil.set('exVars','i',String(exNums[k]));
+    $('exNote').innerHTML='第 2 行 · <b>② 定范围</b>：取出下一个 → <b>i = '+exNums[k]+'</b>（第 '+(k+1)+' 圈。注意 31、32 被步长 3 跳过了）';
+  });
+  exEng.add(()=>{ hl('exCode',3); varUtil.set('exVars','s',String(exSumTo(k)),true);
+    $('exNote').innerHTML='第 3 行 · <b>③ 定加谁</b>：s = '+(exSumTo(k)-exNums[k])+' + '+exNums[k]+' = <b>'+exSumTo(k)+'</b> ↺ 回到第 2 行。';
+  });
+});
+[5,11,17,23].forEach(k=>{
+  exEng.add(()=>{ hl('exCode',2); exLit(k); varUtil.set('exVars','i',String(exNums[k]));
+    $('exNote').innerHTML='⏩ 快进 · i = '+exNums[k]+'（能被 3 整除的数一个接一个点亮入罐）';
+  });
+  exEng.add(()=>{ hl('exCode',3); varUtil.set('exVars','s',String(exSumTo(k)),true);
+    $('exNote').innerHTML='⏩ s 涨到 <b>'+exSumTo(k)+'</b>……';
+  });
+});
+exEng.add(()=>{ hl('exCode',2);
+  $('exNote').innerHTML='第 2 行：<b>i = 99</b> 是最后一个（99 + 3 = 102 ≥ 终点 100，取不到）→ <b>跳出循环</b>，共循环 24 次。';
+});
+exEng.add(()=>{ hl('exCode',4);
+  termUtil.print('exTerm','30~100能被3整除的数的和为 1548');
+  $('exNote').innerHTML='第 4 行：print 输出最终结果 <b>1548</b>（30+33+36+…+99，共 24 个数）';
+});
+exEng.add(()=>{ hl('exCode',0);
+  $('exNote').innerHTML='程序结束。考试就是这样：<b>定盒子 → 定范围 → 定加谁</b>，三空全对！';
+});
+bindCtrl('exCtrl',exEng,'exProg',exReset);
+
+$('exRun').onclick=()=>{
+  const wrap=$('exRunWrap');
+  wrap.style.display='block';
+  exEng.reset(exReset); exEng.play();
+  setTimeout(()=>{ if(wrap.scrollIntoView)wrap.scrollIntoView({behavior:'smooth',block:'nearest'}); },150);
+};
+
+/* ================= 模块5：问答折叠 ================= */
+document.querySelectorAll('.qa-head').forEach(h=>{
+  h.onclick=()=>h.parentElement.classList.toggle('open');
+});
+</script>
+</body>
+</html>
