@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1e40af">
+<title>专题二 · 数据采集与处理 | 高中信息技术学考复习网</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>">
+<style>
+
+  :root{
+    --primary:#2563eb; --primary-dark:#1e40af; --primary-light:#dbeafe;
+    --bg:#f4f6fb; --card:#ffffff;
+    --text:#1e293b; --muted:#64748b; --line:#e2e8f0;
+    --green:#059669; --orange:#ea580c; --red:#dc2626; --purple:#7c3aed; --blue:#0284c7;
+    --key:#fef3c7; --key-bd:#f59e0b; --hard:#fee2e2; --hard-bd:#ef4444;
+    --mn-bg:#eef2ff; --mn-bd:#6366f1; --sum-bg:#ecfdf5; --sum-bd:#10b981;
+    --sidebar-w:264px;
+    --shadow-sm:0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+    --shadow-md:0 6px 20px rgba(15,23,42,.09);
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.75; -webkit-font-smoothing:antialiased;}
+  a{color:var(--primary); text-decoration:none;}
+  ::selection{background:#bfdbfe; color:#1e3a8a;}
+
+  #topbar{position:fixed; top:0; left:0; right:0; height:3px; z-index:120;}
+  #topbar .fill{height:100%; width:0; background:linear-gradient(90deg,#f59e0b,#3b82f6,#06b6d4); transition:width .1s linear;}
+
+  header{
+    color:#fff; padding:14px 20px 12px; text-align:center; position:relative; overflow:hidden;
+    background:
+      radial-gradient(circle at 12% 18%, rgba(255,255,255,.16) 0, transparent 42%),
+      radial-gradient(circle at 88% 85%, rgba(96,165,250,.4) 0, transparent 45%),
+      linear-gradient(135deg,#0f2a6b 0%, #1e40af 42%, #2563eb 74%, #3b82f6 100%);
+    box-shadow:0 4px 24px rgba(30,64,175,.35);
+  }
+  header::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.13) 1px, transparent 1px); background-size:22px 22px;}
+  header h1{font-size:20px; letter-spacing:1px; text-shadow:0 2px 10px rgba(0,0,0,.22); position:relative;}
+  header p{font-size:12.5px; opacity:.94; margin-top:4px; position:relative;}
+  header .badge{display:inline-block; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.42); border-radius:999px; padding:2px 12px; font-size:11.5px; margin-top:6px; backdrop-filter:blur(4px); position:relative;}
+
+  .layout{display:flex; max-width:1400px; margin:0 auto; align-items:flex-start;}
+
+  /* ---------- 侧边栏 ---------- */
+  aside.sidebar{width:var(--sidebar-w); flex:0 0 var(--sidebar-w); position:sticky; top:0; max-height:100vh; overflow-y:auto; background:#fff; border-right:1px solid var(--line); padding:14px 10px 24px; scrollbar-width:thin;}
+  aside.sidebar::-webkit-scrollbar{width:5px;}
+  aside.sidebar::-webkit-scrollbar-thumb{background:#cbd5e1; border-radius:99px;}
+  .sb-head{padding:4px 10px 10px; border-bottom:1px dashed var(--line); margin-bottom:8px;}
+  .sb-head .t{font-size:15px; font-weight:800; color:var(--primary-dark); letter-spacing:.5px;}
+  .sb-head .s{font-size:11.5px; color:var(--muted); margin-top:2px;}
+  .grp{margin-bottom:2px;}
+  .grp-toggle{display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:9px 10px; border-radius:9px; font-size:13px; font-weight:700; color:var(--text); transition:.15s;}
+  .grp-toggle:hover{background:#f1f5f9;}
+  .grp-toggle .arr{font-size:10px; color:var(--muted); transition:transform .2s; margin-left:auto;}
+  .grp.open > .grp-toggle .arr{transform:rotate(90deg);}
+  .grp-toggle .no{display:inline-flex; width:22px; height:22px; border-radius:7px; background:linear-gradient(135deg,#eff6ff,#dbeafe); color:var(--primary-dark); align-items:center; justify-content:center; font-size:11px; font-weight:800; box-shadow:inset 0 0 0 1px rgba(37,99,235,.15);}
+  .grp-toggle .gotcha{margin-left:auto; font-size:10px; color:#b45309; background:#fef3c7; border-radius:99px; padding:0 7px;}
+  .grp.open{background:transparent;}
+  .grp-items{display:none; padding:2px 0 6px 12px; border-left:2px solid var(--line); margin-left:20px;}
+  .grp.open > .grp-items{display:block;}
+  .grp-items a{display:flex; align-items:center; gap:7px; padding:6px 10px; border-radius:8px; font-size:12.5px; color:var(--muted); cursor:pointer; transition:.13s; text-decoration:none; line-height:1.45;}
+  .grp-items a:hover{background:#eef2ff; color:var(--primary);}
+  .grp-items a.active{background:var(--primary-light); color:var(--primary-dark); font-weight:700;}
+  .grp-items a .dot{width:5px; height:5px; border-radius:50%; background:#cbd5e1; flex:0 0 auto;}
+  
+  .grp-items a.active .dot{background:#2563eb;}
+  .sb-progress{margin-top:14px; padding:10px 12px; background:linear-gradient(135deg,#eff6ff,#e0f2fe); border:1px solid #bfdbfe; border-radius:11px;}
+  .sb-progress .lbl{font-size:11.5px; color:var(--primary-dark); font-weight:700;}
+  .sb-progress .bar{height:7px; background:#dbeafe; border-radius:99px; overflow:hidden; margin-top:6px;}
+  .sb-progress .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#3b82f6,#06b6d4); border-radius:99px; transition:width .5s;}
+  .sb-progress .num{font-size:11px; color:var(--muted); margin-top:5px;}
+
+  /* ---------- 主区 ---------- */
+  main{flex:1 1 auto; min-width:0; padding:22px 26px 60px; position:relative;}
+  section.page{display:none;}
+  section.page.active{display:block;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+  .page.active > *{animation:fadeUp .45s cubic-bezier(.2,.7,.3,1) both;}
+  .page.active > *:nth-child(2){animation-delay:.06s;}
+  .page.active > *:nth-child(3){animation-delay:.12s;}
+  .page.active > *:nth-child(n+4){animation-delay:.18s;}
+
+  /* ---------- 面包屑 ---------- */
+  .breadcrumb{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted); margin-bottom:14px; flex-wrap:wrap;}
+  .breadcrumb b{color:var(--primary-dark);}
+  .breadcrumb .sep{color:#cbd5e1;}
+
+  .unit-head{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:16px; box-shadow:var(--shadow-sm); display:flex; gap:14px; align-items:flex-start; position:relative; overflow:hidden;}
+  .unit-head::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:linear-gradient(180deg,#2563eb,#06b6d4);}
+  .unit-head .uh-chip{flex:0 0 auto; width:46px; height:46px; border-radius:12px; background:linear-gradient(135deg,#1e40af,#3b82f6); color:#fff; font-size:19px; font-weight:800; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(37,99,235,.35);}
+  .unit-head .kicker{font-size:11.5px; color:var(--primary); font-weight:700; letter-spacing:1.5px;}
+  .unit-head h2{font-size:20px; margin:2px 0 5px; letter-spacing:.5px;}
+  .unit-head p{color:var(--muted); font-size:13.5px;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:14px; box-shadow:var(--shadow-sm); transition:box-shadow .2s, transform .2s;}
+  .card:hover{box-shadow:var(--shadow-md); transform:translateY(-2px);}
+  .card h3{font-size:16.5px; margin-bottom:10px; color:var(--primary-dark); display:flex; align-items:center; gap:8px;}
+  .card h3 .ico{width:26px; height:26px; border-radius:8px; background:linear-gradient(135deg,#e0e7ff,#dbeafe); color:var(--primary-dark); display:inline-flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto; box-shadow:inset 0 0 0 1px rgba(37,99,235,.12);}
+  .card p, .card li{font-size:14.5px; color:#374151;}
+  .card ul, .card ol{padding-left:20px; margin:8px 0;}
+  .card li{margin:4px 0;}
+  .card table{width:100%; border-collapse:collapse; font-size:13.5px; margin:10px 0;}
+  .card th,.card td{border:1px solid var(--line); padding:7px 10px; text-align:left;}
+  .card th{background:linear-gradient(180deg,#f1f5f9,#eef2f7); font-weight:600; color:#334155;}
+  .card tr:nth-child(even) td{background:#fafbfe;}
+  .table-wrap{overflow-x:auto; border-radius:10px; -webkit-overflow-scrolling:touch;}
+  .table-wrap::-webkit-scrollbar{height:6px;}
+  
+  .hl{background:#fef9c3; padding:0 4px; border-radius:4px; box-shadow:inset 0 0 0 1px rgba(245,158,11,.25);}
+  .formula{background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border:1px dashed #7dd3fc; border-radius:10px; padding:11px 15px; margin:11px 0; font-family:"Courier New",monospace; font-weight:700; color:#0369a1; text-align:center; font-size:14.5px; letter-spacing:.5px;}
+  .tags{margin-bottom:10px; display:flex; gap:8px; flex-wrap:wrap;}
+  .tag{font-size:11.5px; font-weight:700; border-radius:999px; padding:2px 11px; letter-spacing:.5px;}
+  .tag.key{background:var(--key); color:#92400e; border:1px solid var(--key-bd);}
+  
+  .tag.hard{background:var(--hard); color:#991b1b; border:1px solid var(--hard-bd);}
+  .tag.note{background:#e0f2fe; color:#075985; border:1px solid #38bdf8;}
+  .mnemonic{background:linear-gradient(135deg,var(--mn-bg),#f5f3ff); border:1px solid var(--mn-bd); border-left:5px solid var(--mn-bd); border-radius:10px; padding:11px 15px; margin:11px 0; font-size:14.5px; box-shadow:var(--shadow-sm);}
+  .mnemonic b{color:var(--purple);}
+  
+  .mnemonic .t{font-weight:800; color:#7c3aed;}
+  .summary{background:linear-gradient(135deg,var(--sum-bg),#f0fdf4); border:1px solid var(--sum-bd); border-left:5px solid var(--sum-bd); border-radius:10px; padding:14px 17px; margin-top:16px; box-shadow:var(--shadow-sm);}
+  .summary h4{color:#047857; font-size:14.5px; margin-bottom:6px;}
+  .summary ul{padding-left:20px;}
+  .summary li{font-size:13.5px; color:#065f46;}
+  .example{background:linear-gradient(135deg,#fff7ed,#ffedd5); border:1px solid #fdba74; border-radius:9px; padding:9px 13px; margin:8px 0; font-size:13.5px;}
+  .example b{color:#c2410c;}
+
+  /* ---------- 嵌入式小练 ---------- */
+  .mini-quiz{margin:14px 0 2px; border-top:2px dashed #a5b4fc; padding-top:12px;}
+  .mini-quiz .mini-head{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+  .mini-quiz .mini-head .tag-mini{font-size:11px; font-weight:800; color:#4338ca; background:#e0e7ff; border:1px solid #a5b4fc; border-radius:99px; padding:2px 10px;}
+  .mini-quiz .mini-head .hint{font-size:11.5px; color:var(--muted);}
+  .mini-quiz .qitem{margin:8px 0;}
+  .mini-quiz .qitem .opt{padding:7px 11px; font-size:13.5px;}
+  .mini-quiz .explain{font-size:12.5px;}
+  .mini-quiz .exam-bar{padding:7px 10px; margin-bottom:8px;}
+
+  .exam-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:8px 11px;}
+  
+  .exam-stat{font-size:12.5px; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px 9px;}
+  .exam-acc{font-size:12.5px; color:#92400e; background:var(--key); border:1px solid var(--key-bd); border-radius:8px; padding:3px 9px;}
+  .exam-acc b{color:#b45309;}
+  .exam-stat b{color:var(--primary);}
+  .exam-progress{flex:1 1 130px; min-width:100px; height:8px; background:#e2e8f0; border-radius:99px; overflow:hidden;}
+  .exam-progress .bar{height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#3b82f6,#06b6d4); transition:width .4s;}
+  .exam-progress .bar.full{background:linear-gradient(90deg,#0ea5e9,#2563eb);}
+  .exam-progress .bar.good{background:linear-gradient(90deg,#10b981,#059669);}
+  .reset-btn{margin-left:auto; background:#fff; border:1px solid var(--line); color:var(--muted); border-radius:8px; padding:4px 12px; font-size:12px; font-weight:600; cursor:pointer; transition:.15s;}
+  
+  .exam-done{display:none; margin-bottom:10px; background:linear-gradient(135deg,#eff6ff,#e0f2fe); border:1px solid #93c5fd; border-radius:10px; padding:9px 13px; font-size:13px; color:#1d4ed8; font-weight:600; text-align:center;}
+  .exam-done.show{display:block; animation:fadeUp .35s both;}
+  
+  .qitem .q-head{font-size:14px; font-weight:600; color:#111827; margin-bottom:8px; line-height:1.65;}
+  .qitem .q-head .n{display:inline-block; background:linear-gradient(135deg,#eff6ff,#dbeafe); color:var(--primary-dark); border-radius:7px; min-width:23px; text-align:center; padding:1px 6px; margin-right:7px; font-size:12.5px; font-quight:700;}
+  
+  .qitem .opt{display:flex; align-items:flex-start; gap:9px; width:100%; text-align:left; background:#f8fafc; border:1px solid var(--line); border-radius:9px; padding:8px 12px; margin:5px 0; cursor:pointer; font-size:13.5px; transition:.15s; line-height:1.6; font-family:inherit;}
+  .qitem .opt:hover{border-color:var(--primary); background:#eff6ff; transform:translateX(3px);}
+  .qitem .opt .letter{flex:0 0 auto; width:22px; height:22px; border-radius:7px; background:#e2e8f0; color:#475569; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:800; margin-top:1px; transition:.15s;}
+  .qitem .opt:hover .letter{background:var(--primary); color:#fff;}
+  .qitem .opt.correct{background:#dcfce7; border-color:var(--green); color:#166534; font-weight:600; transform:none;}
+  .qitem .opt.correct .letter{background:#16a34a; color:#fff;}
+  .qitem .opt.wrong{background:#fee2e2; border-color:var(--red); color:#991b1b; transform:none;}
+  .qitem .opt.wrong .letter{background:#dc2626; color:#fff;}
+  .qitem .opt.disabled{pointer-events:none; opacity:.92;}
+  @keyframes pulseOk{0%{transform:scale(1);} 45%{transform:scale(1.02);} 100%{transform:scale(1);}}
+  @keyframes shakeNo{0%,100%{transform:translateX(0);} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);}}
+  .qitem .opt.correct{animation:pulseOk .35s;}
+  .qitem .opt.wrong{animation:shakeNo .3s;}
+  .qitem .explain{display:none; margin-top:9px; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border-left:4px solid var(--blue); border-radius:7px; padding:9px 13px; font-size:13px; color:#075985; white-space:pre-wrap; line-height:1.7;}
+  .qitem .explain.show{display:block; animation:fadeUp .3s both;}
+  .qitem .hint-img{display:inline-block; font-size:11px; color:#b45309; background:#fef3c7; border-radius:6px; padding:1px 7px; margin-left:6px; vertical-align:middle;}
+
+  /* ---------- 考前速览 ---------- */
+  .quick-cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px;}
+  .quick-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow-sm);}
+  .quick-card h4{font-size:14px; color:var(--primary-dark); margin-bottom:8px; display:flex; align-items:center; gap:7px;}
+  .quick-card h4 .qi{width:24px; height:24px; border-radius:7px; background:linear-gradient(135deg,#e0e7ff,#dbeafe); display:inline-flex; align-items:center; justify-content:center; font-size:13px; box-shadow:inset 0 0 0 1px rgba(37,99,235,.12);}
+  .quick-card .qc-body{font-size:13px; color:#374151; line-height:1.8;}
+  .quick-card .qc-body b{color:var(--purple);}
+  .quick-card .qc-body .f{font-family:"Courier New",monospace; font-weight:700; color:#0369a1; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:8px; padding:6px 10px; text-align:center; margin:6px 0;}
+
+  /* ---------- 工具区 ---------- */
+  
+  .tool h3{font-size:15.5px; color:var(--pimary,#2563eb); color:var(--primary-dark); margin-bottom:13px; display:flex; align-items:center; gap:8px;}
+  .tool .row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;}
+  .tool label{font-size:12px; color:var(--muted); display:block; margin-bottom:4px; font-weight:600;}
+  .tool input,.tool select{border:1.5px solid var(--line); border-radius:9px; padding:8px 10px; font-size:14px; width:130px; background:#fff; transition:.15s; outline:none;}
+  
+  .tool input:focus,.tool select:focus{border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,.14);}
+  .tool button{background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border:none; border-radius:9px; padding:9px 20px; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 3px 10px rgba(37,99,235,.3); transition:.18s;}
+  .tool button:hover{transform:translateY(-1px); box-shadow:0 5px 14px rgba(37,99,235,.4);}
+  .tool .result{margin-top:11px; background:linear-gradient(135deg,#f0fdf4,#dcfce7); border:1px solid #86efac; border-radius:10px; padding:12px 14px; font-size:13.5px; white-space:pre-wrap; display:none; line-height:1.8;}
+  .tool .result.show{display:block; animation:fadeUp .3s both;}
+  .tool .result .ans{font-weight:800; color:#166534; font-size:15px;}
+
+  footer{color:var(--muted); font-size:12.5px; text-align:center; border-top:1px solid var(--line); line-height:1.9; padding:20px 16px 40px; margin-top:10px;}
+
+  .back-top{position:fixed; right:22px; bottom:26px; width:44px; height:44px; border-radius:50%; border:none; cursor:pointer; background:linear-gradient(135deg,#2563eb,#1e40af); color:#fff; font-size:18px; box-shadow:0 6px 18px rgba(30,64,175,.4); opacity:0; pointer-events:none; transform:translateY(10px); transition:.25s; z-index:60;}
+  .back-top.show{opacity:1; pointer-events:auto; transform:none;}
+  .back-items{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
+  .back-item{display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:12.5px; color:var(--muted); cursor:pointer; transition:.15s;}
+  .back-item:hover{border-color:var(--primary); color:var(--primary); background:#eff6ff;}
+  .back-item .arrow{color:#94a3b8;}
+
+  /* ---------- 汉堡菜单（移动端） ---------- */
+  .menu-btn{display:none; position:fixed; left:16px; bottom:16px; z-index:90; width:46px; height:46px; border-radius:50%; border:none; cursor:pointer; background:linear-gradient(135deg,#2563eb,#1e40af); color:#fff; font-size:19px; box-shadow:0 6px 18px rgba(30,64,175,.4);}
+  aside.sidebar.hide{display:none;}
+
+  /* ---------- 侧边栏折叠（桌面端） ---------- */
+  .sb-collapse-btn{flex:0 0 auto; width:24px; height:24px; border-radius:7px; border:1px solid var(--line); background:#fff; color:var(--muted); font-size:12px; line-height:1; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; justify-content:center; padding:0;}
+  .sb-collapse-btn:hover{color:var(--primary); border-color:var(--primary); background:#eff6ff;}
+  .sb-head-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .layout{transition:max-width .25s;}
+  aside.sidebar{transition:width .25s, flex-basis .25s, transform .25s;}
+  aside.sidebar.collapsed{width:0; flex:0 0 0; overflow:hidden; border-right:none; padding-left:0; padding-right:0; opacity:0;}
+  .sb-open-btn{position:fixed; left:0; top:50%; transform:translateY(-50%); z-index:70; display:none; flex-direction:column; align-items:center; gap:6px; background:linear-gradient(180deg,#2563eb,#1e40af); color:#fff; border:none; border-radius:0 12px 12px 0; padding:16px 7px; cursor:pointer; box-shadow:3px 0 14px rgba(30,64,175,.35); font-size:12px; letter-spacing:2px; writing-mode:vertical-rl;}
+  .sb-open-btn:hover{padding-left:11px; box-shadow:4px 0 18px rgba(30,64,175,.5);}
+  .sb-open-btn.show{display:flex;}
+  .sb-open-btn .oi{font-size:14px; letter-spacing:0;}
+
+  @media (max-width:960px){
+    .layout{flex-direction:column;}
+    aside.sidebar{position:fixed; left:0; top:0; bottom:0; max-height:100vh; width:280px; z-index:80; box-shadow:8px 0 30px rgba(15,23,42,.18); transform:translateX(-105%); transition:transform .25s;}
+    aside.sidebar.show{transform:none;}
+    aside.sidebar.collapsed{width:280px; flex-basis:auto; overflow:visible; padding-left:14px; padding-right:10px; opacity:1;}
+    .menu-btn{display:block;}
+    .sb-collapse-btn, .sb-open-btn{display:none !important;}
+    main{padding:18px 14px 60px;}
+    .quick-cards{grid-template-columns:1fr;}
+  }
+
+  @media print{
+    #topbar, aside.sidebar, .back-top, .menu-btn, .sb-open-btn, .sb-collapse-btn, .reset-btn, .exam-progress, .exam-acc{display:none !important;}
+    header{box-shadow:none;}
+    .layout{display:block;}
+    section.page{display:block !important; page-break-before:always;}
+    section.page:first-of-type{page-break-before:auto;}
+    .card, .qitem{box-shadow:none; break-inside:avoid;}
+    body{background:#fff;}
+  }
+
+  /* ---------- 全站统一导航栏 ---------- */
+  .navbar{
+    position:sticky; top:0; z-index:100;
+    background:linear-gradient(135deg,#0f2a6b 0%, #1e40af 42%, #2563eb 74%, #3b82f6 100%);
+    box-shadow:0 4px 24px rgba(30,64,175,.35);
+  }
+  .navbar .inner{
+    max-width:1400px; margin:0 auto; padding:0 16px;
+    display:flex; align-items:center; gap:16px; height:52px;
+  }
+  .navbar .logo{display:flex; align-items:center; gap:8px; color:#fff; font-weight:800; font-size:15px; letter-spacing:.5px; white-space:nowrap;}
+  .navbar .logo .lg-icon{width:28px; height:28px; border-radius:8px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); display:flex; align-items:center; justify-content:center; font-size:15px;}
+  .navbar .nav-links{display:flex; align-items:center; gap:4px; margin-left:auto;}
+  .navbar .nav-links a{
+    color:rgba(255,255,255,.88); font-size:13.5px; font-weight:600;
+    padding:6px 13px; border-radius:8px; transition:.15s; white-space:nowrap;
+  }
+  .navbar .nav-links a:hover{background:rgba(255,255,255,.16); color:#fff;}
+  .navbar .nav-links a.active{background:rgba(255,255,255,.22); color:#fff; box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);}
+  .navbar .menu-toggle{display:none; margin-left:auto; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.4); color:#fff; border-radius:8px; width:36px; height:34px; font-size:16px; cursor:pointer;}
+  @media (max-width:860px){
+    .navbar .menu-toggle{display:block;}
+    .navbar .nav-links{
+      display:none; position:absolute; top:52px; left:0; right:0;
+      flex-direction:column; align-items:stretch; gap:2px;
+      background:linear-gradient(135deg,#1e40af,#2563eb); padding:10px 14px 14px;
+      box-shadow:0 12px 24px rgba(30,64,175,.35);
+    }
+    .navbar .nav-links.open{display:flex;}
+    .navbar .nav-links a{padding:10px 14px; font-size:14.5px;}
+  }
+</style>
+</head>
+<body>
+<div id="topbar"><div class="fill"></div></div>
+
+<nav class="navbar">
+  <div class="inner">
+    <a class="logo" href="index.html"><span class="lg-icon">📘</span>高中信息技术学考复习网</a>
+    <button class="menu-toggle" id="navToggle" aria-label="打开菜单">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">首页</a>
+      <a href="topic1.html">专题一 · 数据与信息</a>
+      <a href="topic2.html" class="active">专题二 · 数据采集与处理</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <h1>必修一 · 专题二 单元四 数据采集与处理</h1>
+  <p>高中信息技术学业水平考试 · 第一周教学课件（2 课时）</p>
+  <span class="badge">知识点 + 69 道真题 · 内容严格参照教材</span>
+</header>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-head-row">
+      <div class="t">数据采集与处理</div>
+      <button class="sb-collapse-btn" id="sbCollapse" title="收起目录" aria-label="收起目录">⟨</button>
+    </div>
+    <div class="s">第一周 · 2 课时 · 69 题</div>
+  </div>
+  <div class="grp" data-unit="unit1">
+    <button class="grp-toggle"><span class="no">1</span>第1课时 数据处理·数据采集<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="kp-1-1"><span class="dot"></span>一、数据处理过程</a>
+      <a data-anchor="kp-1-2"><span class="dot"></span>二、直接/间接数据</a>
+      <a data-anchor="kp-1-3"><span class="dot"></span>三、采集工具与方法</a>
+      <a data-anchor="ex-u1"><span class="dot"></span>随堂练习 20 题</a>
+    </div>
+  </div>
+  <div class="grp" data-unit="unit2">
+    <button class="grp-toggle"><span class="no">2</span>第2课时 数据库·分析·安全<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="kp-2-1"><span class="dot"></span>四、数字化工具</a>
+      <a data-anchor="kp-2-2"><span class="dot"></span>五、数据库三概念</a>
+      <a data-anchor="kp-2-3"><span class="dot"></span>六、数据分析三法</a>
+      <a data-anchor="kp-2-4"><span class="dot"></span>七、可视化呈现</a>
+      <a data-anchor="kp-2-5"><span class="dot"></span>八、数据保护</a>
+      <a data-anchor="ex-u2"><span class="dot"></span>随堂练习 10 题</a>
+    </div>
+  </div>
+  <div class="grp" data-unit="zx">
+    <button class="grp-toggle"><span class="no">综</span>综合训练 39 题<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="zx-kd"><span class="dot"></span>考点分布总览</a>
+      <a data-anchor="zx-gl"><span class="dot"></span>高频考点规律</a>
+      <a data-anchor="zx-jy"><span class="dot"></span>答题技巧易错点</a>
+      <a data-anchor="zx-list"><span class="dot"></span>十套真题列表</a>
+    </div>
+  </div>
+  <div class="grp" data-unit="review">
+    <button class="grp-toggle" onclick="goto('review')"><span class="no">考</span>考前速览<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="rv-mn"><span class="dot"></span>口诀速记 6 条</a>
+      <a data-anchor="rv-fm"><span class="dot"></span>核心框架 2 个</a>
+      <a data-anchor="rv-yb"><span class="dot"></span>易错对照表</a>
+    </div>
+  </div>
+  <div class="sb-progress">
+    <div class="lbl">学习进度</div>
+    <div class="bar"><i id="sbBar"></i></div>
+    <div class="num" id="sbNum">已学 0 / 8 个知识点</div>
+  </div>
+</aside>
+
+<main>
+<section class="page active" id="unit1">
+  <div class="unit-head">
+    <div class="uh-chip">01</div>
+    <div>
+      <div class="kicker">第 1 课时</div>
+      <h2>数据处理过程 · 数据的来源与采集</h2>
+      <p>教材第 19～20 页。搞清楚数据处理的一般过程与主要环节，分清"一手数据/二手数据"，掌握文字、图像、声音、视频四类采集方法。配套单元练习 30 题前 20 题随堂练。</p>
+    </div>
+  </div>
+    <div class="card kp-card" id="kp-1-1">
+      <div class="tags"><span class="tag key">⭐ 重点</span></div>
+      <h3><span class="ico">🧭</span>一、数据处理的一般过程与主要环节</h3>
+      <p><b>数据处理的一般过程</b>（按顺序记忆）：</p>
+      <div class="formula">定位数据需求 → 收集数据 → 加工处理 → 分析数据 → 撰写分析报告、使用数据</div>
+      <p><b>数据处理过程的主要环节</b>包括：<b>采集、存储、传输、加工、检索、分析和输出</b>等 7 个环节。</p>
+      <div class="mnemonic">📌 <b>口诀：</b>"需求定位先收集，加工分析出报告"（一般过程六步走）；<br>"采存传、工检析输"（采集·存储·传输·加工·检索·分析·输出 七环节）</div>
+      <div class="example">🔍 <b>教材例子：网上阅卷系统</b><br>扫描试卷（<b>采集</b>数据）→ 保存扫描后的试卷和评分结果（<b>存储</b>数据）→ 分发试卷给阅卷老师和上传阅卷结果（<b>传输</b>数据）→ 客观题自动阅卷和统分（<b>加工</b>数据）→ 老师按姓名或考号查看学生答题情况（<b>检索</b>数据）→ 系统自动分析学生的进步情况并生成图表（<b>分析</b>数据）→ 打印考试分析结果（<b>输出</b>数据）。</div>
+      <div class="mini-quiz" data-src="u1" data-idx="0,1,15"></div>
+    </div>
+    <div class="card kp-card" id="kp-1-2">
+      <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+      <h3><span class="ico">🔀</span>二、数据的来源：直接数据与间接数据</h3>
+      <p>按<b>获取渠道</b>，数据可分为<b>直接数据（一手数据）</b>和<b>间接数据（二手数据）</b>：</p>
+      <table>
+      <tr><th>类别</th><th>获取方式</th><th>教材举例</th></tr>
+      <tr><td><b>直接数据（一手）</b></td><td>亲自探究事物本身获取</td><td>调查法、访谈法、观察法、实验法、利用传感器采集</td></tr>
+      <tr><td><b>间接数据（二手）</b></td><td>通过他人或媒体获取</td><td>他人告知、书报刊、互联网、广播与电视等媒体</td></tr>
+      </table>
+      <div class="mnemonic">📌 <b>口诀：</b>"直接五法：调查访谈，观察实验传感器"；间接来源靠媒体——"人、书、网、广播电视"。</div>
+      <div class="example">🔍 科学实验得到的电流数值、现场调查、医生把脉诊断 → <b>直接数据</b>；网络搜索到的气象指数、查阅县志、讲座听到的排名 → <b>间接数据</b>。</div>
+      <p><b>数据来源可信度高的渠道</b>：政府部门、权威媒体、官方网站、党刊党报等。</p>
+      <div class="mini-quiz" data-src="u1" data-idx="2,4,5"></div>
+    </div>
+    <div class="card kp-card" id="kp-1-3">
+      <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+      <h3><span class="ico">🛠</span>三、四类数据的采集工具与方法</h3>
+      <p>不同类型的数据要用不同的采集工具，<b>先分清采集设备与输出设备</b>：</p>
+      <table>
+      <tr><th>数据类型</th><th>采集方法（教材原文）</th></tr>
+      <tr><td>📝 <b>文字</b></td><td>键盘输入、语音识别成文本、手写输入、光学字符识别（OCR）、用手机拍图识字 App 将纸质文本输入</td></tr>
+      <tr><td>🖼 <b>图像</b></td><td>利用智能手机、数码相机拍照，纸质图像扫描输入，电脑截图、截屏，网上下载，软件制作等</td></tr>
+      <tr><td>🎤 <b>声音</b></td><td>用话筒、麦克风、录音笔、录音机录制，网上下载，从已有的音频中剪辑等</td></tr>
+      <tr><td>🎬 <b>视频</b></td><td>用智能手机、摄像头、数码摄像机拍摄，录屏，网上下载，从已有的视频中剪辑，从电视节目中录制等</td></tr>
+      </table>
+      <div class="mnemonic">📌 <b>口诀：</b>"文字靠键鼠手 OCR；图像拍照扫描截；声音话筒录音笔；视频摄像录屏剪。"</div>
+      <div class="example">🔍 <b>易混设备辨析</b>：打印机、投影仪、音箱、扬声器、绘图仪是<b>输出</b>设备，不能采集数据；扫描仪、数码相机、录音笔、麦克风是<b>采集</b>设备。</div>
+      <div class="mini-quiz" data-src="u2" data-idx="0,1,2,3,4"></div>
+    </div>
+    <div class="card exam-card" id="ex-u1">
+      <div class="tags"><span class="tag note">📝 教材真题精练（单元练习 1～20 题）</span></div>
+      <h3><span class="ico">✅</span>单元四真题练习（一）</h3>
+      <div id="exam-u1" class="quiz"></div>
+    </div>
+
+  <div class="summary" id="sum-1">
+    <h4>🎯 第 1 课时 · 小结</h4>
+    <ul>
+<li>数据处理一般过程：<b>定位数据需求 → 收集 → 加工处理 → 分析 → 撰写报告并使用数据</b>。</li>
+<li>主要环节口诀：<b>采存传、工检析输</b>（采集、存储、传输、加工、检索、分析、输出）。</li>
+<li>直接数据（一手）采集五法：<b>调查、访谈、观察、实验、传感器</b>；间接数据来自媒体与他人。</li>
+<li>可信度高的来源：<b>政府部门、权威媒体、官方网站、党刊党报</b>。</li>
+<li>四类采集工具要分清：<b>文字（键盘/OCR）、图像（相机/扫描仪）、声音（话筒/录音笔）、视频（摄像机/录屏）</b>。</li>
+    </ul>
+  </div>
+</section>
+<section class="page " id="unit2">
+  <div class="unit-head">
+    <div class="uh-chip">02</div>
+    <div>
+      <div class="kicker">第 2 课时</div>
+      <h2>数字化工具 · 数据库 · 数据分析与安全</h2>
+      <p>教材第 21～22 页。认识数字化工具的优势，分清数据库、数据库管理系统（DBMS）、数据库应用系统三个层次，掌握数据分析三方法与可视化呈现，学会数据保护措施。配套单元练习 21～30 题随堂练。</p>
+    </div>
+  </div>
+    <div class="card kp-card" id="kp-2-1">
+      <div class="tags"><span class="tag key">⭐ 重点</span></div>
+      <h3><span class="ico">💻</span>四、数字化工具的使用</h3>
+      <p>凡是利用<b>电脑、网络、智能手机及各种数码工具</b>进行的信息活动都属于数字化工具的使用。</p>
+      <p><b>使用数字化工具与资源的优势</b>包括：</p>
+      <div class="formula">共享性、便捷性、互动性、高效性、多样性</div>
+      <div class="mnemonic">📌 <b>口诀：</b>"共享便捷又互动，高效多样记心中"（共·便·互·高·多）。</div>
+      <div class="example">🔍 借助多媒体课件自主学习、利用微信交流学习传输文件、利用电子邮件提交作业、数学老师用几何画板或 Word 编辑公式——都是数字化工具的使用。</div>
+      <div class="mini-quiz" data-src="u2" data-idx="4,5"></div>
+    </div>
+    <div class="card kp-card" id="kp-2-2">
+      <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+      <h3><span class="ico">🗄</span>五、数据库管理系统</h3>
+      <p>三个概念层层递进，<b>考试最爱混着考</b>：</p>
+      <table>
+      <tr><th>概念</th><th>含义</th><th>举例</th></tr>
+      <tr><td><b>数据库（DB）</b></td><td>数据的仓库，用于组织和管理海量数据；以<b>表格</b>形式组织（列=字段，行=记录）</td><td>关系型数据库中的数据表</td></tr>
+      <tr><td><b>数据库管理系统（DBMS）</b></td><td>数据库软件的<b>核心</b>，管理数据库的软件</td><td>Foxpro、Access、SQL、Oracle、Sybase</td></tr>
+      <tr><td><b>数据库应用系统</b></td><td>利用数据库软件设计的<b>面向实际应用</b>的信息系统</td><td>图书管理系统、选课管理系统、人事管理系统、高考成绩查询系统</td></tr>
+      </table>
+      <div class="mnemonic">📌 <b>口诀：</b>"DB 存数据，DBMS 管软件，应用系统面向用户"——12306 查票查的是<b>数据库</b>，在线点菜系统是<b>数据库应用系统</b>。</div>
+      <div class="example">🔍 注意：Excel 2013 是电子表格软件，<b>不属于</b>数据库管理系统。</div>
+      <div class="mini-quiz" data-src="u1" data-idx="11,12,13,14"></div>
+    </div>
+    <div class="card kp-card" id="kp-2-3">
+      <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+      <h3><span class="ico">📈</span>六、数据分析的基本方法</h3>
+      <p>数据分析的方法很多，重点掌握三种：</p>
+      <table>
+      <tr><th>方法</th><th>定义（教材原文要点）</th><th>教材例子</th></tr>
+      <tr><td><b>对比分析</b></td><td>将两个或两个以上的数据进行比较，分析它们的差异，揭示事物的发展变化情况和规律</td><td>交管部门对事故多发地段历年来数据进行对比，找到改善交通的措施</td></tr>
+      <tr><td><b>平均分析</b></td><td>运用计算平均值的方法反映总体在一定时间、地点条件下某一数量特征的一般水平</td><td>对学生的考试成绩取平均分进行分析</td></tr>
+      <tr><td><b>交叉分析</b></td><td>从横向和纵向两个方向来计算两个或多个有联系的变量在交叉点的统计值</td><td>——</td></tr>
+      </table>
+      <div class="mnemonic">📌 <b>口诀：</b>"比一比是对比，取平均是平均，横竖都算交叉"。</div>
+      <div class="example">🔍 期末考试后年级主任对各科成绩取平均分进行考情分析 → <b>平均分析</b>；卫生部门对历年的数据进行对比 → <b>对比分析</b>。</div>
+      <div class="mini-quiz" data-src="u1" data-idx="15,16,17"></div>
+    </div>
+    <div class="card kp-card" id="kp-2-4">
+      <div class="tags"><span class="tag key">⭐ 重点</span></div>
+      <h3><span class="ico">📊</span>七、数据的可视化呈现</h3>
+      <p><b>数据可视化</b>：以图形、图表、动画等方式更加直观生动地呈现数据及数据分析的结果，以便揭示数据之间的关系、变化趋势和规律。</p>
+      <p><b>常见可视化工具</b>：思维导图、统计图表、导航地图、词云图、标签云图、流程图、E-R 图等。</p>
+      <p><b>常见统计图表</b>：柱形图、条形图、折线图、饼图、散点图、面积图、雷达图和股价图等。</p>
+      <div class="example">🔍 <b>词云</b>也叫文字云，是对文本中出现频率较高的"关键词"予以视觉化的展现，过滤掉大量低频文本信息，一眼看出表达重点。</div>
+      <div class="mnemonic">📌 <b>口诀：</b>"导航词云思维导，流程 E-R 统计表"——实时数据可视化选<b>导航地图</b>。</div>
+      <div class="mini-quiz" data-src="u2" data-idx="6,7,8"></div>
+    </div>
+    <div class="card kp-card" id="kp-2-5">
+      <div class="tags"><span class="tag key">⭐ 重点</span></div>
+      <h3><span class="ico">🔒</span>八、数据保护的措施</h3>
+      <p><b>数据安全保护</b>：指数据不被破坏、更改、泄露或丢失。</p>
+      <p><b>保护数据安全的措施</b>：</p>
+      <div class="formula">安装杀毒软件、安装防火墙、数据备份、访问控制、数据加密</div>
+      <p>在大数据时代，数据共享和传播速度加快，更容易造成商业信息和机密信息的泄露。数据发布者需要加强自身的保护意识，并借助一定的技术手段防范数据泄露，同时也需要对数据使用者进行道德和法律上的约束。</p>
+      <p><b>设置密码的原则</b>：</p>
+      <ul>
+      <li>密码长度越长强度越高</li>
+      <li>尽量使用字母（大小写不同）、数字和特殊符号相结合的密码</li>
+      <li>不要使用电话号码、姓名拼音、身份证号、门牌号或生日作为密码</li>
+      </ul>
+      <div class="mnemonic">📌 <b>口诀：</b>"杀毒防火墙，备份控访问，加密保安全"；密码要"长短混合，避开个人"。注意：<b>数据共享不是安全防护技术</b>！</div>
+      <div class="mini-quiz" data-src="u2" data-idx="9"></div>
+    </div>
+    <div class="card exam-card" id="ex-u2">
+      <div class="tags"><span class="tag note">📝 教材真题精练（单元练习 21～30 题）</span></div>
+      <h3><span class="ico">✅</span>单元四真题练习（二）</h3>
+      <div id="exam-u2" class="quiz"></div>
+    </div>
+
+  <div class="summary" id="sum-2">
+    <h4>🎯 第 2 课时 · 小结</h4>
+    <ul>
+<li>数字化工具优势五词：<b>共享、便捷、互动、高效、多样</b>。</li>
+<li>数据库三层：<b>DB 存数据 → DBMS 管软件 → 应用系统服务用户</b>；12306 查的是数据库。</li>
+<li>数据分析三法：<b>对比（找差异规律）、平均（一般水平）、交叉（横纵交叉点）</b>。</li>
+<li>可视化工具：<b>思维导图、统计图表、导航地图、词云图、流程图、E-R 图</b>；实时可视化选导航地图。</li>
+<li>数据保护五措施：<b>杀毒软件、防火墙、备份、访问控制、加密</b>；密码要长、要混合、避开个人信息。</li>
+    </ul>
+  </div>
+</section>
+<section class="page" id="zx">
+  <div class="unit-head">
+    <div class="uh-chip">综</div>
+    <div>
+      <div class="kicker">📝 综合训练</div>
+      <h2>综合训练真题 · 数据采集与处理专题</h2>
+      <p>从教材"综合训练一～十"（书第 97～164 页）中筛选出的、与"数据采集与处理"主题直接相关的 39 道选择题（含答案与解析），按套分组在线作答。</p>
+    </div>
+  </div>
+  <div class="card" id="zx-kd">
+    <h3><span class="ico">📊</span>考点分布总览（共 39 题）</h3>
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <p>把 39 道综合训练真题按考点归类，<b>数据采集方法与工具</b>占比最高，是本专题绝对高频考点。</p>
+    <table>
+    <tr><th>考点</th><th>题量</th><th>占比</th><th>重要度</th></tr>
+    <tr><td><b>数据采集方法与工具</b>（直接/间接数据、采集设备辨析、采集方法选择）</td><td>17</td><td>44%</td><td>🔥 最高频</td></tr>
+    <tr><td><b>数据可视化呈现</b>（可视化方式辨析、词云、思维导图）</td><td>7</td><td>18%</td><td>🔥 高频</td></tr>
+    <tr><td><b>数据处理过程与数据概念</b>（处理环节、数据辨析、数字化工具）</td><td>6</td><td>15%</td><td>⭐ 高频</td></tr>
+    <tr><td><b>数据存储与数据库</b>（数据库概念、存储位置）</td><td>3</td><td>8%</td><td>⭐ 高频</td></tr>
+    <tr><td>数据相关其他（随机数据、文本形式等）</td><td>6</td><td>15%</td><td>常规</td></tr>
+    </table>
+  </div>
+  <div id="zx-container"><span id="zx-list"></span></div>
+</section>
+<section class="page" id="review">
+  <div class="unit-head">
+    <div class="uh-chip">考</div>
+    <div>
+      <div class="kicker">考前冲刺</div>
+      <h2>考前速览 · 口诀与易错点</h2>
+      <p>考前 10 分钟快速过一遍本单元记忆口诀与易错对照。</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3><span class="ico">📌</span>口诀速记卡</h3>
+    <div class="quick-cards" id="rv-mn">
+<div class="quick-card"><h4><span class="qi">🧠</span>数据处理七环节</h4><div class="qc-body"><b>"采存传、工检析输"</b>（采集·存储·传输·加工·检索·分析·输出）</div></div>
+<div class="quick-card"><h4><span class="qi">🧠</span>直接数据采集五法</h4><div class="qc-body"><b>"调查访谈，观察实验传感器"</b>（调查法·访谈法·观察法·实验法·传感器采集）</div></div>
+<div class="quick-card"><h4><span class="qi">🧠</span>数字化工具五大优势</h4><div class="qc-body"><b>"共享便捷又互动，高效多样记心中"</b>（共·便·互·高·多）</div></div>
+<div class="quick-card"><h4><span class="qi">🧠</span>数据分析三方法</h4><div class="qc-body"><b>"比一比是对比，取平均是平均，横竖都算交叉"</b></div></div>
+<div class="quick-card"><h4><span class="qi">🧠</span>数据保护五措施</h4><div class="qc-body"><b>"杀毒防火墙，备份控访问，加密保安全"</b></div></div>
+<div class="quick-card"><h4><span class="qi">🧠</span>可信数据来源</h4><div class="qc-body"><b>"政府权威官网党报"</b>——可信度高的四类渠道</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3><span class="ico">🧮</span>核心公式卡</h3>
+    <div class="quick-cards" id="rv-fm">
+<div class="quick-card"><h4><span class="qi">🧭</span>数据处理一般过程</h4><div class="qc-body"><div class="f">定位数据需求 → 收集数据 → 加工处理 → 分析数据 → 撰写分析报告、使用数据</div></div></div>
+<div class="quick-card"><h4><span class="qi">🗄</span>数据库三层结构</h4><div class="qc-body"><div class="f">数据库（DB）→ 数据库管理系统（DBMS，软件核心）→ 数据库应用系统（面向用户）</div>12306 查票查的是数据库。</div></div>
+    </div>
+  </div>
+  <div class="card" id="rv-yb">
+    <h3><span class="ico">⚠️</span>易错对照表</h3>
+    <table><tr><th>易混点</th><th>区分关键</th><th>口诀/要点</th></tr><tr><td>一手 vs 二手数据</td><td>"科学实验/现场调查" vs "网络搜索/查阅文献"</td><td>亲自获取选直接；借助媒体选间接</td></tr>
+<tr><td>采集 vs 输出设备</td><td>扫描仪/相机/录音笔/麦克风 vs 打印机/投影仪/音箱/绘图仪</td><td>采集是"进去"，输出是"出来"</td></tr>
+<tr><td>DB vs DBMS vs 应用系统</td><td>存数据的仓库 vs 管软件的核心 vs 面向应用的系统</td><td>查票→数据库；点菜系统→应用系统</td></tr>
+<tr><td>可视化 vs 非可视化</td><td>导航地图/词云/统计图表 vs 语音助手/数据库</td><td>能"看图"的才是可视化</td></tr>
+<tr><td>数据保护措施</td><td>备份/加密/防火墙 vs 数据共享</td><td>共享不是防护技术</td></tr></table>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>必修一 · 专题二「数据处理与应用」单元四 · 第一周课件 | 知识点 + 69 道真题（单元练习 30 + 综合训练 39）| 内容严格参照《高中信息技术学业水平考试》教材 | 供教师课堂教学使用</footer>
+
+<button class="back-top" id="backTop" title="返回顶部" aria-label="返回顶部">↑</button>
+<button class="menu-btn" id="menuBtn" title="目录" aria-label="打开目录">☰</button>
+<button class="sb-open-btn" id="sbOpen" title="展开目录" aria-label="展开目录"><span class="oi">⟨</span>展开目录</button>
+
+<script>
+/* ---------- 侧边栏折叠/展开（桌面端，localStorage 记忆） ---------- */
+const sbOpenBtn = document.getElementById('sbOpen');
+const sbEl = document.getElementById('sidebar');
+function setSidebarCollapsed(collapsed){
+  sbEl.classList.toggle('collapsed', collapsed);
+  sbOpenBtn.classList.toggle('show', collapsed);
+  try{ localStorage.setItem('sbCollapsed', collapsed ? '1' : '0'); }catch(e){}
+}
+document.getElementById('sbCollapse').addEventListener('click', ()=> setSidebarCollapsed(true));
+sbOpenBtn.addEventListener('click', ()=> setSidebarCollapsed(false));
+(function restoreSidebar(){
+  let saved = null;
+  try{ saved = localStorage.getItem('sbCollapsed'); }catch(e){}
+  if(saved === '1') setSidebarCollapsed(true);
+})();
+
+/* ---------- 页面切换 ---------- */
+const pages = document.querySelectorAll('section.page');
+const PAGE_IDS = [...pages].map(p=>p.id);   /* 动态收集实际存在的页面 id，避免硬编码 */
+function goto(id){
+  pages.forEach(p=>p.classList.toggle('active', p.id===id));
+  document.querySelectorAll('aside.sidebar .grp').forEach(g=>{
+    const u = g.dataset.unit;
+    if(u===id) g.classList.add('open');
+    else if(PAGE_IDS.includes(u)) g.classList.remove('open');
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+  closeSidebar();
+}
+
+/* ---------- 侧边栏分组开合 ---------- */
+document.querySelectorAll('.grp-toggle').forEach(t=>{
+  t.addEventListener('click', e=>{
+    if(t.hasAttribute('onclick')) return;
+    const grp = t.closest('.grp');
+    const wasOpen = grp.classList.contains('open');
+    document.querySelectorAll('.grp').forEach(g=>g.classList.remove('open'));
+    if(!wasOpen) grp.classList.add('open');
+    const target = grp.dataset.unit;
+    if(PAGE_IDS.includes(target)) goto(target);
+  });
+});
+
+/* ---------- 侧边栏锚点跳转 ---------- */
+document.querySelectorAll('.grp-items a[data-anchor]').forEach(a=>{
+  a.addEventListener('click', ()=>{
+    const id = a.dataset.anchor;
+    const grp = a.closest('.grp');
+    if(grp.dataset.unit){
+      goto(grp.dataset.unit);
+      setTimeout(()=>{
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 60);
+    }
+    document.querySelectorAll('.grp-items a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    closeSidebar();
+  });
+});
+
+/* ---------- 移动端侧边栏 ---------- */
+const menuBtn = document.getElementById('menuBtn');
+function closeSidebar(){ sbEl.classList.remove('show'); }
+menuBtn.addEventListener('click', ()=> sbEl.classList.toggle('show'));
+
+/* ---------- 表格响应式包裹 ---------- */
+document.querySelectorAll('main table').forEach(t=>{
+  if(t.parentNode.classList.contains('table-wrap')) return;
+  const w=document.createElement('div'); w.className='table-wrap';
+  t.parentNode.insertBefore(w,t); w.appendChild(t);
+});
+
+/* ---------- 顶部进度条 / 返回顶部 ---------- */
+const topFill=document.querySelector('#topbar .fill');
+const backTop=document.getElementById('backTop');
+window.addEventListener('scroll', ()=>{
+  const st=window.scrollY, h=document.documentElement.scrollHeight-window.innerHeight;
+  topFill.style.width=(h>0? st/h*100:0)+'%';
+  backTop.classList.toggle('show', st>400);
+},{passive:true});
+backTop.addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+
+/* ---------- 学习进度（访问过的知识卡计数） ---------- */
+const visited = new Set();
+function markVisited(kid){ visited.add(kid); updateProgress(); }
+function updateProgress(){
+  const total = document.querySelectorAll('.kp-card').length || 1;
+  const n = visited.size;
+  document.getElementById('sbBar').style.width = (n/total*100)+'%';
+  document.getElementById('sbNum').textContent = '已学 ' + n + ' / ' + (total===1 && visited.size===0 ? 0 : total) + ' 个知识点';
+}
+updateProgress();
+/* 滚动时标记进入视口的知识卡（无 IntersectionObserver 时降级：点击即标记） */
+if(typeof IntersectionObserver !== 'undefined'){
+  const kpObserver = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting && en.target.id.startsWith('kp-')) markVisited(en.target.id);
+    });
+  },{threshold:.35});
+  document.querySelectorAll('.kp-card').forEach(c=>kpObserver.observe(c));
+}else{
+  document.querySelectorAll('.kp-card').forEach(c=>c.addEventListener('click', ()=>markVisited(c.id)));
+}
+
+/* ---------- 知识卡进入时高亮侧边栏对应项 ---------- */
+if(typeof IntersectionObserver !== 'undefined'){
+  const anchorMap = {};
+  document.querySelectorAll('.grp-items a[data-anchor]').forEach(a=>anchorMap[a.dataset.anchor]=a);
+  const hlObserver = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const a = anchorMap[en.target.id];
+        if(a){
+          document.querySelectorAll('.grp-items a').forEach(x=>x.classList.remove('active'));
+          a.classList.add('active');
+        }
+      }
+    });
+  },{threshold:.3, rootMargin:'0px 0px -30% 0px'});
+  document.querySelectorAll('.kp-card, .exam-card, .tool').forEach(c=>{
+    if(c.id) hlObserver.observe(c);
+  });
+}
+
+const EXAM = {
+  /* 单元四 单元练习 1-20（第1课时随堂练） */
+  u1: [
+    {q:'[第1题] 高考网上阅卷之前，需要先扫描试卷，这个过程属于（　）。', o:['数据采集','数据处理','数据输出','数据加密'], a:0, e:'扫描试卷是把纸质试卷转化为计算机可处理的数据，属于数据采集环节。'},
+    {q:'[第2题] 数据处理过程包括数据采集、传输、加工、存储、检索和（　）。', o:['删除','输出','评价','转换'], a:1, e:'数据处理的主要环节：采集、存储、传输、加工、检索、分析和输出，最后是输出。'},
+    {q:'[第3题] 以下数据来源中，属于"一手数据"的是（　）。', o:['听专家讲座','微信朋友圈','网络搜索','科学实验'], a:3, e:'科学实验是亲自探究事物本身获取的数据，属于直接数据（一手数据）；其余均为间接获取。'},
+    {q:'[第4题] 下列对信息来源的叙述，错误的是（　）。', o:['在收集信息时，信息来源越多越好','在收集信息时，应该合理选择信息来源','信息源越广阔，收集到的信息量就越大','要力求信息来源具有一定的代表性'], a:0, e:'信息来源并非越多越好，要合理选择、力求有代表性，来源过多反而增加甄别成本，故 A 错误。'},
+    {q:'[第5题] 以下属于间接获取数据的渠道的是（　）。', o:['现场录音','现场调查','浏览报纸','测量体温'], a:2, e:'浏览报纸属于从媒体间接获取数据；现场录音、现场调查、测量体温均为直接获取。'},
+    {q:'[第6题] 以下属于收集"直接数据"的方法的是（　）。', o:['观察法','查阅文献资料','教学光盘','询问老师'], a:0, e:'观察法是亲自获取的直接数据采集方法；查阅文献、教学光盘、询问老师均属于间接渠道。'},
+    {q:'[第7题] 同学们要获取"学校发展史"的数据，以下最有效的获取途径的是（　）。', o:['收听广播','百度搜索','观看电视节目','到校史室查阅档案'], a:3, e:'学校发展史的第一手资料保存在校史室档案中，查阅档案最直接、最有效。'},
+    {q:'[第8题] 要获取某大学在福建计划招生数的数据，以下信息来源中可信度最高的是（　）。', o:['招生代理机构','网友告知','官方的招生网站','网络论坛'], a:2, e:'官方网站属于可信度高的渠道（政府部门、权威媒体、官方网站、党刊党报）。'},
+    {q:'[第9题] 以下不属于网络数据获取方法的是（　）。', o:['使用搜索引擎','BBS','拨打客服电话','网络数据库'], a:2, e:'拨打客服电话不是通过网络获取数据的方法。'},
+    {q:'[第10题] 学生用试纸测试某溶液得到它的 pH 值，这种采集数据的方法属于（　）。', o:['调查法','实验法','访谈法','观察法'], a:1, e:'动手做实验获得数据属于实验法。'},
+    {q:'[第11题] 乘坐飞机时通过人脸识别获得旅客信息，这个过程属于（　）。', o:['数据加工','数据采集','数据整理','数据通信'], a:1, e:'通过人脸识别技术获取旅客信息，是获取数据的过程，属于数据采集。'},
+    {q:'[第12题] 以下不属于数据库管理系统的是（　）。', o:['Excel 2013','Access','SQL','Foxpro'], a:0, e:'Excel 2013 是电子表格软件；Access、SQL、Foxpro 是关系型数据库软件。'},
+    {q:'[第13题] 以下属于通过数字化工具获取信息的是（　）。', o:['拨打电话获得天气预报','当面访问老师获取成绩','使用纸质问卷调查了解学生健康信息','使用手机拍摄获取班级活动照片'], a:3, e:'手机拍摄属于利用数码工具获取信息；其余均为传统（非数字化）方式。'},
+    {q:'[第14题] 在"12306 网站"查询动车票，其实查询的是（　）。', o:['网页文件','电子表格','数据库','文本文件'], a:2, e:'12306 网站查询的是数据库中的票务数据。'},
+    {q:'[第15题] 某餐厅利用"在线点菜系统"管理菜单，"在线点菜系统"属于（　）。', o:['数据库','人工管理系统','数据库应用系统','数据库管理系统'], a:2, e:'在线点菜系统是利用数据库软件设计的面向实际应用的信息系统，属于数据库应用系统。'},
+    {q:'[第16题] 为了预防流行性疾病，做好防范措施，卫生部门对历年的数据进行对比。这属于数据处理过程中的（　）。', o:['数据查找','数据输出','数据拆分','数据分析'], a:3, e:'对历年数据进行对比，揭示变化规律，属于数据分析环节。'},
+    {q:'[第17题] 以下软件可以用于处理和分析数据的是（　）。', o:['Excel','Photoshop','Outlook','Flash'], a:0, e:'Excel 是电子表格软件，可进行数据计算、统计与分析。'},
+    {q:'[第18题] 期末考试结束后，年级主任对各科成绩取平均分进行考情分析，这种分析方法属于（　）。', o:['对比分析','交叉分析','平均分析','综合分析'], a:2, e:'计算平均值反映一般水平，属于平均分析。'},
+    {q:'[第19题] 要录制一段校长在升旗仪式上讲话的音频，不可以使用（　）。', o:['录音笔','扬声器','录音机','智能手机'], a:1, e:'扬声器是输出设备，只能播放声音，不能录制音频。'},
+    {q:'[第20题] 以下设备可以用于采集视频的有（　）。①智能手机 ②投影仪 ③数码相机 ④上网本', o:['①③','①②','②④','③④'], a:0, e:'智能手机和数码相机均可拍摄视频；投影仪是输出设备，上网本不是视频采集设备。'}
+  ],
+  /* 单元四 单元练习 21-30（第2课时随堂练） */
+  u2: [
+    {q:'[第21题] 以下设备均可用于获取数字化图像的是（　）。', o:['录音笔、投影仪','数码相机、智能手机','数码相机、打印机','数码摄像机、手写板'], a:1, e:'数码相机和智能手机都能拍照获取数字化图像；投影仪、打印机是输出设备。'},
+    {q:'[第22题] 将漫画书上的图片保存到计算机中，以下可用的数字化采集工具的是（　）。', o:['打印机','绘图仪','扫描仪','投影仪'], a:2, e:'扫描仪可将纸质图像数字化输入计算机；打印机、绘图仪、投影仪均为输出设备。'},
+    {q:'[第23题] 为了做好校园歌手比赛的图文报道，以下设备中合适的是（　）。', o:['扫描仪','打印机','数码相机','投影仪'], a:2, e:'图文报道需要现场拍照，数码相机是采集设备。'},
+    {q:'[第24题] 采集一段文本信息不可以使用（　）。', o:['键盘','手写板','扫描仪','打印机'], a:3, e:'键盘、手写板可输入文字，扫描仪可 OCR 识别文字；打印机是输出设备。'},
+    {q:'[第25题] 数据按照获取的渠道分为直接数据和间接数据。下列属于直接数据的是（　）。', o:['医生把脉诊断的病情','讲座听到的高校排名情况','说明书上看到的电脑参数','网络搜索到的气象指数'], a:0, e:'医生把脉是亲自探究获取的数据，属于直接数据；其余均为间接数据。'},
+    {q:'[第26题] 以下学习方式，没有用到数字化工具的是（　）。', o:['当面请教老师解题方法','浏览专家博客学习写作方法','与同学在微信上讨论数学难题','借助百度词典学习英语单词'], a:0, e:'当面请教是传统方式；博客、微信、百度词典均借助了数字化工具。'},
+    {q:'[第27题] 以下不属于数据可视化表达方式的是（　）。', o:['统计图表','模拟实验动画','语音助手','标签云图'], a:2, e:'语音助手是语音交互，不是可视化表达；统计图表、动画、标签云图均以视觉方式呈现数据。'},
+    {q:'[第28题] 以下可实现实时数据可视化的是（　）。', o:['流程图','导航地图','思维导图','柱形图'], a:1, e:'导航地图可实时显示路况与位置变化，属于实时数据可视化。'},
+    {q:'[第29题]（配图）图 7 为统计局网站呈现的旅客运输周转量数据图表，这种呈现数据的形式称为（　）。', o:['文字化形式','可视化形式','多样化形式','虚拟化形式'], a:1, e:'配图题：以图表直观呈现数据，属于可视化形式。'},
+    {q:'[第30题] 以下选项中，不属于数据安全防护技术的是（　）。', o:['数据备份','数据加密','安装防火墙','数据共享'], a:3, e:'数据共享不是安全防护技术；防护措施包括杀毒软件、防火墙、备份、访问控制、加密。'}
+  ],
+};
+const ZX = {
+  '综合训练一': [
+    {q:'[第2题] 数据可视化以丰富的视觉效果呈现数据，获取其中的信息。下列属于数据可视化表达方式的是（　）。', o:['工作簿','散点图','数据库','学籍号'], a:1, e:'散点图是常见统计图表，属于数据可视化表达方式。'},
+    {q:'[第3题] 想要获取第一手资料，最合适的方法是（　）。', o:['通过网络媒体获取信息','观看路边广告获取信息','亲自探究事物本身获取信息','与他人交流获取信息'], a:2, e:'第一手资料即直接数据，要亲自探究事物本身获取。'},
+    {q:'[第6题] 市场部门需要呈现每月鲜果消费价格的变化趋势，下列最适合的数据可视化表达方式是（　）。', o:['散点图','折线图','雷达图','面积图'], a:1, e:'折线图用于分析数据随时间的变化规律、预测发展趋势，呈现价格变化趋势最合适。'}
+  ],
+  '综合训练二': [
+    {q:'[第4题] 数据采集的方法有多种，下列属于数据采集方法的是（　）。①汇总法 ②调查法 ③实验法 ④分类法', o:['①④','②③','①③','②④'], a:1, e:'直接数据的采集方法有调查法、访谈法、观察法、实验法和传感器采集；汇总法、分类法不属于采集方法。'},
+    {q:'[第7题] 要采集毕业典礼视频，不可以使用的设备是（　）。', o:['数码摄像机','智能手机','录音机','上网本'], a:2, e:'录音机只能录制音频，不能采集视频。'},
+    {q:'[第13题] 以下均属于数字图像采集工具的是（　）。', o:['扫描仪、投影仪','数码相机、键盘','摄像机、打印机','扫描仪、数码相机'], a:3, e:'扫描仪和数码相机都能获取数字化图像；投影仪、打印机是输出设备，键盘不能采集图像。'},
+    {q:'[第36题] 数据按照获取的渠道分为直接数据和间接数据。下列属于直接数据的是（　）。', o:['实验得到的电流数值','查阅县志了解的历史','网络搜索的空气指数','咨询获得的景点介绍'], a:0, e:'实验得到的数值是亲自探究获取的直接数据；其余均为间接数据。'}
+  ],
+  '综合训练三': [
+    {q:'[第7题] 以下设备不能用于采集视频的是（　）。', o:['视频采集卡','扫描仪','智能手机','数码摄像机'], a:1, e:'扫描仪用于采集静态图像，不能采集视频。'},
+    {q:'[第31题] 数据的记录形式是多种多样的。下列属于数据的是（　）。', o:['实验记录簿','录取通知单','数码摄像机','游客健康码'], a:3, e:'游客健康码是记录客观事物（健康状态）的符号，属于数据。'},
+    {q:'[第39题] 采集一段采样频率为 22.05kHz、量化位数为 8 位、时长 5 秒的立体声音频，其文件的存储容量大约为（　）。', o:['44.1KB','3528KB','441KB','220.5KB'], a:2, e:'按教材参考答案选 C。提示：容量=采样频率×量化位数×声道数×时长÷8，不同声道数与换算近似（1KB=1000B 还是 1024B）会得到不同结果，考试时以教材答案为准。'},
+  ],
+  '综合训练四': [
+    {q:'[第5题] 乘坐高铁时通过人脸识别获得乘车人员信息，这个过程属于（　）。', o:['数据采集','数据压缩','数据整理','数据加密'], a:0, e:'人脸识别获取旅客信息是获取数据的过程，属于数据采集。'},
+    {q:'[第11题] 以下可以采集到音频信息的设备是（　）。', o:['耳机','扬声器','录音笔','功率放大器'], a:2, e:'录音笔可录制音频；耳机、扬声器、功率放大器都是输出/放大设备。'},
+    {q:'[第27题] 将自然界中的水流声录制下来转换为音频文件保存在计算机中，首先要进行（　）。', o:['采样','编码','量化','剪辑'], a:0, e:'声音数字化过程的第一步是采样。'}
+  ],
+  '综合训练五': [
+    {q:'[第1题] 生物兴趣小组成员需要录制一段小鸟的叫声，以下可用的数字化采集工具是（　）。', o:['签字笔','麦克风','扬声器','录音笔'], a:3, e:'按教材参考答案选 D。录音笔是专门的音频数字化采集工具；签字笔非数字化工具，扬声器是输出设备。（注：麦克风虽属声音输入设备，但以教材答案为准。）'},
+    {q:'[第27题] 数据可视化以丰富的视觉效果呈现数据，获取其中的信息。下列属于数据可视化表达方式的是（　）。', o:['数据库','显示器','雷达图','文件夹'], a:2, e:'雷达图是常见统计图表，属于数据可视化表达方式。'},
+    {q:'[第28题] 在 Python 中，函数 len([1,2,5]) 的返回值是（　）。', o:['5','1','8','3'], a:3, e:'len() 返回列表元素个数，列表 [1,2,5] 有 3 个元素。'}
+  ],
+  '综合训练六': [
+    {q:'[第4题] 在声音数字化过程中，每隔一段时间在模拟声音信号的波形上采集一个幅度值，该步骤称为（　）。', o:['转换','编码','量化','采样'], a:3, e:'按一定时间间隔采集幅度值就是采样。'},
+    {q:'[第5题] 以下不属于数据采集设备的是（　）。', o:['录音笔','摄像头','音箱','扫描仪'], a:2, e:'音箱是输出设备，不能采集数据。'},
+    {q:'[第24题] 人们通过气象卫星获得大量的气象信息，这属于数据处理过程中的（　）。', o:['数据分析','数据采集','数据查找','数据可视化'], a:1, e:'通过气象卫星获取信息是获取数据的过程，属于数据采集。'},
+    {q:'[第30题] 学生要将纸质的作业通过网络上交给老师，下列最适合的数字化工具是（　）。', o:['演示文稿','搜索引擎','智能手机','思维导图'], a:2, e:'智能手机可拍照将纸质作业数字化后上网提交。'},
+    {q:'[第34题] 从一个装有多种颜色小球的盒子里摸出小球，每次摸出小球的颜色不一定相同。这一事例说明有些数据是（　）。', o:['可控制的','会消失的','固定不变的','随机出现的'], a:3, e:'摸球结果不确定，说明有些数据是随机出现的。'}
+  ],
+  '综合训练七': [
+    {q:'[第4题] 体育老师想了解全校学生近视情况，最佳的数据采集方法是（　）。', o:['访谈法','问卷调查法','观察法','网络检索法'], a:1, e:'面向全校学生的大规模调查，问卷调查法效率最高、覆盖面最广。'},
+    {q:'[第27题] 学校需要录制一段安全教育的视频，以下可用的数字化采集工具是（　）。', o:['摄像机','显示器','麦克风','录音机'], a:0, e:'录制视频要用摄像机；显示器是输出设备，麦克风、录音机只能采集音频。'},
+    {q:'[第31题] 程序员用记事本编写了程序代码，其数据的表现形式是（　）。', o:['动画','视频','文本','图形'], a:2, e:'程序代码以字符文本形式记录，属于文本数据。'}
+  ],
+  '综合训练八': [
+    {q:'[第7题] 数据的记录形式是多种多样的。下列属于数据的是（　）。', o:['年平均气温','实验报告册','行车记录仪','旅客身份证'], a:0, e:'年平均气温是记录客观事物属性的数值符号，属于数据。'},
+    {q:'[第8题] 以下应用了数字化工具向老师汇报学习情况的是（　）。', o:['和老师面对面交流','口头汇报学习成果','提交纸质学习报告','使用电子邮件发送'], a:3, e:'电子邮件是数字化工具；面对面、口头、纸质均为传统方式。'},
+    {q:'[第25题] 数据处理的一般过程，顺序正确的是（　）。①分析数据 ②定位数据需求 ③撰写分析报告 ④收集数据', o:['①②③④','②④①③','②④③①','②①④③'], a:1, e:'数据处理一般过程：定位数据需求→收集数据→加工处理→分析数据→撰写分析报告、使用数据，即②④①③。'}
+  ],
+  '综合训练九': [
+    {q:'[第5题] 以下不属于信息采集工具的是（　）。', o:['摄像头','录音笔','扫描仪','绘图仪'], a:3, e:'绘图仪是输出设备，不是采集工具。'},
+    {q:'[第9题] 班主任要记录学生研学活动的场景，下列可用的数字化采集工具是（　）。', o:['内存储器','刻录机','数码相机','绘图仪'], a:2, e:'记录活动场景（图像/视频）用数码相机拍摄。'},
+    {q:'[第11题] 采用词云图表达信息的方式属于（　）。', o:['文字化形式','具体化形式','虚拟化形式','可视化形式'], a:3, e:'词云图是对关键词的可视化展现，属于可视化形式。'},
+    {q:'[第28题] 以下不属于数据可视化应用的是（　）。', o:['高德地图','掌上公交','图表新闻','无线广播'], a:3, e:'无线广播是音频传播，不属于数据可视化应用。'},
+    {q:'[第34题] 学生要将书面作业通过网络上传给老师批改，下列可用的数字化采集工具是（　）。', o:['显示器','摄像头','投影仪','绘图仪'], a:1, e:'摄像头可拍摄书面作业转化为数字图像上传；其余均为输出设备。'}
+  ],
+  '综合训练十': [
+    {q:'[第1题] 在信息技术的组成中，主要用于获取信息的是（　）。', o:['微电子技术','通信技术','传感技术','计算机技术'], a:2, e:'传感技术主要用于获取（采集）信息。'},
+    {q:'[第11题] 要获取"2021 年国庆期间鼓浪屿旅客人数"的数据。以下可靠有效的数据来源是（　）。', o:['实地考察','政府网站','问卷调查','社交平台'], a:1, e:'游客人数统计数据以政府网站发布最权威可靠。'},
+    {q:'[第14题] 声音、图像等模拟数据转换为数字数据的过程是（　）。', o:['采样→编码→量化','量化→采样→编码','编码→量化→采样','采样→量化→编码'], a:3, e:'模拟信号数字化三步：采样→量化→编码。'},
+    {q:'[第15题] 图书管理信息系统管理的大量书籍数据存储在（　）中。', o:['数据库管理系统','数据库','资源管理系统','数据库应用系统'], a:1, e:'大量书籍数据存储在数据库中，图书管理信息系统是数据库应用系统。'},
+    {q:'[第18题] 图 37 为数据结构的思维导图，这种呈现数据的形式称为（　）。', o:['框架化形式','虚拟化形式','可视化形式','多样化形式'], a:2, e:'思维导图是常见的可视化工具，属于可视化形式。'},
+    {q:'[第28题] 气象部门要实时监测空气中 PM2.5 的浓度，下列最适合的数字化采集工具是（　）。', o:['录音笔','扫描仪','传感器','摄像机'], a:2, e:'实时监测 PM2.5 浓度要用传感器采集数据。'},
+    {q:'[第34题] 学生要将书面作业通过网络上传给老师批改，下列可用的数字化采集工具是（　）。', o:['显示器','摄像头','投影仪','绘图仪'], a:1, e:'摄像头可拍摄书面作业转化为数字图像上传；其余均为输出设备。'}
+  ],
+};
+/* ---------- 通用真题渲染引擎（进度条/正确率/重做/动画） ---------- */
+function mountQuiz(list, containerId){
+  const root = document.getElementById(containerId);
+  if(!root) return;
+  function build(){
+    root.innerHTML = '';
+    let answered = 0, correct = 0;
+
+    const bar = document.createElement('div'); bar.className = 'exam-bar';
+    const stat = document.createElement('span'); stat.className = 'exam-stat';
+    const prog = document.createElement('div'); prog.className = 'exam-progress';
+    const fill = document.createElement('div'); fill.className = 'bar'; prog.appendChild(fill);
+    const acc = document.createElement('span'); acc.className = 'exam-acc';
+    const reset = document.createElement('button'); reset.className = 'reset-btn'; reset.textContent = '↺ 重做';
+    reset.onclick = build;
+    bar.append(stat, prog, acc, reset);
+
+    const done = document.createElement('div'); done.className = 'exam-done';
+    root.append(bar, done);
+
+    function update(){
+      stat.innerHTML = `进度：已答 <b>${answered}</b> / ${list.length}　正确 <b>${correct}</b>`;
+      acc.innerHTML = answered ? `正确率 <b>${Math.round(correct/answered*100)}%</b>` : '正确率 <b>--</b>';
+      fill.style.width = (answered/list.length*100) + '%';
+      fill.classList.toggle('full', answered === list.length);
+      fill.classList.toggle('good', answered === list.length && correct === list.length);
+      if(answered === list.length){
+        const rate = Math.round(correct/list.length*100);
+        done.textContent = rate === 100
+          ? '🎉 太棒了！全部正确，这一组题你已经完全掌握！'
+          : (rate >= 80 ? `✅ 已完成本组练习，正确率 ${rate}%，掌握得不错！` : `📌 已完成本组练习，正确率 ${rate}%，建议结合解析复习错题。`);
+        done.classList.add('show');
+      } else {
+        done.classList.remove('show');
+      }
+    }
+
+    list.forEach((item, i)=>{
+      const box = document.createElement('div');
+      box.className = 'qitem';
+      const head = document.createElement('div');
+      head.className = 'q-head';
+      head.innerHTML = `<span class="n">${i+1}</span>${item.q}`;
+      if(item.a === -1) head.innerHTML += `<span class="hint-img">配图题</span>`;
+      box.appendChild(head);
+
+      const opts = document.createElement('div');
+      item.o.forEach((opt, j)=>{
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.innerHTML = `<span class="letter">${String.fromCharCode(65+j)}</span><span>${opt}</span>`;
+        b.onclick = ()=>{
+          if(b.classList.contains('disabled')) return;
+          answered++;
+          if(item.a === -1){
+            box.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+            const ex = box.querySelector('.explain');
+            ex.innerHTML = '<b>说明：</b>' + item.e;
+            ex.classList.add('show');
+            updateStat();
+            return;
+          }
+          box.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+          if(j === item.a){ b.classList.add('correct'); correct++; }
+          else { b.classList.add('wrong'); box.querySelectorAll('.opt')[item.a].classList.add('correct'); }
+          const ex = box.querySelector('.explain');
+          ex.innerHTML = '<b>解析：</b>' + item.e;
+          ex.classList.add('show');
+          updateStat();
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(opts);
+      const ex = document.createElement('div');
+      ex.className = 'explain';
+      box.appendChild(ex);
+      root.appendChild(box);
+    });
+
+    function updateStat(){ update(); }
+    update();
+  }
+  build();
+}
+/* ---------- 挂载题组（自动生成） ---------- */
+mountQuiz(EXAM.u1, 'exam-u1');
+mountQuiz(EXAM.u2, 'exam-u2');
+
+
+/* ---------- 嵌入式小练渲染 ---------- */
+function mountMini(el){
+  const src = el.dataset.src, idxStr = el.dataset.idx;
+  const list = idxStr.split(',').map(i=>EXAM[src][+i]);
+  const holder = document.createElement('div');
+  el.appendChild(holder);
+  holder.id = 'mini-' + Math.random().toString(36).slice(2,8);
+  const head = document.createElement('div');
+  head.className = 'mini-head';
+  head.innerHTML = '<span class="tag-mini">✏️ 讲完即练</span><span class="hint">从本单元真题中精选 ' + list.length + ' 题，完整题组见本课时尾部</span>';
+  el.insertBefore(head, holder);
+  mountQuiz(list, holder.id);
+}
+document.querySelectorAll('.mini-quiz').forEach(mountMini);
+
+/* ---------- 综合训练真题渲染 ---------- */
+(function renderZX(){
+  const container = document.getElementById('zx-container');
+  if(!container) return;
+  let seq = 0;
+  for(const name in ZX){
+    const card = document.createElement('div');
+    card.className = 'card';
+    const h = document.createElement('h3');
+    h.innerHTML = `<span class="ico">📝</span>${name}（共 ${ZX[name].length} 题）`;
+    card.appendChild(h);
+    const quizId = 'zx-quiz-' + (seq++);
+    const quiz = document.createElement('div');
+    quiz.id = quizId;
+    card.appendChild(quiz);
+    container.appendChild(card);
+    mountQuiz(ZX[name], quizId);
+  }
+})();
+
+
+
+/* ---------- 进制转换 ---------- */
+const sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+function dec2bin(){
+  const out = document.getElementById('convResult');
+  let n = parseInt(document.getElementById('decInput').value, 10);
+  if(isNaN(n) || n<0){ out.textContent='请输入非负整数'; out.classList.add('show'); return; }
+  if(n===0){ out.innerHTML='<span class="ans">0</span> 的二进制是 <span class="ans">0</span>'; out.classList.add('show'); return; }
+  let steps=[], num=n, rems=[];
+  while(num>0){ const r=num%2; rems.push(r); steps.push(`${num} ÷ 2 = ${Math.floor(num/2)} …… 余 ${r}`); num=Math.floor(num/2); }
+  const bin = rems.reverse().join('');
+  out.innerHTML = '除 2 取余过程：<br>' + steps.join('<br>') + `<br><br>✅ 余数倒序得：<span class="ans">${n}(十进制) = ${bin}B</span>`;
+  out.classList.add('show');
+}
+function bin2dec(){
+  const out = document.getElementById('convResult');
+  const s = document.getElementById('binInput').value.trim();
+  if(!/^[01]+$/.test(s)){ out.textContent='请输入只含 0 和 1 的二进制数'; out.classList.add('show'); return; }
+  const arr = s.split('').reverse();
+  let terms=[], sum=0;
+  arr.forEach((ch,i)=>{ const v = ch==='1' ? Math.pow(2,i) : 0; if(v) terms.push('1×2' + (sup[i] || ('^'+i))); sum += v; });
+  out.innerHTML = '按权展开：' + terms.join(' + ') + `<br><br>✅ <span class="ans">${s}B = ${sum}(十进制)</span>`;
+  out.classList.add('show');
+}
+
+/* ---------- 声音容量 ---------- */
+function soundCalc(){
+  const out = document.getElementById('soundResult');
+  const f=parseFloat(document.getElementById('freq').value), b=parseFloat(document.getElementById('bits').value),
+        c=parseInt(document.getElementById('chan').value), t=parseFloat(document.getElementById('dur').value);
+  if([f,b,c,t].some(isNaN)){ out.textContent='请填写完整数字'; out.classList.add('show'); return; }
+  const B = f*1000*b*c*t/8, KB=B/1024, MB=KB/1024;
+  out.innerHTML = `容量 = ${f}kHz×1000 × ${b}位 × ${c}声道 × ${t}秒 ÷ 8<br>` +
+    `= ${f*1000} × ${b} × ${c} × ${t} ÷ 8<br>` +
+    `✅ = <span class="ans">${B.toFixed(0)} B</span> ≈ <span class="ans">${KB.toFixed(1)} KB</span>` +
+    (MB>=0.01 ? ` ≈ ${MB.toFixed(2)} MB` : '');
+  out.classList.add('show');
+}
+
+/* ---------- 图像容量 ---------- */
+function imageCalc(){
+  const out = document.getElementById('imageResult');
+  const w=parseInt(document.getElementById('w').value), h=parseInt(document.getElementById('h').value);
+  let bits=parseFloat(document.getElementById('cbits').value);
+  const cc=document.getElementById('ccount').value;
+  if(cc!=='' && cc!==undefined){
+    const n=parseInt(cc,10);
+    if(n>0 && (n&(n-1))===0){ bits=Math.round(Math.log2(n)); }
+    else { out.textContent='颜色种数需为 2 的幂（如 16、256）'; out.classList.add('show'); return; }
+  }
+  if([w,h,bits].some(v=>isNaN(v))){ out.textContent='请填写完整数字'; out.classList.add('show'); return; }
+  const B = w*h*bits/8, KB=B/1024;
+  const extra = cc!==''?`（${cc} 色 → 2^${bits} = ${cc}，即每像素 ${bits} 位）`:`（每像素 ${bits} 位）`;
+  out.innerHTML = `图像容量 = ${w}×${h} × ${bits} ÷ 8 ${extra}<br>` +
+    `✅ = <span class="ans">${B.toFixed(0)} B</span>` + (KB>=1?` ≈ ${KB.toFixed(2)} KB`: '');
+  out.classList.add('show');
+}
+
+/* 初始展开第1课时 */
+document.querySelector('.grp[data-unit="unit1"]').classList.add('open');
+updateProgress();
+
+/* ---------- 全站导航栏（移动端菜单） ---------- */
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', ()=> navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> navLinks.classList.remove('open')));
+
+/* ---------- URL hash 直达课时（首页课时链接跳转支持） ---------- */
+(function gotoFromHash(){
+  const h = decodeURIComponent(location.hash.replace('#',''));
+  const valid = ['unit1','unit2','zx','review'];
+  if(h && valid.includes(h)){
+    goto(h);
+  }
+})();
+window.addEventListener('hashchange', ()=>{
+  const h = decodeURIComponent(location.hash.replace('#',''));
+  const valid = ['unit1','unit2','zx','review'];
+  if(h && valid.includes(h)) goto(h);
+});
+</script>
+</body>
+</html>

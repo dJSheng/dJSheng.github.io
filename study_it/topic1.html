@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1e40af">
+<title>专题一 · 数据与信息 | 高中信息技术学考复习网</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>">
+<style>
+  :root{
+    --primary:#2563eb; --primary-dark:#1e40af; --primary-light:#dbeafe;
+    --bg:#f4f6fb; --card:#ffffff;
+    --text:#1e293b; --muted:#64748b; --line:#e2e8f0;
+    --green:#059669; --orange:#ea580c; --red:#dc2626; --purple:#7c3aed; --blue:#0284c7;
+    --key:#fef3c7; --key-bd:#f59e0b; --hard:#fee2e2; --hard-bd:#ef4444;
+    --mn-bg:#eef2ff; --mn-bd:#6366f1; --sum-bg:#ecfdf5; --sum-bd:#10b981;
+    --sidebar-w:264px;
+    --shadow-sm:0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+    --shadow-md:0 6px 20px rgba(15,23,42,.09);
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.75; -webkit-font-smoothing:antialiased;}
+  a{color:var(--primary); text-decoration:none;}
+  ::selection{background:#bfdbfe; color:#1e3a8a;}
+
+  #topbar{position:fixed; top:0; left:0; right:0; height:3px; z-index:120;}
+  #topbar .fill{height:100%; width:0; background:linear-gradient(90deg,#f59e0b,#3b82f6,#06b6d4); transition:width .1s linear;}
+
+  header{
+    color:#fff; padding:14px 20px 12px; text-align:center; position:relative; overflow:hidden;
+    background:
+      radial-gradient(circle at 12% 18%, rgba(255,255,255,.16) 0, transparent 42%),
+      radial-gradient(circle at 88% 85%, rgba(96,165,250,.4) 0, transparent 45%),
+      linear-gradient(135deg,#0f2a6b 0%, #1e40af 42%, #2563eb 74%, #3b82f6 100%);
+    box-shadow:0 4px 24px rgba(30,64,175,.35);
+  }
+  header::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.13) 1px, transparent 1px); background-size:22px 22px;}
+  header h1{font-size:20px; letter-spacing:1px; text-shadow:0 2px 10px rgba(0,0,0,.22); position:relative;}
+  header p{font-size:12.5px; opacity:.94; margin-top:4px; position:relative;}
+  header .badge{display:inline-block; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.42); border-radius:999px; padding:2px 12px; font-size:11.5px; margin-top:6px; backdrop-filter:blur(4px); position:relative;}
+
+  .layout{display:flex; max-width:1400px; margin:0 auto; align-items:flex-start;}
+
+  /* ---------- 侧边栏 ---------- */
+  aside.sidebar{width:var(--sidebar-w); flex:0 0 var(--sidebar-w); position:sticky; top:0; max-height:100vh; overflow-y:auto; background:#fff; border-right:1px solid var(--line); padding:14px 10px 24px; scrollbar-width:thin;}
+  aside.sidebar::-webkit-scrollbar{width:5px;}
+  aside.sidebar::-webkit-scrollbar-thumb{background:#cbd5e1; border-radius:99px;}
+  .sb-head{padding:4px 10px 10px; border-bottom:1px dashed var(--line); margin-bottom:8px;}
+  .sb-head .t{font-size:15px; font-weight:800; color:var(--primary-dark); letter-spacing:.5px;}
+  .sb-head .s{font-size:11.5px; color:var(--muted); margin-top:2px;}
+  .grp{margin-bottom:2px;}
+  .grp-toggle{display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:9px 10px; border-radius:9px; font-size:13px; font-weight:700; color:var(--text); transition:.15s;}
+  .grp-toggle:hover{background:#f1f5f9;}
+  .grp-toggle .arr{font-size:10px; color:var(--muted); transition:transform .2s; margin-left:auto;}
+  .grp.open > .grp-toggle .arr{transform:rotate(90deg);}
+  .grp-toggle .no{display:inline-flex; width:22px; height:22px; border-radius:7px; background:linear-gradient(135deg,#eff6ff,#dbeafe); color:var(--primary-dark); align-items:center; justify-content:center; font-size:11px; font-weight:800; box-shadow:inset 0 0 0 1px rgba(37,99,235,.15);}
+  .grp-toggle .gotcha{margin-left:auto; font-size:10px; color:#b45309; background:#fef3c7; border-radius:99px; padding:0 7px;}
+  .grp.open{background:transparent;}
+  .grp-items{display:none; padding:2px 0 6px 12px; border-left:2px solid var(--line); margin-left:20px;}
+  .grp.open > .grp-items{display:block;}
+  .grp-items a{display:flex; align-items:center; gap:7px; padding:6px 10px; border-radius:8px; font-size:12.5px; color:var(--muted); cursor:pointer; transition:.13s; text-decoration:none; line-height:1.45;}
+  .grp-items a:hover{background:#eef2ff; color:var(--primary);}
+  .grp-items a.active{background:var(--primary-light); color:var(--primary-dark); font-weight:700;}
+  .grp-items a .dot{width:5px; height:5px; border-radius:50%; background:#cbd5e1; flex:0 0 auto;}
+  
+  .grp-items a.active .dot{background:#2563eb;}
+  .sb-progress{margin-top:14px; padding:10px 12px; background:linear-gradient(135deg,#eff6ff,#e0f2fe); border:1px solid #bfdbfe; border-radius:11px;}
+  .sb-progress .lbl{font-size:11.5px; color:var(--primary-dark); font-weight:700;}
+  .sb-progress .bar{height:7px; background:#dbeafe; border-radius:99px; overflow:hidden; margin-top:6px;}
+  .sb-progress .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#3b82f6,#06b6d4); border-radius:99px; transition:width .5s;}
+  .sb-progress .num{font-size:11px; color:var(--muted); margin-top:5px;}
+
+  /* ---------- 主区 ---------- */
+  main{flex:1 1 auto; min-width:0; padding:22px 26px 60px; position:relative;}
+  section.page{display:none;}
+  section.page.active{display:block;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+  .page.active > *{animation:fadeUp .45s cubic-bezier(.2,.7,.3,1) both;}
+  .page.active > *:nth-child(2){animation-delay:.06s;}
+  .page.active > *:nth-child(3){animation-delay:.12s;}
+  .page.active > *:nth-child(n+4){animation-delay:.18s;}
+
+  /* ---------- 面包屑 ---------- */
+  .breadcrumb{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted); margin-bottom:14px; flex-wrap:wrap;}
+  .breadcrumb b{color:var(--primary-dark);}
+  .breadcrumb .sep{color:#cbd5e1;}
+
+  .unit-head{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:16px; box-shadow:var(--shadow-sm); display:flex; gap:14px; align-items:flex-start; position:relative; overflow:hidden;}
+  .unit-head::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:linear-gradient(180deg,#2563eb,#06b6d4);}
+  .unit-head .uh-chip{flex:0 0 auto; width:46px; height:46px; border-radius:12px; background:linear-gradient(135deg,#1e40af,#3b82f6); color:#fff; font-size:19px; font-weight:800; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(37,99,235,.35);}
+  .unit-head .kicker{font-size:11.5px; color:var(--primary); font-weight:700; letter-spacing:1.5px;}
+  .unit-head h2{font-size:20px; margin:2px 0 5px; letter-spacing:.5px;}
+  .unit-head p{color:var(--muted); font-size:13.5px;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:14px; box-shadow:var(--shadow-sm); transition:box-shadow .2s, transform .2s;}
+  .card:hover{box-shadow:var(--shadow-md); transform:translateY(-2px);}
+  .card h3{font-size:16.5px; margin-bottom:10px; color:var(--primary-dark); display:flex; align-items:center; gap:8px;}
+  .card h3 .ico{width:26px; height:26px; border-radius:8px; background:linear-gradient(135deg,#e0e7ff,#dbeafe); color:var(--primary-dark); display:inline-flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto; box-shadow:inset 0 0 0 1px rgba(37,99,235,.12);}
+  .card p, .card li{font-size:14.5px; color:#374151;}
+  .card ul, .card ol{padding-left:20px; margin:8px 0;}
+  .card li{margin:4px 0;}
+  .card table{width:100%; border-collapse:collapse; font-size:13.5px; margin:10px 0;}
+  .card th,.card td{border:1px solid var(--line); padding:7px 10px; text-align:left;}
+  .card th{background:linear-gradient(180deg,#f1f5f9,#eef2f7); font-weight:600; color:#334155;}
+  .card tr:nth-child(even) td{background:#fafbfe;}
+  .table-wrap{overflow-x:auto; border-radius:10px; -webkit-overflow-scrolling:touch;}
+  .table-wrap::-webkit-scrollbar{height:6px;}
+  
+  .hl{background:#fef9c3; padding:0 4px; border-radius:4px; box-shadow:inset 0 0 0 1px rgba(245,158,11,.25);}
+  .formula{background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border:1px dashed #7dd3fc; border-radius:10px; padding:11px 15px; margin:11px 0; font-family:"Courier New",monospace; font-weight:700; color:#0369a1; text-align:center; font-size:14.5px; letter-spacing:.5px;}
+  .tags{margin-bottom:10px; display:flex; gap:8px; flex-wrap:wrap;}
+  .tag{font-size:11.5px; font-weight:700; border-radius:999px; padding:2px 11px; letter-spacing:.5px;}
+  .tag.key{background:var(--key); color:#92400e; border:1px solid var(--key-bd);}
+  
+  .tag.hard{background:var(--hard); color:#991b1b; border:1px solid var(--hard-bd);}
+  .tag.note{background:#e0f2fe; color:#075985; border:1px solid #38bdf8;}
+  .mnemonic{background:linear-gradient(135deg,var(--mn-bg),#f5f3ff); border:1px solid var(--mn-bd); border-left:5px solid var(--mn-bd); border-radius:10px; padding:11px 15px; margin:11px 0; font-size:14.5px; box-shadow:var(--shadow-sm);}
+  .mnemonic b{color:var(--purple);}
+  
+  .mnemonic .t{font-weight:800; color:#7c3aed;}
+  .summary{background:linear-gradient(135deg,var(--sum-bg),#f0fdf4); border:1px solid var(--sum-bd); border-left:5px solid var(--sum-bd); border-radius:10px; padding:14px 17px; margin-top:16px; box-shadow:var(--shadow-sm);}
+  .summary h4{color:#047857; font-size:14.5px; margin-bottom:6px;}
+  .summary ul{padding-left:20px;}
+  .summary li{font-size:13.5px; color:#065f46;}
+  .example{background:linear-gradient(135deg,#fff7ed,#ffedd5); border:1px solid #fdba74; border-radius:9px; padding:9px 13px; margin:8px 0; font-size:13.5px;}
+  .example b{color:#c2410c;}
+
+  /* ---------- 嵌入式小练 ---------- */
+  .mini-quiz{margin:14px 0 2px; border-top:2px dashed #a5b4fc; padding-top:12px;}
+  .mini-quiz .mini-head{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+  .mini-quiz .mini-head .tag-mini{font-size:11px; font-weight:800; color:#4338ca; background:#e0e7ff; border:1px solid #a5b4fc; border-radius:99px; padding:2px 10px;}
+  .mini-quiz .mini-head .hint{font-size:11.5px; color:var(--muted);}
+  .mini-quiz .qitem{margin:8px 0;}
+  .mini-quiz .qitem .opt{padding:7px 11px; font-size:13.5px;}
+  .mini-quiz .explain{font-size:12.5px;}
+  .mini-quiz .exam-bar{padding:7px 10px; margin-bottom:8px;}
+
+  .exam-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:8px 11px;}
+  
+  .exam-stat{font-size:12.5px; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px 9px;}
+  .exam-acc{font-size:12.5px; color:#92400e; background:var(--key); border:1px solid var(--key-bd); border-radius:8px; padding:3px 9px;}
+  .exam-acc b{color:#b45309;}
+  .exam-stat b{color:var(--primary);}
+  .exam-progress{flex:1 1 130px; min-width:100px; height:8px; background:#e2e8f0; border-radius:99px; overflow:hidden;}
+  .exam-progress .bar{height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#3b82f6,#06b6d4); transition:width .4s;}
+  .exam-progress .bar.full{background:linear-gradient(90deg,#0ea5e9,#2563eb);}
+  .exam-progress .bar.good{background:linear-gradient(90deg,#10b981,#059669);}
+  .reset-btn{margin-left:auto; background:#fff; border:1px solid var(--line); color:var(--muted); border-radius:8px; padding:4px 12px; font-size:12px; font-weight:600; cursor:pointer; transition:.15s;}
+  
+  .exam-done{display:none; margin-bottom:10px; background:linear-gradient(135deg,#eff6ff,#e0f2fe); border:1px solid #93c5fd; border-radius:10px; padding:9px 13px; font-size:13px; color:#1d4ed8; font-weight:600; text-align:center;}
+  .exam-done.show{display:block; animation:fadeUp .35s both;}
+  
+  .qitem .q-head{font-size:14px; font-weight:600; color:#111827; margin-bottom:8px; line-height:1.65;}
+  .qitem .q-head .n{display:inline-block; background:linear-gradient(135deg,#eff6ff,#dbeafe); color:var(--primary-dark); border-radius:7px; min-width:23px; text-align:center; padding:1px 6px; margin-right:7px; font-size:12.5px; font-quight:700;}
+  
+  .qitem .opt{display:flex; align-items:flex-start; gap:9px; width:100%; text-align:left; background:#f8fafc; border:1px solid var(--line); border-radius:9px; padding:8px 12px; margin:5px 0; cursor:pointer; font-size:13.5px; transition:.15s; line-height:1.6; font-family:inherit;}
+  .qitem .opt:hover{border-color:var(--primary); background:#eff6ff; transform:translateX(3px);}
+  .qitem .opt .letter{flex:0 0 auto; width:22px; height:22px; border-radius:7px; background:#e2e8f0; color:#475569; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:800; margin-top:1px; transition:.15s;}
+  .qitem .opt:hover .letter{background:var(--primary); color:#fff;}
+  .qitem .opt.correct{background:#dcfce7; border-color:var(--green); color:#166534; font-weight:600; transform:none;}
+  .qitem .opt.correct .letter{background:#16a34a; color:#fff;}
+  .qitem .opt.wrong{background:#fee2e2; border-color:var(--red); color:#991b1b; transform:none;}
+  .qitem .opt.wrong .letter{background:#dc2626; color:#fff;}
+  .qitem .opt.disabled{pointer-events:none; opacity:.92;}
+  @keyframes pulseOk{0%{transform:scale(1);} 45%{transform:scale(1.02);} 100%{transform:scale(1);}}
+  @keyframes shakeNo{0%,100%{transform:translateX(0);} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);}}
+  .qitem .opt.correct{animation:pulseOk .35s;}
+  .qitem .opt.wrong{animation:shakeNo .3s;}
+  .qitem .explain{display:none; margin-top:9px; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border-left:4px solid var(--blue); border-radius:7px; padding:9px 13px; font-size:13px; color:#075985; white-space:pre-wrap; line-height:1.7;}
+  .qitem .explain.show{display:block; animation:fadeUp .3s both;}
+  .qitem .hint-img{display:inline-block; font-size:11px; color:#b45309; background:#fef3c7; border-radius:6px; padding:1px 7px; margin-left:6px; vertical-align:middle;}
+
+  /* ---------- 考前速览 ---------- */
+  .quick-cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px;}
+  .quick-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow-sm);}
+  .quick-card h4{font-size:14px; color:var(--primary-dark); margin-bottom:8px; display:flex; align-items:center; gap:7px;}
+  .quick-card h4 .qi{width:24px; height:24px; border-radius:7px; background:linear-gradient(135deg,#e0e7ff,#dbeafe); display:inline-flex; align-items:center; justify-content:center; font-size:13px; box-shadow:inset 0 0 0 1px rgba(37,99,235,.12);}
+  .quick-card .qc-body{font-size:13px; color:#374151; line-height:1.8;}
+  .quick-card .qc-body b{color:var(--purple);}
+  .quick-card .qc-body .f{font-family:"Courier New",monospace; font-weight:700; color:#0369a1; background:#f0f9ff; border:1px dashed #7dd3fc; border-radius:8px; padding:6px 10px; text-align:center; margin:6px 0;}
+
+  /* ---------- 工具区 ---------- */
+  
+  .tool h3{font-size:15.5px; color:var(--pimary,#2563eb); color:var(--primary-dark); margin-bottom:13px; display:flex; align-items:center; gap:8px;}
+  .tool .row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;}
+  .tool label{font-size:12px; color:var(--muted); display:block; margin-bottom:4px; font-weight:600;}
+  .tool input,.tool select{border:1.5px solid var(--line); border-radius:9px; padding:8px 10px; font-size:14px; width:130px; background:#fff; transition:.15s; outline:none;}
+  
+  .tool input:focus,.tool select:focus{border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,.14);}
+  .tool button{background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border:none; border-radius:9px; padding:9px 20px; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 3px 10px rgba(37,99,235,.3); transition:.18s;}
+  .tool button:hover{transform:translateY(-1px); box-shadow:0 5px 14px rgba(37,99,235,.4);}
+  .tool .result{margin-top:11px; background:linear-gradient(135deg,#f0fdf4,#dcfce7); border:1px solid #86efac; border-radius:10px; padding:12px 14px; font-size:13.5px; white-space:pre-wrap; display:none; line-height:1.8;}
+  .tool .result.show{display:block; animation:fadeUp .3s both;}
+  .tool .result .ans{font-weight:800; color:#166534; font-size:15px;}
+
+  footer{color:var(--muted); font-size:12.5px; text-align:center; border-top:1px solid var(--line); line-height:1.9; padding:20px 16px 40px; margin-top:10px;}
+
+  .back-top{position:fixed; right:22px; bottom:26px; width:44px; height:44px; border-radius:50%; border:none; cursor:pointer; background:linear-gradient(135deg,#2563eb,#1e40af); color:#fff; font-size:18px; box-shadow:0 6px 18px rgba(30,64,175,.4); opacity:0; pointer-events:none; transform:translateY(10px); transition:.25s; z-index:60;}
+  .back-top.show{opacity:1; pointer-events:auto; transform:none;}
+  .back-items{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
+  .back-item{display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:12.5px; color:var(--muted); cursor:pointer; transition:.15s;}
+  .back-item:hover{border-color:var(--primary); color:var(--primary); background:#eff6ff;}
+  .back-item .arrow{color:#94a3b8;}
+
+  /* ---------- 汉堡菜单（移动端） ---------- */
+  .menu-btn{display:none; position:fixed; left:16px; bottom:16px; z-index:90; width:46px; height:46px; border-radius:50%; border:none; cursor:pointer; background:linear-gradient(135deg,#2563eb,#1e40af); color:#fff; font-size:19px; box-shadow:0 6px 18px rgba(30,64,175,.4);}
+  aside.sidebar.hide{display:none;}
+
+  /* ---------- 侧边栏折叠（桌面端） ---------- */
+  .sb-collapse-btn{flex:0 0 auto; width:24px; height:24px; border-radius:7px; border:1px solid var(--line); background:#fff; color:var(--muted); font-size:12px; line-height:1; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; justify-content:center; padding:0;}
+  .sb-collapse-btn:hover{color:var(--primary); border-color:var(--primary); background:#eff6ff;}
+  .sb-head-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .layout{transition:max-width .25s;}
+  aside.sidebar{transition:width .25s, flex-basis .25s, transform .25s;}
+  aside.sidebar.collapsed{width:0; flex:0 0 0; overflow:hidden; border-right:none; padding-left:0; padding-right:0; opacity:0;}
+  .sb-open-btn{position:fixed; left:0; top:50%; transform:translateY(-50%); z-index:70; display:none; flex-direction:column; align-items:center; gap:6px; background:linear-gradient(180deg,#2563eb,#1e40af); color:#fff; border:none; border-radius:0 12px 12px 0; padding:16px 7px; cursor:pointer; box-shadow:3px 0 14px rgba(30,64,175,.35); font-size:12px; letter-spacing:2px; writing-mode:vertical-rl;}
+  .sb-open-btn:hover{padding-left:11px; box-shadow:4px 0 18px rgba(30,64,175,.5);}
+  .sb-open-btn.show{display:flex;}
+  .sb-open-btn .oi{font-size:14px; letter-spacing:0;}
+
+  @media (max-width:960px){
+    .layout{flex-direction:column;}
+    aside.sidebar{position:fixed; left:0; top:0; bottom:0; max-height:100vh; width:280px; z-index:80; box-shadow:8px 0 30px rgba(15,23,42,.18); transform:translateX(-105%); transition:transform .25s;}
+    aside.sidebar.show{transform:none;}
+    aside.sidebar.collapsed{width:280px; flex-basis:auto; overflow:visible; padding-left:14px; padding-right:10px; opacity:1;}
+    .menu-btn{display:block;}
+    .sb-collapse-btn, .sb-open-btn{display:none !important;}
+    main{padding:18px 14px 60px;}
+    .quick-cards{grid-template-columns:1fr;}
+  }
+
+  @media print{
+    #topbar, aside.sidebar, .back-top, .menu-btn, .sb-open-btn, .sb-collapse-btn, .reset-btn, .exam-progress, .exam-acc{display:none !important;}
+    header{box-shadow:none;}
+    .layout{display:block;}
+    section.page{display:block !important; page-break-before:always;}
+    section.page:first-of-type{page-break-before:auto;}
+    .card, .qitem{box-shadow:none; break-inside:avoid;}
+    body{background:#fff;}
+  }
+
+  /* ---------- 全站统一导航栏 ---------- */
+  .navbar{
+    position:sticky; top:0; z-index:100;
+    background:linear-gradient(135deg,#0f2a6b 0%, #1e40af 42%, #2563eb 74%, #3b82f6 100%);
+    box-shadow:0 4px 24px rgba(30,64,175,.35);
+  }
+  .navbar .inner{
+    max-width:1400px; margin:0 auto; padding:0 16px;
+    display:flex; align-items:center; gap:16px; height:52px;
+  }
+  .navbar .logo{display:flex; align-items:center; gap:8px; color:#fff; font-weight:800; font-size:15px; letter-spacing:.5px; white-space:nowrap;}
+  .navbar .logo .lg-icon{width:28px; height:28px; border-radius:8px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); display:flex; align-items:center; justify-content:center; font-size:15px;}
+  .navbar .nav-links{display:flex; align-items:center; gap:4px; margin-left:auto;}
+  .navbar .nav-links a{
+    color:rgba(255,255,255,.88); font-size:13.5px; font-weight:600;
+    padding:6px 13px; border-radius:8px; transition:.15s; white-space:nowrap;
+  }
+  .navbar .nav-links a:hover{background:rgba(255,255,255,.16); color:#fff;}
+  .navbar .nav-links a.active{background:rgba(255,255,255,.22); color:#fff; box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);}
+  .navbar .menu-toggle{display:none; margin-left:auto; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.4); color:#fff; border-radius:8px; width:36px; height:34px; font-size:16px; cursor:pointer;}
+  @media (max-width:860px){
+    .navbar .menu-toggle{display:block;}
+    .navbar .nav-links{
+      display:none; position:absolute; top:52px; left:0; right:0;
+      flex-direction:column; align-items:stretch; gap:2px;
+      background:linear-gradient(135deg,#1e40af,#2563eb); padding:10px 14px 14px;
+      box-shadow:0 12px 24px rgba(30,64,175,.35);
+    }
+    .navbar .nav-links.open{display:flex;}
+    .navbar .nav-links a{padding:10px 14px; font-size:14.5px;}
+  }
+</style>
+</head>
+<body>
+<div id="topbar"><div class="fill"></div></div>
+
+<nav class="navbar">
+  <div class="inner">
+    <a class="logo" href="index.html"><span class="lg-icon">📘</span>高中信息技术学考复习网</a>
+    <button class="menu-toggle" id="navToggle" aria-label="打开菜单">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">首页</a>
+      <a href="topic1.html" class="active">专题一 · 数据与信息</a>
+      <a href="topic2.html">专题二 · 数据采集与处理</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <h1>必修一 · 专题一 数据与信息</h1>
+  <p>高中信息技术学业水平考试 · 第一周教学课件（4 课时）</p>
+  <span class="badge">知识点 + 159 道真题 · 内容严格参照教材</span>
+</header>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-head-row">
+      <div class="t">数据与信息</div>
+      <button class="sb-collapse-btn" id="sbCollapse" title="收起目录" aria-label="收起目录">⟨</button>
+    </div>
+    <div class="s">第一周 · 4 课时 · 159 题</div>
+  </div>
+
+  <div class="grp" data-unit="unit1">
+    <button class="grp-toggle"><span class="no">1</span>第1课时 数据·信息·知识<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="kp-1-1"><span class="dot"></span>一、数据：符号记录</a>
+      <a data-anchor="kp-1-2"><span class="dot"></span>二、大数据</a>
+      <a data-anchor="kp-1-3"><span class="dot"></span>三、信息与八大特征</a>
+      <a data-anchor="kp-1-4"><span class="dot"></span>四、知识·智慧·关系</a>
+      <a data-anchor="ex-u1"><span class="dot"></span>单元一真题 30 题</a>
+    </div>
+  </div>
+
+  <div class="grp" data-unit="unit2">
+    <button class="grp-toggle"><span class="no">2</span>第2课时 数制与进制转换<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="kp-2-1"><span class="dot"></span>一、二进制基本概念</a>
+      <a data-anchor="kp-2-2"><span class="dot"></span>二、十进制→二进制</a>
+      <a data-anchor="kp-2-3"><span class="dot"></span>三、二进制→十进制</a>
+      <a data-anchor="ex-u2"><span class="dot"></span>单元二真题 30 题</a>
+    </div>
+  </div>
+
+  <div class="grp" data-unit="unit3">
+    <button class="grp-toggle"><span class="no">3</span>第3课时 编码与存储单位<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="kp-3-1"><span class="dot"></span>一、信息的编码</a>
+      <a data-anchor="kp-3-2"><span class="dot"></span>二、ASCII 码</a>
+      <a data-anchor="kp-3-3"><span class="dot"></span>三、汉字编码流程</a>
+      <a data-anchor="kp-3-4"><span class="dot"></span>四、信息存储单位</a>
+      <a data-anchor="ex-u3"><span class="dot"></span>编码真题 20 题</a>
+    </div>
+  </div>
+
+  <div class="grp" data-unit="unit4">
+    <button class="grp-toggle"><span class="no">4</span>第4课时 声音与图像编码<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="kp-4-1"><span class="dot"></span>一、模拟与数字信号</a>
+      <a data-anchor="kp-4-2"><span class="dot"></span>二、声音数字化</a>
+      <a data-anchor="kp-4-3"><span class="dot"></span>三、图像数字化</a>
+      <a data-anchor="kp-4-4"><span class="dot"></span>四、位图矢量图·格式</a>
+      <a data-anchor="ex-u4"><span class="dot"></span>单元三真题 25 题</a>
+    </div>
+  </div>
+
+  <div class="grp" data-unit="zx">
+    <button class="grp-toggle"><span class="no">综</span>综合训练 74 题<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="zx-kd"><span class="dot"></span>考点分布总览</a>
+      <a data-anchor="zx-gl"><span class="dot"></span>高频考点规律</a>
+      <a data-anchor="zx-jy"><span class="dot"></span>答题技巧易错点</a>
+      <a data-anchor="zx-list"><span class="dot"></span>十套真题列表</a>
+    </div>
+  </div>
+
+  <div class="grp" data-unit="review">
+    <button class="grp-toggle" onclick="goto('review')"><span class="no">考</span>考前速览<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="rv-mn"><span class="dot"></span>口诀速记 11 条</a>
+      <a data-anchor="rv-fm"><span class="dot"></span>核心公式 4 个</a>
+      <a data-anchor="rv-yb"><span class="dot"></span>易错对照表</a>
+    </div>
+  </div>
+
+  <div class="grp" data-unit="tools">
+    <button class="grp-toggle" onclick="goto('tools')"><span class="no">🛠</span>互动工具<span class="arr">▶</span></button>
+    <div class="grp-items">
+      <a data-anchor="tl-conv"><span class="dot"></span>进制转换器</a>
+      <a data-anchor="tl-snd"><span class="dot"></span>声音容量计算</a>
+      <a data-anchor="tl-img"><span class="dot"></span>图像容量计算</a>
+    </div>
+  </div>
+
+  <div class="sb-progress">
+    <div class="lbl">学习进度</div>
+    <div class="bar"><i id="sbBar"></i></div>
+    <div class="num" id="sbNum">已学 0 / 19 个知识点</div>
+  </div>
+</aside>
+
+<main>
+<section class="page active" id="unit1">  <div class="unit-head">
+    <div class="uh-chip">01</div>
+    <div>
+      <div class="kicker">第 1 课时</div>
+      <h2>数据、信息与知识</h2>
+      <p>搞清楚三个高频概念——数据、信息、知识，以及它们"由低到高"的关系。本课时配套教材单元一 30 道真题。</p>
+    </div>
+  </div>
+
+    <div class="card kp-card" id="kp-1-1">
+    <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+    <h3><span class="ico">📊</span>一、数据：客观事物的符号记录</h3>
+    <p><b>数据</b>是现实世界客观事物的<b>符号记录</b>，是信息的<b>载体</b>；而<b>信息是数据的内涵（含义）</b>，是对数据的语义解释。</p>
+    <div class="example">🔍 <b>例子：</b>“小明的身高是 160 厘米”这句话描述的是<b>信息</b>，其中的 <b>160</b> 才是<b>数据</b>。</div>
+    <p><b>数据的分类</b>（两种分法，注意区分，容易混淆）：</p>
+    <table>
+      <tr><th>划分角度</th><th>类别</th><th>举例</th></tr>
+      <tr><td>按<b>处理方式</b></td><td><b>数值型</b>数据（含正负号、小数点、阿拉伯数字）</td><td>年龄、收入、物价、气温</td></tr>
+      <tr><td>按<b>处理方式</b></td><td><b>非数值型</b>数据</td><td>文字、图像、声音、视频</td></tr>
+      <tr><td>按<b>表现形式</b></td><td><b>数字数据</b>（二进制数）</td><td>计算机内部用 0、1 表示</td></tr>
+      <tr><td>按<b>表现形式</b></td><td><b>模拟数据</b></td><td>符号、语言、文字、图像、动画、声音、视频</td></tr>
+    </table>
+    <p><b>数据的特点</b>：有些数据是<b>固定</b>的（如电话区号、邮政编码）；有些是<b>会变化</b>的（如气温、身高体重、物价）；有些是<b>随机</b>的（如彩票开奖号码、抛骰子点数）。</p>
+    <p><b>找数据的规律</b>（教材补充）：</p>
+    <div class="example">🔍 数列 49, 64, 81, 100, 121 … 下一项是 <b>144</b>（7²、8²、9²、10²、11² → 12²）。<br>🔍 数列 1, 2, 6, 11, 20 … 下一项是 <b>34</b>（前两项相加再加 3）。<br>🔍 数列 1, 3, 7, 13, 21 … 下一项是 <b>31</b>（第 n 项 = 第 n−1 项 + (n−1)×2）。</div>
+    <div class="mini-quiz" data-src="u1" data-idx="0,3,4,6"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-1-2">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">🌐</span>二、大数据</h3>
+    <p><b>大数据</b>是指<b>无法在可承受的时间范围内用常规软件工具进行高效捕捉、管理和处理的数据集合</b>，起源于<b>互联网</b>。</p>
+    <p><b>四大特征</b>（4 个关键词）：</p>
+    <ul>
+      <li><b>数据体量大</b>（规模大）</li>
+      <li><b>数据类型多</b>（多样且变化快）</li>
+      <li><b>处理速度快</b></li>
+      <li><b>应用价值高但价值密度低</b></li>
+    </ul>
+    <p><b>应用</b>：电商个性化推荐、导航地图、健康码、行程码、掌上公交等。</p>
+    <p><b>采集方法</b>：网络采集法（网络爬虫）、传感器采集法、系统日志采集法。</p>
+    <p><b>处理过程</b>：数据采集与预处理 → 数据存储 → 数据挖掘 → 数据呈现。</p>
+    <div class="mini-quiz" data-src="u1" data-idx="9,10,11,12"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-1-3">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">💡</span>三、信息：数据中包含的意义</h3>
+    <p><b>信息</b>是数据中所包含的意义，必须<b>依附于某种载体</b>才能存储、表达和传播。典型信息：信号、通知、资讯、消息、短信、广告、新闻、市场行情、天气预报等。</p>
+    <p><b>三种经典定义</b>（记住三位科学家）：</p>
+    <ul>
+      <li><b>香农</b>：信息是能<b>消除认识上的不确定性</b>的消息。</li>
+      <li><b>维纳</b>：信息是一种<b>资源</b>，信息、物质、能量是人类赖以生存的三大资源。</li>
+      <li><b>钟义信</b>：信息是<b>事物运动的状态与状态变化的方式</b>。</li>
+    </ul>
+    <p><b>信息的八大特征</b>（考试高频，务必记牢）：</p>
+    <table>
+      <tr><th>特征</th><th>含义</th><th>实例</th></tr>
+      <tr><td>价值性</td><td>具有经济或精神价值</td><td>天气预报指导穿衣、出行</td></tr>
+      <tr><td>载体依附性</td><td>不能独立存在，需依附载体</td><td>文字刻竹简、写纸上、存电脑</td></tr>
+      <tr><td>可处理性</td><td>加工后产生新信息、增值</td><td>卫星云图→天气预报</td></tr>
+      <tr><td>传递性</td><td>可从一个地方传到别处</td><td>冬奥会开幕式全球直播</td></tr>
+      <tr><td>共享性</td><td>多人同时接收、可多次使用</td><td>红绿灯信号每个司机都能看</td></tr>
+      <tr><td>时效性</td><td>一定时间内有效，过期失效</td><td>微信红包 24 小时未领自动退回</td></tr>
+      <tr><td>真伪性</td><td>有真有假</td><td>"空城计"、手机诈骗短信</td></tr>
+      <tr><td>价值相对性</td><td>对不同人有不同价值</td><td>酒驾扣分对司机重要、对学生无用</td></tr>
+    </table>
+    <p><b>信息的载体</b>：符号、语言、文字、图像、声音、动画、视频等。</p>
+    <div class="mnemonic"><span class="t">📌 记忆口诀（信息八大特征）：</span><br><b>"价值依附可处理，传递共享讲时效，真伪相对记心间。"</b>（价·依·可·传·共·时·真·相）</div>
+    <div class="mini-quiz" data-src="u1" data-idx="16,18,19,24"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-1-4">
+    <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+    <h3><span class="ico">🧠</span>四、知识 & 数据→信息→知识→智慧的关系</h3>
+    <p><b>知识</b>是对信息<b>加工、提炼、分析</b>的结果，能精准反映事物的<b>本质</b>，是可用于指导实践的认识、规律和经验。</p>
+    <div class="example">🔍 <b>例子：</b>“标准气压下，冰水混合物的温度是 0℃”描述的是<b>知识</b>。公式、定理、感冒指数、身体健康指数、"血压正常范围""正常心率 60~100 次/分"都属于知识。</div>
+    <p>四者关系——<b>由低到高</b>的认知阶段：</p>
+    <div class="formula">数据 → 信息 → 知识 → 智慧</div>
+    <ul>
+      <li><b>数据</b>：是信息和知识的基础（原料，最初阶段）；</li>
+      <li><b>信息</b>：是数据处理的结果（加工后有意义）；</li>
+      <li><b>知识</b>：是对信息加工、提炼的结果，反映本质（规律）；</li>
+      <li><b>智慧</b>：是知识的抽象和升华。</li>
+    </ul>
+    <p style="color:var(--orange);font-size:14px;">⚠️ 注意：数据与信息不是"相互包含"关系——数据是载体、信息是内涵。</p>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"数据是原料，信息是加工，知识是规律，智慧是升华。"</b></div>
+    <div class="mini-quiz" data-src="u1" data-idx="21,27,28,29"></div>
+  </div>
+
+    <div class="card exam-card" id="ex-u1">
+    <div class="tags"><span class="tag note">📝 教材真题精练（单元一 · 30 题）</span></div>
+    <h3><span class="ico">✅</span>单元一真题练习</h3>
+    <div id="exam-u1" class="quiz"></div>
+  </div>
+
+    <div class="summary" id="sum-1">
+    <h4>🎯 第 1 课时 · 小结</h4>
+    <ul>
+      <li><b>数据</b>是符号记录（载体），<b>信息</b>是数据的内涵（意义），<b>知识</b>是对信息提炼出的规律。</li>
+      <li>三者由低到高：<b>数据 → 信息 → 知识 → 智慧</b>（数据是基础、最初阶段）。</li>
+      <li><b>信息八大特征</b>：价值、依附、可处理、传递、共享、时效、真伪、相对。</li>
+      <li><b>大数据</b>四大特征：体量大、类型多、速度快、价值密度低。</li>
+    </ul>
+  </div></section>
+<section class="page" id="unit2">  <div class="unit-head">
+    <div class="uh-chip">02</div>
+    <div>
+      <div class="kicker">第 2 课时</div>
+      <h2>数制与进制转换</h2>
+      <p>计算机只认识 0 和 1，学会十进制 ↔ 二进制互转是信息编码的基础。本课时配套教材单元二 30 道真题。</p>
+    </div>
+  </div>
+
+    <div class="card kp-card" id="kp-2-1">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">🔢</span>一、二进制的基本概念</h3>
+    <p>计算机内部所有数据都用<b>二进制</b>表示，只有 <b>0、1</b> 两个数码，能被机器直接识别。</p>
+    <p><b>运算规则</b>：逢二进一、借一当二。同理，<b>n 进制</b>就是"逢 n 进一、借一当 n"（如四进制"逢四进一"、五进制"逢五进一"）。</p>
+    <p><b>位权</b>（由低位到高位）：2⁰、2¹、2²、2³…… 即 1、2、4、8……</p>
+    <p><b>表示方式</b>：在数末尾加字母 <b>B</b>，如 <span class="hl">1101B</span> 表示二进制。其余：<b>D</b> 十进制、<b>O</b> 八进制、<b>H</b> 十六进制。</p>
+    <p><b>组合状态数</b>：n 位二进制有 <b>2ⁿ</b> 种组合（如 4 位二进制有 2⁴=16 种）。</p>
+    <div class="mini-quiz" data-src="u2num" data-idx="3,8,9"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-2-2">
+    <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+    <h3><span class="ico">➡️</span>二、十进制 → 二进制（两种方法）</h3>
+    <p><b>方法一：除 2 取余法（辗转相除法）</b>——反复除以 2，取出余数，商作为下次被除数，直到商为 0，<b>余数由下往上</b>写。</p>
+    <div class="example">🔍 <b>例：35 → 100011B</b>　35÷2=17 余1，17÷2=8 余1，8÷2=4 余0，4÷2=2 余0，2÷2=1 余0，1÷2=0 余1，余数<b>倒序</b>得 100011。</div>
+    <p><b>方法二：拆数法（凑数法）</b>——按位权从大到小拆，每一步尽量大。</p>
+    <div class="example">🔍 <b>例：35 = 32 + 2 + 1</b> → 二进制 <b>100011</b>；　<b>27 = 16 + 8 + 2 + 1</b> → <b>11011</b>；　<b>14 = 8 + 4 + 2</b> → <b>1110</b>；　<b>29 = 16 + 8 + 4 + 1</b> → <b>11101</b>。</div>
+    <p style="color:var(--blue);font-size:14px;">💡 通用方法：十进制转任意 <b>R</b> 进制（R=2、8、16），都用"<b>除 R 取余、倒序排列</b>"。</p>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"除 2 取余，余数倒着读；拆权凑数，从大往小拆。"</b></div>
+    <div class="mini-quiz" data-src="u2num" data-idx="1,5,7"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-2-3">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">⬅️</span>三、二进制 → 十进制（按权展开求和）</h3>
+    <p>方法：<b>按权展开</b>，把各位数码乘以对应位权后相加。</p>
+    <div class="example">🔍 <b>例：(10111)₂</b> = 1×2⁰ + 1×2¹ + 1×2² + 0×2³ + 1×2⁴ = 1 + 2 + 4 + 0 + 16 = <b>23</b><br>🔍 <b>例：(11010)₂</b> = 0 + 2 + 0 + 8 + 16 = <b>26</b>；　<b>(10101)₂</b> = 16 + 4 + 1 = <b>21</b></div>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"按权展开，乘了再加，位数从 0 开始数。"</b></div>
+    <p style="margin-top:10px; color:var(--blue);">👉 去 <a href="#tools" onclick="goto('tools')">🛠 互动工具</a> 里的"进制转换器"练一练！</p>
+    <div class="mini-quiz" data-src="u2num" data-idx="0,2,4"></div>
+  </div>
+
+    <div class="card exam-card" id="ex-u2">
+    <div class="tags"><span class="tag note">📝 教材真题精练（单元二 · 30 题）</span></div>
+    <h3><span class="ico">✅</span>单元二真题练习</h3>
+    <div id="exam-u2" class="quiz"></div>
+  </div>
+
+    <div class="summary" id="sum-2">
+    <h4>🎯 第 2 课时 · 小结</h4>
+    <ul>
+      <li>计算机内部用<b>二进制</b>（0、1），规则"逢二进一、借一当二"；n 位二进制有 <b>2ⁿ</b> 种组合。</li>
+      <li>十进制→二进制：<b>除 2 取余（倒序）</b> 或 <b>拆数法（凑权）</b>；十进制→R 进制用"除 R 取余"。</li>
+      <li>二进制→十进制：<b>按权展开求和</b>。</li>
+    </ul>
+  </div></section>
+<section class="page" id="unit3">  <div class="unit-head">
+    <div class="uh-chip">03</div>
+    <div>
+      <div class="kicker">第 3 课时</div>
+      <h2>信息编码与存储单位</h2>
+      <p>文字、符号在计算机里如何变成 0/1？掌握 ASCII 码、汉字编码流程和存储单位换算。本课时配套教材单元二后半部分真题。</p>
+    </div>
+  </div>
+
+    <div class="card kp-card" id="kp-3-1">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">🔤</span>一、信息的编码</h3>
+    <p><b>编码</b>是指按预先规定的方法将文字、数字或其他数据转换为规定的符号组合。在计算机中，编码是指将符号、数字、文字、图像、声音和视频等对象按预先规定的方法编成<b>二进制代码</b>的过程。</p>
+    <p><b>编码的作用与意义</b>（四点）：</p>
+    <ul>
+      <li>便于机器<b>识别、存储、传输和处理</b>；</li>
+      <li>方便使用，<b>提高数据利用率</b>；</li>
+      <li><b>节省存储空间</b>；</li>
+      <li><b>提高数据处理效率</b>。</li>
+    </ul>
+  </div>
+
+    <div class="card kp-card" id="kp-3-2">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">🔤</span>二、ASCII 码</h3>
+    <p><b>ASCII 码</b>是美国国家信息交换标准代码，用于对英文字母（区分大小写）、数字 0~9、标点及控制字符编码。</p>
+    <ul>
+      <li>用 <b>1 个字节</b>表示 1 个字符，最高位固定为 0，实际只用 <b>7 位</b>，共能表示 <b>2⁷ = 128</b> 个字符。</li>
+      <li><b>大小关系</b>（务必记住）：<span class="hl">空格 &lt; 数字 &lt; 大写字母 &lt; 小写字母</span></li>
+    </ul>
+    <p><b>常用十进制范围</b>：</p>
+    <table>
+      <tr><th>范围</th><th>内容</th></tr>
+      <tr><td>0 ~ 31</td><td>控制字符</td></tr>
+      <tr><td>32</td><td>空格</td></tr>
+      <tr><td>48 ~ 57</td><td>数字 0 ~ 9</td></tr>
+      <tr><td>65 ~ 90</td><td>大写字母 A ~ Z</td></tr>
+      <tr><td>97 ~ 122</td><td>小写字母 a ~ z</td></tr>
+      <tr><td>123 ~ 128</td><td>英文标点符号、运算符号</td></tr>
+    </table>
+    <p style="margin-top:10px;"><b>教材表2 · 部分字符的 ASCII 码表</b>（列顶端为高四位、行左边为低四位，两者组合即该字符的二进制码）：</p>
+    <table>
+      <tr><th>低四位＼高四位</th><th>0010</th><th>0011</th><th>0100</th><th>0101</th><th>0110</th><th>0111</th></tr>
+      <tr><td>0000</td><td>空格</td><td>0</td><td>@</td><td>P</td><td>、</td><td>p</td></tr>
+      <tr><td>0001</td><td>!</td><td>1</td><td>A</td><td>Q</td><td>a</td><td>q</td></tr>
+      <tr><td>0010</td><td>"</td><td>2</td><td>B</td><td>R</td><td>b</td><td>r</td></tr>
+      <tr><td>0011</td><td>#</td><td>3</td><td>C</td><td>S</td><td>c</td><td>s</td></tr>
+      <tr><td>0100</td><td></td><td>4</td><td>D</td><td>T</td><td>d</td><td>t</td></tr>
+      <tr><td>0101</td><td>%</td><td>5</td><td>E</td><td>U</td><td>e</td><td>u</td></tr>
+      <tr><td>0110</td><td>&amp;</td><td>6</td><td>F</td><td>V</td><td>f</td><td>v</td></tr>
+      <tr><td>0111</td><td></td><td>7</td><td>G</td><td>W</td><td>g</td><td>w</td></tr>
+      <tr><td>1000</td><td>(</td><td>8</td><td>H</td><td>X</td><td>h</td><td>x</td></tr>
+      <tr><td>1001</td><td>)</td><td>9</td><td>I</td><td>Y</td><td>i</td><td>y</td></tr>
+      <tr><td>1010</td><td>*</td><td>:</td><td>J</td><td>Z</td><td>j</td><td>z</td></tr>
+    </table>
+    <div class="example">🔍 <b>查阅方法：</b>先找列顶端的高四位，再找行左边的低四位，两者组合。如 "A" 在列 <b>0100</b>、行 <b>0001</b> → <b>01000001</b>。</div>
+    <div class="example">🔍 <b>推导：</b>"d"=100 → "g"=100+3=<b>103</b>；"C"=01000011 → "F"=01000011+11=<b>01000110</b>；"B"=01000010 → "F"=01000010+100=<b>01000110</b>；"C"=67 → "H"=67+5=<b>72</b>。</div>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"空 &lt; 数 &lt; 大 &lt; 小"</b>（空格最小，小写字母最大；数字 48 起、大写 65 起、小写 97 起）。</div>
+    <div class="mini-quiz" data-src="u2b" data-idx="6,7,9,10"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-3-3">
+    <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+    <h3><span class="ico">🀄</span>三、汉字编码流程</h3>
+    <p>汉字从输入到输出，不同环节用不同编码：</p>
+    <div class="formula">输入码 → 机内码 → 国标码(GB2312) → 输出码(字形码)</div>
+    <ul>
+      <li><b>输入码</b>：如拼音、五笔；</li>
+      <li><b>机内码</b>：汉字在机器内部存储、加工、传送使用的代码；</li>
+      <li><b>国标码（GB2312）</b>：一种交换码；</li>
+      <li><b>输出码（字形码）</b>：用字形点阵表示。</li>
+    </ul>
+    <p><b>存储</b>：存储一个汉字的机内码或国标码用 <b>2 个字节</b>，存储 1000 个汉字约占 <b>2KB</b>（1024 个汉字国标码 = 2048B = 2KB）。</p>
+    <div class="example">🔍 <b>字形点阵：</b>"日"字 8×8 点阵存储容量 = 8×8÷8 = <b>8B</b>（÷8 是把"位"换算成"字节"，1B=8 位）。位图编码规则：黑记 1、白记 0，从左到右逐位编码。</div>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"输入 → 机内 → 国标 → 输出"</b>，简称 <b>"输机国出"</b>；一个汉字机内码/国标码 <b>2 字节</b>。</div>
+    <div class="mini-quiz" data-src="u2b" data-idx="16,17,18"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-3-4">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">💾</span>四、信息存储单位</h3>
+    <p><b>最小单位</b>是位（bit，简记 b，即比特），<b>基本单位</b>是字节（Byte，简记 B），<b>1B = 8bit</b>。</p>
+    <div class="formula">1B = 8bit　|　1KB = 1024B　|　1MB = 1024KB　|　1GB = 1024MB　|　1TB = 1024GB</div>
+    <div class="example">🔍 1KB 能存 <b>1024</b> 个英文字符（每个 1B），最多存 <b>512</b> 个汉字（每个 2B）；10000 个英文字母约 <b>10KB</b>。</div>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"1B 等于 8 位，1024 进一级，K、M、G、T 排排坐。"</b></div>
+    <div class="mini-quiz" data-src="u2b" data-idx="0,1,2,4"></div>
+  </div>
+
+    <div class="card exam-card" id="ex-u3">
+    <div class="tags"><span class="tag note">📝 教材真题精练（单元二编码部分 · 含存储单位）</span></div>
+    <h3><span class="ico">✅</span>编码与存储单位真题练习</h3>
+    <div id="exam-u2b" class="quiz"></div>
+  </div>
+
+    <div class="summary" id="sum-3">
+    <h4>🎯 第 3 课时 · 小结</h4>
+    <ul>
+      <li><b>ASCII 码</b>：7 位、128 字符，大小关系"空格 &lt; 数字 &lt; 大写 &lt; 小写"。</li>
+      <li><b>汉字编码</b>：输入码 → 机内码 → 国标码 → 输出码，机内码/国标码各占 2 字节。</li>
+      <li><b>存储单位</b>：1B=8bit，每级 ×1024，从 B 到 KB、MB、GB、TB。</li>
+    </ul>
+  </div></section>
+<section class="page" id="unit4">  <div class="unit-head">
+    <div class="uh-chip">04</div>
+    <div>
+      <div class="kicker">第 4 课时</div>
+      <h2>声音与图像编码</h2>
+      <p>声音、图像如何变成数字信号？掌握"采样→量化→编码"三步骤和容量计算公式。本课时配套教材单元三 25 道真题。</p>
+    </div>
+  </div>
+
+    <div class="card kp-card" id="kp-4-1">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">〰️</span>一、模拟信号与数字信号</h3>
+    <ul>
+      <li><b>模拟信号 / 模拟数据</b>：用<b>连续变化</b>的物理量表达，相对不稳定，易受干扰失真（如声音、图像、视频、温度、压强）。</li>
+      <li><b>数字信号 / 数字数据</b>：随时间变化是<b>离散、不连续</b>的，用二进制 0 和 1 表示。</li>
+      <li>模拟信号与数字信号<b>可以相互转换</b>（数字数据也能转回模拟数据）。</li>
+    </ul>
+    <p><b>数字化三步</b>：</p>
+    <div class="formula">采样 → 量化 → 编码</div>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"先采样、再量化、最后编码。"</b>（"采量编"）</div>
+    <div class="mini-quiz" data-src="u3" data-idx="0,1,3"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-4-2">
+    <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+    <h3><span class="ico">🎵</span>二、声音数字化</h3>
+    <ul>
+      <li><b>采样</b>：每隔一段时间在波形上取一个幅度值，1 秒内采样次数叫<b>采样频率</b>，频率越高保真度越高。</li>
+      <li><b>量化</b>：用二进制数表示采样得到的幅度值（取最接近的整数），<b>量化位数</b>越大保真度越高。</li>
+      <li><b>编码</b>：把量化后的数据转化为二进制数。</li>
+    </ul>
+    <p>采样频率越高、量化位数越大 → 保真度越高、质量越好，但<b>数据容量越大</b>。</p>
+    <div class="formula">声音容量(B) = 采样频率 × 量化位数 × 声道数 × 时长 ÷ 8</div>
+    <div class="example">🔍 <b>例：</b>22.05kHz、16 位、10 秒、双声道：22.05×1000×16×10×2÷8÷1024 ≈ <b>861.3KB</b>。<br>🔍 <b>例：</b>22.05kHz、16 位、5 秒、双声道：22.05×1000×16×5×2÷8÷1024 ≈ <b>430.7KB</b>。（注意 kHz 先 ×1000 换成 Hz）</div>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"频率乘位数，乘声道乘时长，最后除以 8。"</b></div>
+    <div class="mini-quiz" data-src="u3" data-idx="5,9,6,10"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-4-3">
+    <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+    <h3><span class="ico">🖼</span>三、图像数字化</h3>
+    <p>图像数字化同样分采样、量化、编码三步：采样是把图像分割成<b>像素点</b>；量化是用二进制表示每个像素的颜色/亮度；编码是记录量化数据。</p>
+    <ul>
+      <li><b>像素</b>：图像分割成的离散点。</li>
+      <li><b>颜色位数（位深度）</b>：表示像素点颜色/亮度的位数，<b>颜色种数 = 2ⁿ</b>（n 为颜色位数）。</li>
+    </ul>
+    <div class="example">🔍 黑白图像 1 位（2¹=2 色）、16 色需 4 位（2⁴）、256 色需 8 位（2⁸）、24 位真彩色；5 位可表示 2⁵=32 色。</div>
+    <div class="formula">图像容量(B) = 分辨率(宽×高) × 颜色位数 ÷ 8</div>
+    <div class="example">🔍 <b>例1：</b>20×30、24 位：20×30×24÷8 = <b>1800B</b>。　<b>例2：</b>20×30、16 色（4 位）：20×30×4÷8 = <b>300B</b>。　<b>例3：</b>10×20、16 色：10×20×4÷8 = <b>100B</b>。　<b>例4：</b>20×10、24 位：20×10×24÷8 = <b>600B</b>。</div>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"分辨率乘位数，除以 8 得容量；颜色种数 2 的 n 次方。"</b></div>
+    <div class="mini-quiz" data-src="u3" data-idx="12,13,15,21"></div>
+  </div>
+
+    <div class="card kp-card" id="kp-4-4">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">🖋</span>四、位图 vs 矢量图 & 常见文件扩展名</h3>
+    <table>
+      <tr><th>类型</th><th>组成</th><th>优点</th><th>缺点</th></tr>
+      <tr><td><b>位图</b>（点阵图）</td><td>由像素组成</td><td>色彩丰富、逼真反映自然景物</td><td>放大易失真、文件容量大</td></tr>
+      <tr><td><b>矢量图</b>（向量图）</td><td>由线条+色块组成</td><td>放大不失真、文件容量小</td><td>色彩单调、不够丰富</td></tr>
+    </table>
+    <div class="mnemonic"><span class="t">📌 记忆口诀：</span><br><b>"位图放大糊，矢量放大清；位图色彩富，矢量色彩单。"</b></div>
+    <p style="margin-top:10px;"><b>常见文件扩展名</b>（考试常考格式归类）：</p>
+    <table>
+      <tr><th>类型</th><th>扩展名</th></tr>
+      <tr><td>文本</td><td>txt、doc/docx、ppt/pptx、wps</td></tr>
+      <tr><td>声音</td><td>wav、mp3、wma、mid、au、ra（wav 未压缩、音质好、容量大）</td></tr>
+      <tr><td>图像</td><td>jpg/jpeg、gif、bmp、png、tif/tiff、psd（bmp 未压缩、容量大）</td></tr>
+      <tr><td>视频</td><td>avi、mpg、wmv、mp4、asf、mov</td></tr>
+      <tr><td>其他</td><td>rar/zip（压缩）、xls/xlsx（表格）、pdf（文档）</td></tr>
+    </table>
+    <div class="example">🔍 wav→mp3、bmp→jpg 都是<b>缩小容量</b>（转为压缩格式）。</div>
+    <div class="mini-quiz" data-src="u3" data-idx="17,16,22,23"></div>
+  </div>
+
+    <div class="card exam-card" id="ex-u4">
+    <div class="tags"><span class="tag note">📝 教材真题精练（单元三 · 25 题）</span></div>
+    <h3><span class="ico">✅</span>单元三真题练习</h3>
+    <div id="exam-u3" class="quiz"></div>
+  </div>
+
+    <div class="summary" id="sum-4">
+    <h4>🎯 第 4 课时 · 小结</h4>
+    <ul>
+      <li>模拟→数字三步骤：<b>采样 → 量化 → 编码</b>。</li>
+      <li><b>声音容量</b> = 采样频率 × 量化位数 × 声道数 × 时长 ÷ 8。</li>
+      <li><b>图像容量</b> = 分辨率 × 颜色位数 ÷ 8；<b>颜色种数 = 2ⁿ</b>。</li>
+      <li><b>位图</b>放大失真但色彩丰富，<b>矢量图</b>放大不失真但色彩单调。</li>
+    </ul>
+  </div></section>
+<section class="page" id="zx">
+  <div class="unit-head">
+    <div class="uh-chip">📝</div>
+    <div>
+      <div class="kicker">📝 综合训练</div>
+      <h2>综合训练真题 · 数据与信息专题</h2>
+      <p>从教材"综合训练一~十"中筛选出的、与"数据与信息"专题直接相关的 74 道选择题（含答案与解析）。</p>
+    </div>
+  </div>
+
+  <!-- ============ 考点分析 ============ -->
+  <div class="card" id="zx-kd">
+    <div class="tags"><span class="tag key">⭐ 重点</span></div>
+    <h3><span class="ico">📊</span>考点分布总览（共 74 题）</h3>
+    <p>把 74 道真题按考点归类，<b>信息的概念与特征</b>占比最高（约 28%），是绝对的高频考点，务必吃透。</p>
+    <table>
+      <tr><th>考点</th><th>题量</th><th>占比</th><th>重要度</th></tr>
+      <tr><td><b>信息的概念与特征</b>（八大特征 + 三大定义 + 载体）</td><td>21</td><td>28%</td><td>🔥 最高频</td></tr>
+      <tr><td><b>数字化与容量计算</b>（采样量化编码 + 声音/图像容量 + 颜色种数）</td><td>13</td><td>18%</td><td>🔥 高频</td></tr>
+      <tr><td><b>数据与知识辨析</b>（数据/信息/知识、数据特点、找规律）</td><td>12</td><td>16%</td><td>⭐ 高频</td></tr>
+      <tr><td><b>数制与进制转换</b>（二↔十互转、二进制运算、进位规则）</td><td>9</td><td>12%</td><td>⭐ 高频</td></tr>
+      <tr><td><b>信息存储单位</b>（bit/Byte/KB/MB/GB/TB 换算）</td><td>8</td><td>11%</td><td>⭐ 高频</td></tr>
+      <tr><td><b>信息编码</b>（ASCII 码、字形点阵）</td><td>5</td><td>7%</td><td>常规</td></tr>
+      <tr><td>数据采集工具</td><td>4</td><td>5%</td><td>常规</td></tr>
+      <tr><td>大数据应用</td><td>2</td><td>3%</td><td>常规</td></tr>
+    </table>
+  </div>
+
+  <div class="card" id="zx-gl">
+    <div class="tags"><span class="tag key">⭐ 重点</span><span class="tag hard">🔥 难点</span></div>
+    <h3><span class="ico">🎯</span>高频考点规律总结</h3>
+
+    <p><b>① 信息八大特征辨析</b>（21 题，最高频）——抓题干里的"场景关键词"对号入座：</p>
+    <table>
+      <tr><th>特征</th><th>题干关键词</th><th>典型场景</th></tr>
+      <tr><td>价值性</td><td>指导决策、有用途、带来好处</td><td>看天气预报出海、用健康数据优化教学</td></tr>
+      <tr><td>载体依附性</td><td>依附于、刻在、写在、存进</td><td>文字刻竹简、存电脑</td></tr>
+      <tr><td>可处理性</td><td>分析、加工、处理、筛选</td><td>成绩分析找问题、身份证提取性别</td></tr>
+      <tr><td>传递性</td><td>传到、传播、播报</td><td>消息传遍全国、直播</td></tr>
+      <tr><td>共享性</td><td>多人同时、共同、下载、群发</td><td>微信群里发通知、资源下载</td></tr>
+      <tr><td>时效性</td><td>过期、过时、随时间变化</td><td>优惠券过期、旧地图、旧天气</td></tr>
+      <tr><td>真伪性</td><td>真假、诈骗、假象</td><td>"明修栈道暗度陈仓"、诈骗短信</td></tr>
+      <tr><td>价值相对性</td><td>对不同人价值不同</td><td>酒驾扣分对司机重要、对学生无用</td></tr>
+    </table>
+    <div class="mnemonic"><span class="t">📌 口诀：</span><b>"价值依附可处理，传递共享讲时效，真伪相对记心间。"</b></div>
+
+    <p style="margin-top:12px;"><b>② 数字化三步骤 + 容量计算</b>（13 题）——先记顺序，再套公式：</p>
+    <ul>
+      <li>三步顺序固定：<span class="hl">采样 → 量化 → 编码</span>（考"第一步是采样""不包括输入/压缩"）。</li>
+      <li>声音容量 = 采样频率 × 量化位数 × 声道数 × 时长 ÷ 8，<b>kHz 要先 ×1000 换成 Hz</b>。</li>
+      <li>图像容量 = 分辨率（宽×高）× 颜色位数 ÷ 8。</li>
+      <li>颜色种数 = 2ⁿ：黑白 1 位、16 色 4 位、256 色 8 位、7 位 128 色、6 位 64 色。</li>
+    </ul>
+    <div class="mnemonic"><span class="t">📌 口诀：</span><b>"先采样、再量化、最后编码；容量=各项相乘再除以 8。"</b></div>
+
+    <p style="margin-top:12px;"><b>③ 数据 / 信息 / 知识辨析</b>（12 题）——三者层层递进：</p>
+    <ul>
+      <li><b>数据</b>：描述客观事物的<b>符号记录</b>（如"160"、年平均气温、健康码）。</li>
+      <li><b>信息</b>：数据所包含的<b>意义</b>（如"小明身高 160 厘米"、天气预报、股市行情）。</li>
+      <li><b>知识</b>：经过提炼的<b>规律/定律</b>（如质量守恒定律、"正常心率 60~100"）。</li>
+      <li>数据特点：<b>固定</b>（区号）/<b>会变化</b>（气温）/<b>随机</b>（骰子、彩票）。</li>
+    </ul>
+    <div class="mnemonic"><span class="t">📌 口诀：</span><b>"数据是符号，信息有意义，知识是规律。"</b></div>
+
+    <p style="margin-top:12px;"><b>④ 进制转换</b>（9 题）：</p>
+    <ul>
+      <li>二进制 → 十进制：<b>按权展开求和</b>（如 11011 = 16+8+2+1 = 27）。</li>
+      <li>十进制 → 二进制：<b>拆数法</b>（凑 16/8/4/2/1）或<b>除 2 取余倒序</b>。</li>
+      <li>二进制运算：逢二进一（如 0101+0111 = 1100）。</li>
+      <li>n 进制规则：<b>逢 n 进一</b>（六进制逢六进一）。</li>
+    </ul>
+
+    <p style="margin-top:12px;"><b>⑤ 存储单位换算</b>（8 题）——两大易错点：</p>
+    <ul>
+      <li><b>1B = 8bit</b>，相邻单位 <b>×1024</b> 进一级（1KB=1024B、1MB=1024KB、1GB=1024MB、1TB=1024GB）。</li>
+      <li><b>一个汉字占 2 字节、一个英文字符占 1 字节</b>：1000 汉字≈2KB，5000 汉字≈10KB，2000 汉字≈4KB。</li>
+      <li>最小单位是位（bit）、基本单位是字节（Byte）。</li>
+    </ul>
+
+    <p style="margin-top:12px;"><b>⑥ ASCII 码</b>（5 题）：</p>
+    <ul>
+      <li>7 位编码、共 128 个字符，用 1 字节存储。</li>
+      <li>大小关系：<span class="hl">空格 &lt; 数字 &lt; 大写字母 &lt; 小写字母</span>。</li>
+      <li>相邻字母 ASCII 码连续：已知一个字符的码值，按字母表位置加减差值即可推出（如 "d"=100 → "g"=103）。</li>
+    </ul>
+  </div>
+
+  <div class="card" id="zx-jy">
+    <div class="tags"><span class="tag hard">🔥 易错点</span></div>
+    <h3><span class="ico">⚠️</span>答题技巧与易错提醒</h3>
+    <ul>
+      <li><b>"时效性" vs "价值相对性"</b>：强调"过期/过时"选时效性；强调"对不同人价值不同"选价值相对性。</li>
+      <li><b>"共享性" vs "传递性"</b>：强调"多人同时接收、可多次使用"选共享性；强调"从一处传到另一处"选传递性。</li>
+      <li><b>"载体依附性" vs "数据"</b>：问"信息不能独立存在、需依附载体"选依附性；问"记录客观事物的符号"选数据。</li>
+      <li><b>容量计算单位陷阱</b>：kHz 要 ×1000 换 Hz；结果为 B 时若要 KB 记得再 ÷1024；16 色 = 4 位（2⁴），不是 16 位。</li>
+      <li><b>汉字 vs 英文字符</b>：汉字 2 字节、英文 1 字节，算"能存多少个"时别搞混。</li>
+      <li><b>排除法</b>：选择题先排除明显"设备/载体"项（计算器、光盘、显示屏不是数据），再排除"过时表述"。</li>
+    </ul>
+  </div>
+
+  <div id="zx-container"><span id="zx-list"></span></div></section>
+<section class="page" id="review">
+  <div class="unit-head">
+    <div class="uh-chip">考</div>
+    <div>
+      <div class="kicker">考前冲刺</div>
+      <h2>考前速览 · 口诀与公式</h2>
+      <p>考前 10 分钟快速过一遍所有记忆口诀与核心公式。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="ico">📌</span>口诀速记卡</h3>
+    <div class="quick-cards" id="rv-mn">
+      <div class="quick-card"><h4><span class="qi">🧠</span>信息八大特征</h4><div class="qc-body"><b>"价值依附可处理，传递共享讲时效，真伪相对记心间。"</b>（价·依·可·传·共·时·真·相）</div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>数据·信息·知识·智慧</h4><div class="qc-body"><b>"数据是原料，信息是加工，知识是规律，智慧是升华。"</b></div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>十进制→二进制</h4><div class="qc-body"><b>"除 2 取余，余数倒着读；拆权凑数，从大往小拆。"</b></div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>二进制→十进制</h4><div class="qc-body"><b>"按权展开，乘了再加，位数从 0 开始数。"</b></div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>汉字编码流程</h4><div class="qc-body"><b>"输入 → 机内 → 国标 → 输出"</b>，简称 <b>"输机国出"</b>；一个汉字机内码/国标码 2 字节。</div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>数字化三步</h4><div class="qc-body"><b>"先采样、再量化、最后编码。"</b>（"采量编"）</div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>声音容量</h4><div class="qc-body"><b>"频率乘位数，乘声道乘时长，最后除以 8。"</b></div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>图像容量</h4><div class="qc-body"><b>"分辨率乘位数，除以 8 得容量；颜色种数 2 的 n 次方。"</b></div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>位图与矢量图</h4><div class="qc-body"><b>"位图放大糊，矢量放大清；位图色彩富，矢量色彩单。"</b></div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>ASCII 大小关系</h4><div class="qc-body"><b>"空 &lt; 数 &lt; 大 &lt; 小"</b>（空格最小，小写字母最大；数字 48 起、大写 65 起、小写 97 起）。</div></div>
+      <div class="quick-card"><h4><span class="qi">🧠</span>存储单位</h4><div class="qc-body"><b>"1B 等于 8 位，1024 进一级，K、M、G、T 排排坐。"</b></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="ico">🧮</span>核心公式卡</h3>
+    <div class="quick-cards" id="rv-fm">
+      <div class="quick-card"><h4><span class="qi">📐</span>声音容量</h4><div class="qc-body"><div class="f">声音容量(B) = 采样频率 × 量化位数 × 声道数 × 时长 ÷ 8</div>kHz 先 ×1000 换成 Hz。</div></div>
+      <div class="quick-card"><h4><span class="qi">📐</span>图像容量</h4><div class="qc-body"><div class="f">图像容量(B) = 分辨率(宽×高) × 颜色位数 ÷ 8</div>颜色种数 = 2ⁿ。</div></div>
+      <div class="quick-card"><h4><span class="qi">📐</span>存储单位换算</h4><div class="qc-body"><div class="f">1B = 8bit | 1KB = 1024B | 1MB = 1024KB | 1GB = 1024MB | 1TB = 1024GB</div></div></div>
+      <div class="quick-card"><h4><span class="qi">📐</span>组合状态数</h4><div class="qc-body"><div class="f">n 位二进制 → 2ⁿ 种组合</div>4 位 → 16 种；7 位 → 128 色。</div></div>
+    </div>
+  </div>
+
+  <div class="card" id="rv-yb">
+    <h3><span class="ico">⚠️</span>易错对照表</h3>
+    <table>
+      <tr><th>易混点</th><th>区分关键</th><th>口诀/要点</th></tr>
+      <tr><td>时效性 vs 价值相对性</td><td>"过期/过时" vs "对不同人价值不同"</td><td>过期选时效；因人而异选相对</td></tr>
+      <tr><td>共享性 vs 传递性</td><td>"多人同时" vs "从一处到另一处"</td><td>群发/下载选共享；播报/传遍选传递</td></tr>
+      <tr><td>载体依附性 vs 数据</td><td>"信息需依附" vs "符号记录本身"</td><td>刻在/写在选依附；符号/记录选数据</td></tr>
+      <tr><td>容量计算单位陷阱</td><td>kHz→×1000；B→KB 再÷1024</td><td>16 色 = 4 位（2⁴），不是 16 位</td></tr>
+      <tr><td>汉字 vs 英文字符</td><td>汉字 2 字节、英文 1 字节</td><td>1024 个汉字 = 2KB；1KB 存 512 汉字</td></tr>
+    </table>
+  </div>
+</section>
+<section class="page" id="tools">
+  <div class="unit-head">
+    <div class="uh-chip">🛠</div>
+    <div>
+      <div class="kicker">🛠 动手练一练</div>
+      <h2>互动工具</h2>
+      <p>边学边算，把公式用起来记得更牢。</p>
+    </div>
+  </div>
+
+  <div class="tool" id="tl-conv">
+    <h3>🔢 进制转换器（十进制 ↔ 二进制）</h3>
+    <div class="row">
+      <div><label>十进制数</label><input type="number" id="decInput" placeholder="如 35" value="35"></div>
+      <button onclick="dec2bin()">转二进制</button>
+    </div>
+    <div class="row">
+      <div><label>二进制数</label><input type="text" id="binInput" placeholder="如 10111" value="10111"></div>
+      <button onclick="bin2dec()">转十进制</button>
+    </div>
+    <div class="result" id="convResult"></div>
+  </div>
+
+  <div class="tool" id="tl-snd">
+    <h3>🎵 声音容量计算器</h3>
+    <div class="row">
+      <div><label>采样频率(kHz)</label><input type="number" id="freq" value="22.05"></div>
+      <div><label>量化位数(bit)</label><input type="number" id="bits" value="16"></div>
+      <div><label>声道数</label><select id="chan"><option value="1">1（单声道）</option><option value="2" selected>2（双声道）</option></select></div>
+      <div><label>时长(秒)</label><input type="number" id="dur" value="10"></div>
+      <button onclick="soundCalc()">计算</button>
+    </div>
+    <div class="result" id="soundResult"></div>
+  </div>
+
+  <div class="tool" id="tl-img">
+    <h3>🖼 图像容量计算器</h3>
+    <div class="row">
+      <div><label>宽(像素)</label><input type="number" id="w" value="20"></div>
+      <div><label>高(像素)</label><input type="number" id="h" value="30"></div>
+      <div><label>颜色位数(bit)</label><input type="number" id="cbits" value="24"></div>
+      <button onclick="imageCalc()">计算</button>
+    </div>
+    <div class="row">
+      <div><label>或：颜色种数(如16色)</label><input type="number" id="ccount" placeholder="可选"></div>
+      <span style="font-size:13px;color:var(--muted);">填"颜色种数"会自动换算成位数(2ⁿ)</span>
+    </div>
+    <div class="result" id="imageResult"></div>
+  </div>
+</section>
+</main>
+</div>
+
+<footer>
+  必修一 · 专题一「数据与信息」· 第一周课件 | 知识点 + 159 道真题（单元练习 85 + 综合训练 74）| 内容严格参照《高中信息技术学业水平考试》教材 | 供教师课堂教学使用
+</footer>
+
+<button class="back-top" id="backTop" title="返回顶部" aria-label="返回顶部">↑</button>
+<button class="menu-btn" id="menuBtn" title="目录" aria-label="打开目录">☰</button>
+<button class="sb-open-btn" id="sbOpen" title="展开目录" aria-label="展开目录"><span class="oi">⟨</span>展开目录</button>
+
+<script>
+/* ---------- 侧边栏折叠/展开（桌面端，localStorage 记忆） ---------- */
+const sbOpenBtn = document.getElementById('sbOpen');
+const sbEl = document.getElementById('sidebar');
+function setSidebarCollapsed(collapsed){
+  sbEl.classList.toggle('collapsed', collapsed);
+  sbOpenBtn.classList.toggle('show', collapsed);
+  try{ localStorage.setItem('sbCollapsed', collapsed ? '1' : '0'); }catch(e){}
+}
+document.getElementById('sbCollapse').addEventListener('click', ()=> setSidebarCollapsed(true));
+sbOpenBtn.addEventListener('click', ()=> setSidebarCollapsed(false));
+(function restoreSidebar(){
+  let saved = null;
+  try{ saved = localStorage.getItem('sbCollapsed'); }catch(e){}
+  if(saved === '1') setSidebarCollapsed(true);
+})();
+
+/* ---------- 页面切换 ---------- */
+const pages = document.querySelectorAll('section.page');
+function goto(id){
+  pages.forEach(p=>p.classList.toggle('active', p.id===id));
+  document.querySelectorAll('aside.sidebar .grp').forEach(g=>{
+    const u = g.dataset.unit;
+    if(u===id) g.classList.add('open');
+    else if(['unit1','unit2','unit3','unit4','zx','review','tools'].includes(u)) g.classList.remove('open');
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+  closeSidebar();
+}
+
+/* ---------- 侧边栏分组开合 ---------- */
+document.querySelectorAll('.grp-toggle').forEach(t=>{
+  t.addEventListener('click', e=>{
+    if(t.hasAttribute('onclick')) return;
+    const grp = t.closest('.grp');
+    const wasOpen = grp.classList.contains('open');
+    document.querySelectorAll('.grp').forEach(g=>g.classList.remove('open'));
+    if(!wasOpen) grp.classList.add('open');
+    const target = grp.dataset.unit;
+    if(['unit1','unit2','unit3','unit4','zx','review','tools'].includes(target)) goto(target);
+  });
+});
+
+/* ---------- 侧边栏锚点跳转 ---------- */
+document.querySelectorAll('.grp-items a[data-anchor]').forEach(a=>{
+  a.addEventListener('click', ()=>{
+    const id = a.dataset.anchor;
+    const grp = a.closest('.grp');
+    if(grp.dataset.unit){
+      goto(grp.dataset.unit);
+      setTimeout(()=>{
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 60);
+    }
+    document.querySelectorAll('.grp-items a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    closeSidebar();
+  });
+});
+
+/* ---------- 移动端侧边栏 ---------- */
+const sidebar = document.getElementById('sidebar');
+const menuBtn = document.getElementById('menuBtn');
+function closeSidebar(){ sidebar.classList.remove('show'); }
+menuBtn.addEventListener('click', ()=> sidebar.classList.toggle('show'));
+
+/* ---------- 表格响应式包裹 ---------- */
+document.querySelectorAll('main table').forEach(t=>{
+  if(t.parentNode.classList.contains('table-wrap')) return;
+  const w=document.createElement('div'); w.className='table-wrap';
+  t.parentNode.insertBefore(w,t); w.appendChild(t);
+});
+
+/* ---------- 顶部进度条 / 返回顶部 ---------- */
+const topFill=document.querySelector('#topbar .fill');
+const backTop=document.getElementById('backTop');
+window.addEventListener('scroll', ()=>{
+  const st=window.scrollY, h=document.documentElement.scrollHeight-window.innerHeight;
+  topFill.style.width=(h>0? st/h*100:0)+'%';
+  backTop.classList.toggle('show', st>400);
+},{passive:true});
+backTop.addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+
+/* ---------- 学习进度（访问过的知识卡计数） ---------- */
+const visited = new Set();
+function markVisited(kid){ visited.add(kid); updateProgress(); }
+function updateProgress(){
+  const total = 19;
+  const n = visited.size;
+  document.getElementById('sbBar').style.width = (n/total*100)+'%';
+  document.getElementById('sbNum').textContent = '已学 ' + n + ' / ' + total + ' 个知识点';
+}
+/* 滚动时标记进入视口的知识卡 */
+const kpObserver = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting && en.target.id.startsWith('kp-')) markVisited(en.target.id);
+  });
+},{threshold:.35});
+document.querySelectorAll('.kp-card').forEach(c=>kpObserver.observe(c));
+
+/* ---------- 知识卡进入时高亮侧边栏对应项 ---------- */
+const anchorMap = {};
+document.querySelectorAll('.grp-items a[data-anchor]').forEach(a=>anchorMap[a.dataset.anchor]=a);
+const hlObserver = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      const a = anchorMap[en.target.id];
+      if(a){
+        document.querySelectorAll('.grp-items a').forEach(x=>x.classList.remove('active'));
+        a.classList.add('active');
+      }
+    }
+  });
+},{threshold:.3, rootMargin:'0px 0px -30% 0px'});
+document.querySelectorAll('.kp-card, .exam-card, .tool').forEach(c=>{
+  if(c.id) hlObserver.observe(c);
+});
+
+/* ---------- 教材真题库（共 85 题，均取自教材单元练习） ---------- */
+const EXAM = {
+  /* 单元一（30 题） */
+  u1: [
+    {q:'数据是指（　）。', o:['数值的大小','计量物体数量和质量的数值','数字 0,1,2,…,9 及正、负号','描述和记录客观事物属性的符号'], a:3, e:'教材指出"数据是现实世界客观事物的符号记录，是信息的载体"，因此数据是描述和记录客观事物属性的符号。'},
+    {q:'光盘封面中"信息技术"的数据表现形式是（　）。', o:['数字','文字','视频','图像'], a:1, e:'光盘封面上的"信息技术"以文字形式呈现，属于文字这种数据表现形式。'},
+    {q:'各地区的固定电话区号不会发生变化。这一事例说明有些数据是（　）。', o:['会消失的','随机出现的','固定不变的','会变化的'], a:2, e:'电话区位号、邮政编码等属于固定不变的数据。'},
+    {q:'找规律：数列 49, 64, 81, 100, 121 … 的后一项是（　）。', o:['256','169','196','144'], a:3, e:'49=7²，64=8²，81=9²，100=10²，121=11²，下一项为 12²=144。'},
+    {q:'以下属于数据的是（　）。', o:['数学练习册','教材配套光盘','黑板上的文字','LED 显示屏'], a:2, e:'黑板上的文字是记录客观事物的符号，属于数据；练习册、光盘、显示屏属于载体或设备。'},
+    {q:'以下有关数据的说法，错误的是（　）。', o:['下课铃声属于非数值型数据','牛肉的价格和产量属于数值型数据','图文声像是数据常见的呈现方式','计算机能直接识别和处理各种数据'], a:3, e:'计算机内部只能直接识别和处理二进制表示的数字化数据，模拟数据需先转换为数字数据，故 D 错误。'},
+    {q:'以下不属于数据的是（　）。', o:['课文朗读录音','迎新晚会视频','多功能计算器','卫星气象云图'], a:2, e:'多功能计算器是设备，不是记录客观事物的符号；录音、视频、云图都属于数据。'},
+    {q:'数据记录形式多种多样，以下属于数据的是（　）。', o:['MP4 播放器','飞天壁画','移动硬盘','文件袋'], a:1, e:'飞天壁画属于图像类数据；MP4 播放器、移动硬盘、文件袋是实体设备或物品。'},
+    {q:'报刊记录数据的形式是（　）。', o:['文字和图像','动画','视频','声音'], a:0, e:'报刊主要通过文字和图像来记录和呈现信息。'},
+    {q:'无法在可承受的时间范围内用常规软件工具进行捕捉、管理和处理的数据集合称为（　）。', o:['数据块','大数据','数据库','异常数据'], a:1, e:'这是教材对"大数据"的定义。'},
+    {q:'大数据的特征包括（　）。①体量大 ②快速化 ③多样性 ④价值密度低', o:['①②③','①③④','②③④','①②③④'], a:3, e:'大数据特征为：数据体量大、数据类型多、处理速度快、应用价值高但价值密度低，四项全对。'},
+    {q:'大数据是基于（　）的。', o:['电信网','广电网','企业网','互联网'], a:3, e:'教材明确："大数据起源于互联网"。'},
+    {q:'以下应用了大数据技术的是（　）。', o:['健康码','电子邮件','文件传输','微信私聊记录'], a:0, e:'教材举例"健康码、行程码、掌上公交"等都用到了大数据技术。'},
+    {q:'以下对信息的描述，错误的是（　）。', o:['信息可以消除认识上的不确定性','信息是已经存在和被利用的消息','信息是数据、消息中所包含的意义','信息是事物的运动状态及其状态变化的方式'], a:1, e:'香农认为"信息是有新知识或内容的消息"，而非"已经存在和被利用的消息"，故 B 错误。'},
+    {q:'以下不属于信息的是（　）。', o:['书报刊','会议通知','天气预报','股市行情'], a:0, e:'书报刊是信息的载体，不是信息本身；通知、天气预报、股市行情均属于信息。'},
+    {q:'以下有关信息概念的描述，正确的是（　）。', o:['信息是一种能量','信息是社会产物','信息区别于资源','信息区别于物质'], a:3, e:'维纳认为信息是一种资源，信息、物质、能量是并列的三大资源，故"信息区别于物质"正确。'},
+    {q:'提出"信息是一种资源"的科学家是（　）。', o:['香农','维纳','冯·诺依曼','钟义信'], a:1, e:'教材指出维纳认为"信息是一种资源"。'},
+    {q:'以下关于信息概念的描述，正确的是（　）。', o:['信息一定包含数据','信息一定包含符号','信息与数据会相互运动','信息是事物运动的方式'], a:3, e:'钟义信认为"信息是事物运动的状态与状态变化的方式"。'},
+    {q:'以下不属于信息特征的是（　）。', o:['依附性','传递性','共享性','多元性'], a:3, e:'信息特征有价值性、载体依附性、可处理性、传递性、共享性、时效性、真伪性、价值相对性，不含"多元性"。'},
+    {q:'猪肉的价格会随着每天市场行情变化而波动，这主要说明信息具有（　）。', o:['时效性','多样性','不稳定性','不确定性'], a:0, e:'价格随时间变化，说明信息在一定时间内有效、会过时，体现信息的时效性。'},
+    {q:'天气预报可以被多个人接收并且多次使用，这主要体现信息的（　）特征。', o:['时效性','复用性','共享性','传播性'], a:2, e:'信息可被多人同时接收和多次使用，体现信息的共享性。'},
+    {q:'小明爸爸说"我的血压是高压130，低压80，属于正常范围"，这句话描述的是（　）。', o:['数据','信息','知识','都不是'], a:2, e:'"属于正常范围"是经过分析形成的判断和认识，属于知识。'},
+    {q:'商品厂家找明星代言做广告，以提高产品销售量。这主要体现信息的（　）特征。', o:['价值性','依附性','普遍性','可处理性'], a:0, e:'利用广告、代言信息带来经济价值，体现信息的价值性。'},
+    {q:'学生通过观看教学光盘影像进行学习，学生获取信息的载体是（　）。', o:['声音','光盘','视频','文字'], a:2, e:'题干强调"光盘影像"，即通过视频这种载体获取信息。'},
+    {q:'"明修栈道，暗度陈仓"，主要体现信息的（　）特征。', o:['传递性','真伪性','时效性','片面性'], a:1, e:'"明修栈道，暗度陈仓"是利用假象迷惑对方，信息有真有假，体现信息的真伪性。'},
+    {q:'交警分析道路监控视频数据，找到交通事故原因，主要体现信息的（　）特征。', o:['时效性','共享性','相对性','可处理性'], a:3, e:'对视频数据进行分析、加工得到事故原因，体现信息的可处理性。'},
+    {q:'以下说法中不正确的是（　）。', o:['数据和信息相互包含','信息是数据处理的结果','智慧是知识的抽象和升华','数据是信息和知识的基础'], a:0, e:'数据是信息的载体，信息是数据的内涵，二者不是"相互包含"的关系，故 A 不正确。'},
+    {q:'人类对客观事物感知的最初阶段是（　）。', o:['信息','数据','知识','智慧'], a:1, e:'按照"数据→信息→知识→智慧"的认知过程，最初阶段是数据。'},
+    {q:'人体正常心率的范围在 60 到 100 次每分钟，这句话的描述属于（　）。', o:['数据','信息','数字','知识'], a:3, e:'"正常心率范围"是经过总结形成的规律性认识，属于知识。'},
+    {q:'以下关于数据、知识、信息、智慧之间关系的表示方法，正确的是（　）。', o:['信息→数据→知识→智慧','智慧→数据→信息→知识','数据→信息→知识→智慧','知识→智慧→信息→数据'], a:2, e:'教材明确指出：数据→信息→知识→智慧。'}
+  ],
+  /* 单元二 数制部分（1~10 题） */
+  u2num: [
+    {q:'将二进制数 (11010)₂ 转换为十进制数等于（　）。', o:['24','26','25','28'], a:1, e:'按权展开：1×2⁴+1×2³+0×2²+1×2¹+0×2⁰ = 16+8+0+2+0 = 26。'},
+    {q:'与十进制数 14 等值的二进制数是（　）。', o:['1110','1101','1100','1111'], a:0, e:'拆数法：14 = 8+4+2+0 → 1110；验证 (1110)₂=8+4+2+0=14。'},
+    {q:'以下二进制数中最大的是（　）。', o:['11101','11100','10111','11011'], a:0, e:'11101=29、11100=28、10111=23、11011=27，29 最大。'},
+    {q:'二进制数的表示方法通常是在数值的后面加上字母（　）。', o:['D','B','O','H'], a:1, e:'二进制 Binary 用 B 表示；D 十进制、O 八进制、H 十六进制。'},
+    {q:'与二进制数 10101 等值的十进制数是（　）。', o:['42','22','21','43'], a:2, e:'(10101)₂ = 16+0+4+0+1 = 21。'},
+    {q:'将十进制整数转换为 R（R 为 2,8,16）进制数常用的方法是（　）。', o:['按权展开求和法','列表法','移位法','除 R 取余法'], a:3, e:'十进制整数转 R 进制用"除 R 取余、倒序排列"。'},
+    {q:'以下可能是二进制数的是（　）。', o:['1456','1201','98AF','1011'], a:3, e:'二进制只含数码 0 和 1，1011 只含 0 和 1。'},
+    {q:'将十进制数 29 转换为二进制数，下列正确的是（　）。', o:['10110','11001','11101','10111'], a:2, e:'29 = 16+8+4+1 → 11101；验证 (11101)₂=16+8+4+0+1=29。'},
+    {q:'以下关于四进制数进位规则的描述，正确的是（　）。', o:['逢二进一','逢十进一','逢一进四','逢四进一'], a:3, e:'n 进制的进位规则是"逢 n 进一"，四进制即"逢四进一"。'},
+    {q:'4 位二进制数的组合状态数为（　）。', o:['4','8','16','12'], a:2, e:'n 位二进制有 2ⁿ 种组合，4 位即 2⁴=16 种。'}
+  ],
+  /* 单元二 编码与存储单位部分（11~30 题，共 20 题） */
+  u2b: [
+    {q:'在计算机中存储信息的最小单位是（　）。', o:['字节','二进制位','千字节','兆字节'], a:1, e:'最小单位是位（bit，比特）；基本单位是字节（Byte）。'},
+    {q:'在计算机中存储信息的基本单位是（　）。', o:['比特','KB','MB','字节'], a:3, e:'基本单位是字节（Byte，简记 B），1B=8bit。'},
+    {q:'1MB 等于（　）。', o:['1000KB','1024B','1000×1000B','1024×1024B'], a:3, e:'1MB = 1024KB = 1024×1024B。'},
+    {q:'以下对信息存储容量单位的换算，错误的是（　）。', o:['1TB=1024GB','1MB=1024KB','1KB=1024MB','1GB=1024MB'], a:2, e:'应为 1MB=1024KB，而不是 1KB=1024MB，故 C 错误。'},
+    {q:'一个字节相当于（　）。', o:['1bit','8bit','2bit','16bit'], a:1, e:'1B（字节）= 8bit（位）。'},
+    {q:'以下对存储容量单位大小的比较，正确的是（　）。', o:['1GB > 1MB > 1TB','1TB > 1MB > 1KB','1GB > 1TB > 1MB','1MB > 1KB > 1TB'], a:1, e:'正确大小顺序：1TB>1GB>1MB>1KB，B 选项中 1TB>1MB>1KB 成立。'},
+    {q:'在微型机中，英文字符的编码方案是（　）。', o:['BCD 码','区位码','ASCII 码','拼音码'], a:2, e:'英文字符用 ASCII 码（美国国家信息交换标准代码）编码。'},
+    {q:'7 位 ASCII 码所能表示的字符个数是（　）。', o:['64','128','256','1024'], a:1, e:'ASCII 码用 7 位表示，共 2⁷=128 个字符。'},
+    {q:'已知"B"的 ASCII 码为二进制数 01000010，则"F"的 ASCII 码为（　）。', o:['01001010','01000101','01000100','01000110'], a:3, e:'B 与 F 相差 4（B、C、D、E、F），01000010+100(二进制4)=01000110。'},
+    {q:'以下字符中，其对应 ASCII 码的值最大的是（　）。', o:['z','D','9','空格'], a:0, e:'空格(32)<数字(48~57)<大写(65~90)<小写(97~122)，"z"为小写字母值最大。'},
+    {q:'若字符"C"的 ASCII 码为十进制数 67，那么字符"H"的 ASCII 码为十进制数（　）。', o:['68','69','72','71'], a:2, e:'C 到 H 相差 5（C、D、E、F、G、H），67+5=72。'},
+    {q:'4×4 位图中第一行的编码是 1101，则第二行的编码是（　）。', o:['0011','0101','1100','1010'], a:-1, e:'本题为配图题，需对照教材图 5 数出第二行从左到右的黑白像素（黑=1、白=0）来判断，文字版无法确定唯一答案。'},
+    {q:'已知"g"的 ASCII 码的十进制数是 103，则"d"的 ASCII 码的十进制数是（　）。', o:['99','101','100','98'], a:2, e:'d、e、f、g 依次递增，"d"比"g"小 3，103-3=100。'},
+    {q:'以下有关 ASCII 码的说法，错误的是（　）。', o:['ASCII 码是美国信息交换标准码的简称','ASCII 码主要用于对字母、数字和标点符号进行编码','ASCII 码是汉字的统一编码方案','一个字符的 ASCII 码占一个字节，最高位固定为 0'], a:2, e:'汉字的编码方案是国标码（GB2312）等，ASCII 码不是汉字的统一编码方案。'},
+    {q:'ASCII 码表中字符"#"的 ASCII 码是（　）。', o:['00100011','00110010','01000011','00100101'], a:0, e:'查表："#"位于列（高四位）0010、行（低四位）0011 的交点，即 00100011。'},
+    {q:'1KB 存储容量能存储的英文字符个数是（　）。', o:['128 个','1024 个','512 个','2048 个'], a:1, e:'1KB=1024B，一个英文字符占 1 字节，故能存 1024 个。'},
+    {q:'1KB 存储容量最多能存储汉字的个数是（　）。', o:['1024','512','2048','1000'], a:1, e:'一个汉字机内码/国标码占 2 字节，1024B÷2=512 个。'},
+    {q:'存储 1024 个汉字的国标码占用的存储空间是（　）。', o:['512B','1KB','2KB','128B'], a:2, e:'一个汉字国标码占 2 字节，1024×2=2048B=2KB。'},
+    {q:'汉字在机器内部进行存储、加工和传输使用的代码是（　）。', o:['机内码','拼音码','自然码','字型码'], a:0, e:'机内码是汉字在机器内部存储、加工、传送使用的代码；拼音码是输入码，字型码是输出码。'},
+    {q:'存储 10000 个英文字母需要的存储容量大约是（　）。', o:['5KB','2KB','10KB','1MB'], a:2, e:'一个英文字母占 1 字节，10000B≈9.77KB，约 10KB。'}
+  ],
+  /* 单元三（25 题） */
+  u3: [
+    {q:'随着时间连续变化的数据称为（　）。', o:['数值数据','动态数据','数字数据','模拟数据'], a:3, e:'模拟信号用连续变化的物理量表达，其值称模拟数据；数字数据是离散、不连续的。'},
+    {q:'随时间变化是离散的、不连续的数据称为（　）。', o:['间接数据','数字数据','模拟数据','可变数据'], a:1, e:'数字信号是离散、不连续的信号，其值称为数字数据。'},
+    {q:'用 0、1 表示的数据称为（　）。', o:['模拟数据','物理数据','模拟信号','数字数据'], a:3, e:'数字数据用二进制数 0 和 1 表示。'},
+    {q:'以下对数据的叙述，错误的是（　）。', o:['数字数据不能转化为模拟数据','在计算机中，数据以二进制的形式表示','文字、图像、声音、视频等数据属于模拟数据','模拟数据必须转化为数字数据，计算机才能加工处理'], a:0, e:'A 错误：模拟信号与数字信号可以相互转换，数字数据可通过数模转换转回模拟数据。'},
+    {q:'声音的数字化过程中，正确的步骤顺序是（　）。①量化 ②采样 ③编码', o:['①②③','②①③','②③①','①③②'], a:1, e:'数字化基本步骤：采样→量化→编码，即②采样、①量化、③编码。'},
+    {q:'录音设备在 1 秒钟内对声音信号的采样次数称为（　）。', o:['采样精度','采样频率','采样样本','采样数量'], a:1, e:'1 秒钟内的采样次数称为采样频率。'},
+    {q:'采用以下标准采集的音频，质量最高的是（　）。', o:['采样频率 22.05kHz，量化位数 8 位','采样频率 22.05kHz，量化位数 16 位','采样频率 44.1kHz，量化位数 8 位','采样频率 88.2kHz，量化位数 16 位'], a:3, e:'采样频率越高、量化位数越大，保真度越高。D 项频率最高、位数最大，质量最高。'},
+    {q:'采样率越高，量化位数越大，则（　）。①声音的保真度越高 ②音质效果越差 ③数据量越大 ④存储容量越小', o:['①③','②④','①②③','①②④'], a:0, e:'采样频率越高、量化位数越大，保真度越高、质量越好，但数据容量越大，①③正确。'},
+    {q:'将模拟数据转换为数字数据的过程包含编码和（　）。', o:['量化、采样','压缩、量化','转换、采样','解密、量化'], a:0, e:'数字化三步：采样→量化→编码，除编码外还包含采样和量化。'},
+    {q:'在声音数字化过程中，把采集到的幅度值用最接近的整数表示，该步骤称为（　）。', o:['编码','量化','存储','采样'], a:1, e:'量化是用二进制数表示采样得到的幅度值（取最接近的整数）。'},
+    {q:'采集一段采样频率 22.05kHz、量化位数 16 位、时长 5 秒的双声道立体声音频，存储容量大约为（　）。', o:['88.2KB','3528KB','220.5KB','430.7KB'], a:3, e:'22.05×1000×16×5×2÷8÷1024 = 441000÷1024 ≈ 430.7KB。'},
+    {q:'存储一幅尺寸和分辨率相同的图像，其中容量最小的是（　）。', o:['16 色图像','黑白图像','256 色图像','24 位真彩色图像'], a:1, e:'分辨率相同则颜色位数越小容量越小：黑白 1 位 < 16 色 4 位 < 256 色 8 位 < 24 位。'},
+    {q:'与图像容量大小密切相关的因素有（　）。①图像尺寸 ②分辨率 ③图像制作软件 ④颜色位数', o:['①②④','①③④','②③④','①②③'], a:0, e:'图像容量=分辨率×颜色位数÷8，图像尺寸决定分辨率，故①②④相关，制作软件无关。'},
+    {q:'存储一幅未经压缩、分辨率为 10×20、颜色为 16 色的位图图像，占用的存储空间是（　）。', o:['3KB','400B','200B','100B'], a:3, e:'16 色=2⁴，每像素 4 位。10×20×4÷8 = 800÷8 = 100B。'},
+    {q:'存储一幅未经压缩、分辨率为 20×10、颜色位数为 24 位的位图图像，其存储容量为（　）。', o:['800B','600B','4800B','480B'], a:1, e:'20×10×24÷8 = 4800÷8 = 600B。'},
+    {q:'5 位二进制数最多能表示的颜色数为（　）。', o:['16','8','32','4'], a:2, e:'颜色种数=2ⁿ，5 位即 2⁵=32 种。'},
+    {q:'以下不属于音频文件格式的是（　）。', o:['mp3','mov','wav','wma'], a:1, e:'mov 是视频格式；音频格式有 wav、mp3、wma、mid、au、ra 等。'},
+    {q:'小华从网上下载了一幅图，放大后会失真，此图的类型是（　）。', o:['矢量图','三维图','平面图','位图'], a:3, e:'位图由像素组成、放大后容易失真；矢量图放大不失真。'},
+    {q:'以下属于文本文件的是（　）。', o:['校园风采.avi','校园风采.gif','校园风采.txt','校园风采.xls'], a:2, e:'txt 是文本文件；avi 视频、gif 图像、xls 表格。'},
+    {q:'下列属于视频文件的是（　）。', o:['xysp.zip','xysp.mid','xysp.wmv','xysp.pdf'], a:2, e:'wmv 是视频格式；zip 压缩、mid 音频、pdf 文档。'},
+    {q:'以下不属于图像文件格式的是（　）。', o:['doc','png','jpg','bmp'], a:0, e:'doc/docx 是 Word 文档；png、jpg、bmp 是图像格式。'},
+    {q:'某位图包含 256 种颜色，此图像的色彩位数至少为（　）。', o:['4 位','16 位','32 位','8 位'], a:3, e:'256=2⁸，故色彩位数至少为 8 位。'},
+    {q:'将原始的课文朗读录音"春.wav"转换为"春.mp3"，将会（　）。', o:['提高音质','缩小容量','增大容量','降低噪声'], a:1, e:'wav 未压缩、容量大；mp3 是压缩格式，转换后容量缩小。'},
+    {q:'将一幅 bmp 格式的图像转变为 jpg 格式，则（　）。', o:['容量变小','容量变大','色彩变丰富','尺寸变大'], a:0, e:'bmp 未压缩、容量大，jpg 是压缩格式，转换后容量变小。'},
+    {q:'在声音数字化过程中，用计算机能够存储和处理的二进制表示，该步骤称为（　）。', o:['量化','采样','编码','读写'], a:2, e:'将量化后的数据转化为二进制数的过程称为编码。'}
+  ],
+};
+
+/* ===== 综合训练一~十 中与"数据与信息"专题相关的选择题（共 74 题） ===== */
+const ZX = {
+  '综合训练一': [
+    {q:'[第9题] 计算机中表示信息的最小单位和基本单位分别是（　）。', o:['位和字节','字和字长','B 和 KB','MB 和 GB'], a:0, e:'最小单位是位（bit），基本单位是字节（Byte，简记 B），1B=8bit。'},
+    {q:'[第16题] 常用的英文字符的编码方案是（　）。', o:['国标码','拼音码','ASCII 码','BCD 码'], a:2, e:'英文字符用 ASCII 码（美国国家信息交换标准代码）编码。'},
+    {q:'[第17题] 将二进制数 11011 转化为十进制数等于（　）。', o:['25','27','26','29'], a:1, e:'11011 = 16+8+0+2+1 = 27。'},
+    {q:'[第18题] 历史典故"学富五车"告诉我们古代文字是刻在竹简、木简上的，这体现了信息的（　）。', o:['价值性','时效性','载体依附性','传递性'], a:2, e:'文字依附于竹简、木简，体现信息不能独立存在、需依附载体，即载体依附性。'},
+    {q:'[第22题] 找规律：数列 8, 20, 34, 50, 68 的后一项是（　）。', o:['78','84','88','92'], a:2, e:'相邻差为 12、14、16、18（每次+2），下一差 20，68+20=88。'}
+  ],
+  '综合训练二': [
+    {q:'[第2题] 渔民根据天气预报决定是否出海捕鱼，这主要体现了信息的（　）特征。', o:['真伪性','传递性','价值性','独立性'], a:2, e:'信息作为决策参考（出海作业）产生价值，体现价值性。'},
+    {q:'[第6题] 电视播放的 NBA 比赛实况，其信息呈现的方式是（　）。', o:['文字','动画','图像','视频'], a:3, e:'比赛实况以视频形式呈现，视频是信息的载体之一。'},
+    {q:'[第10题] 质量守恒定律告诉我们：参加化学反应前各物质的质量总和等于反应后生成各物质的质量总和。质量守恒定律属于（　）。', o:['数据','知识','信息','信号'], a:1, e:'定律是经过总结形成的规律性认识，属于知识。'},
+    {q:'[第11题] 信息是一种（　）。', o:['物质','资源','能量','东西'], a:1, e:'维纳认为"信息是一种资源"，信息、物质、能量是三大资源。'},
+    {q:'[第17题] 音频的数字化过程要经过 3 个主要步骤，不包括（　）。', o:['采样','量化','输入','编码'], a:2, e:'数字化三步是采样→量化→编码，不包括"输入"。'},
+    {q:'[第22题] 下列属于大数据在生产、生活中应用的是（　）。', o:['拨打 114 咨询电话号码','顾客扫描二维码点餐','管理员将图书信息输入管理平台','共享单车平台为用户提供最近停车点'], a:3, e:'共享单车平台基于海量车辆位置数据为用户推荐停车点，属于大数据应用。'},
+    {q:'[第24题] 用视频监控抓拍得到图像，其数字化步骤是（　）。', o:['编码→采样→量化','采样→编码→量化','采样→量化→编码','量化→采样→编码'], a:2, e:'图像数字化三步：采样→量化→编码。'},
+    {q:'[第25题] 在树的生长过程中，其高度逐渐增高。这一事例说明有些数据是（　）。', o:['会消失的','固定不变的','会变化的','随机出现的'], a:2, e:'树的高度随时间改变，属于"会变化"的数据。'},
+    {q:'[第27题] 存储 5000 个汉字需要的存储容量大约是（　）。', o:['1KB','2KB','10KB','5KB'], a:2, e:'一个汉字机内码/国标码占 2 字节，5000×2=10000B≈10KB。'},
+    {q:'[第38题]（配图）用 8×8 点阵表示"才"字，黑、白像素映射为 1、0，从上到下第五行的信息编码是（　）。', o:['00010100','01111111','00000100','00001100'], a:0, e:'配图题：数出第五行从左到右的黑白像素（黑=1、白=0）得到 00010100。'}
+  ],
+  '综合训练三': [
+    {q:'[第1题] 天气预报会随着时间的推移而发生变化，这体现了信息的（　）特征。', o:['传递性','共享性','时效性','依附性'], a:2, e:'信息随时间变化、过期失效，体现时效性。'},
+    {q:'[第2题] 有人说"信息是一种资源"，也有人说"信息能消除认识上的不确定性"。这些说法说明了（　）。', o:['信息是一种物质','信息等同于物质和能源','信息是不确定的','信息可以被人类所利用'], a:3, e:'两种说法都表明信息对人类有用、可被利用。'},
+    {q:'[第12题] 下列关于信息概念的描述，正确的是（　）。', o:['符号可以表达信息','符号是信息的子集','信息符号相互作用','信息一定包含符号'], a:0, e:'信息需要依附载体，符号是载体，可以表达信息。'},
+    {q:'[第13题] 以下关于存储单位的换算，错误的是（　）。', o:['1Byte=8bit','1MB=1024KB','1TB=1024MB','1KB=1024B'], a:2, e:'1TB=1024GB，而不是 1024MB，故 C 错误。'},
+    {q:'[第14题] 已知"b"的 ASCII 码值的十进制数是 98，则"e"的 ASCII 码值的十进制数是（　）。', o:['99','102','100','101'], a:3, e:'b、c、d、e 依次递增，"e"比"b"大 3，98+3=101。'},
+    {q:'[第18题] 在音频的数字化过程中，操作步骤顺序正确的是（　）。', o:['采样、量化、编码','量化、采样、编码','采样、编码、量化','编码、量化、采样'], a:0, e:'声音数字化步骤：采样→量化→编码。'},
+    {q:'[第25题] 一幅分辨率为 8×64、黑白未压缩的位图图像，其存储容量是（　）。', o:['128b','512B','64B','1024b'], a:2, e:'黑白图像每像素 1 位，8×64×1÷8=64B。'},
+    {q:'[第31题] 数据的记录形式是多种多样的。下列属于数据的是（　）。', o:['实验记录簿','录取通知单','数码摄像机','游客健康码'], a:3, e:'健康码是记录客观事物的符号（数据），其余为载体或设备。'},
+    {q:'[第35题] 某位图图像的色彩位数为 7 位，此图像可呈现的颜色数量最多为（　）。', o:['64','32','128','256'], a:2, e:'颜色种数=2ⁿ，2⁷=128 种。'},
+    {q:'[第39题] 采集一段采样频率为 22.05kHz、量化位数为 8 位、时长 5 秒的立体声音频，其文件的存储容量大约为（　）。', o:['44.1KB','3528KB','441KB','220.5KB'], a:3, e:'22.05×1000×8×2×5÷8=220500B≈220.5KB。'}
+  ],
+  '综合训练四': [
+    {q:'[第1题] 如图"15%"的数据表现形式是（　）。', o:['图形','数字','音频','文字'], a:3, e:'"15%"以文字（含符号）形式呈现。'},
+    {q:'[第3题] 李师傅按照车载 GPS 导航规划的路线驾驶经常出错，更新导航地图文件后错误概率大大降低。这体现了信息具有（　）。', o:['载体依附性','共享性','传递性','时效性'], a:3, e:'旧地图信息过时失效，更新后恢复价值，体现时效性。'},
+    {q:'[第4题] 文字、图像、符号、音频、视频等属于（　）。', o:['信息','数据','知识','内容'], a:1, e:'这些是记录客观事物的符号，属于数据（模拟数据）。'},
+    {q:'[第6题] 下列属于信息的是（　）。', o:['新华字典','成绩报告单','影像光盘','天气预报'], a:3, e:'天气预报是信息本身；字典、报告单、光盘是载体。'},
+    {q:'[第7题] 一张未经压缩、分辨率为 20×10、颜色位数为 16 位的位图图像，其存储容量为（　）。', o:['1024B','800B','400B','3200B'], a:2, e:'20×10×16÷8=400B。'},
+    {q:'[第11题] 以下可以采集到音频信息的设备是（　）。', o:['耳机','扬声器','录音笔','功率放大器'], a:2, e:'录音笔可采集声音；耳机、扬声器是输出设备。'},
+    {q:'[第27题] 将自然界中的水流声录制下来转换为音频文件保存在计算机中，首先要进行（　）。', o:['采样','编码','量化','剪辑'], a:0, e:'数字化第一步是采样。'},
+    {q:'[第37题] 以下属于数据的是（　）。', o:['计算机文件','刻录机','文件柜','无线路由器'], a:0, e:'计算机文件是记录客观事物的符号（数据），其余是设备或载体。'},
+    {q:'[第38题] 教师通过成绩分析找出学生存在的问题，这主要体现了信息的（　）特征。', o:['共享性','传递性','可处理性','价值相对性'], a:2, e:'对成绩数据进行分析加工得出新信息，体现可处理性。'},
+    {q:'[第39题] 将二进制数 11101 转化为十进制数，其值为（　）。', o:['30','29','28','27'], a:1, e:'11101 = 16+8+4+0+1 = 29。'}
+  ],
+  '综合训练五': [
+    {q:'[第1题] 生物兴趣小组成员需要录制一段小鸟的叫声，以下可用的数字化采集工具是（　）。', o:['签字笔','麦克风','扬声器','录音笔'], a:3, e:'录音笔可采集录制声音；麦克风仅是声音输入部件。'},
+    {q:'[第3题] 谷爱凌为中国体育代表团获得 2 金 1 银的消息通过网络和电视传遍全中国。这说明信息具有（　）。', o:['传递性','有效性','真伪性','依附性'], a:0, e:'信息通过网络、电视从一处传到各地，体现传递性。'},
+    {q:'[第9题] ASCII 码表中字符"Q"的 ASCII 码是（　）。', o:['00010101','01010001','01000011','01010010'], a:1, e:'Q 的十进制 ASCII 码为 81，二进制 01010001。'},
+    {q:'[第21题] 将模拟信号转换为数字信号的过程包含采样和（　）。①解压 ②量化 ③编码 ④编译', o:['①②','②③','①④','②④'], a:1, e:'模拟转数字三步：采样、量化、编码。'},
+    {q:'[第23题] 将二进制数转化为十进制数，可使用的数字工具软件是（　）。', o:['计算器','画图程序','PDF 阅读器','记事本'], a:0, e:'计算器（科学型）支持进制转换。'}
+  ],
+  '综合训练六': [
+    {q:'[第3题] 下列属于大数据在生产、生活中应用的是（　）。', o:['在购物平台注册账号','购物平台智能推送商品信息','系统开发人员设计用户界面','利用软件统计考试成绩'], a:1, e:'基于用户海量行为数据的智能推送，属于大数据应用。'},
+    {q:'[第4题] 在声音数字化过程中，每隔一段时间在模拟声音信号的波形上采集一个幅度值，该步骤称为（　）。', o:['转换','编码','量化','采样'], a:3, e:'按一定间隔取幅度值，是采样。'},
+    {q:'[第5题] 以下不属于数据采集设备的是（　）。', o:['录音笔','摄像头','音箱','扫描仪'], a:2, e:'音箱是输出设备，不是采集设备。'},
+    {q:'[第7题] 将十进制数 19 转换为二进制数，以下正确的是（　）。', o:['10101','10011','10110','10001'], a:1, e:'19=16+2+1 → 10011。'},
+    {q:'[第9题] 已知字母"H"的 ASCII 码的十进制数为 72，则字母"B"的 ASCII 码的十进制数是（　）。', o:['65','66','67','68'], a:1, e:'B、C、D、E、F、G、H 依次递增，"B"比"H"小 6，72-6=66。'},
+    {q:'[第10题] 存储 2000 个汉字的国标码占用的存储空间约是（　）。', o:['500B','250B','1MB','4KB'], a:3, e:'一个汉字国标码占 2 字节，2000×2=4000B≈4KB。'},
+    {q:'[第12题] 小组长在班会课上汇报研究性学习的成果，这主要体现了信息的（　）特征。', o:['时效性','可处理性','真伪性','共享性'], a:3, e:'成果通过汇报被多人共同接收，体现共享性。'},
+    {q:'[第21题] 从身份证号码中可以获得性别信息，这主要体现了信息的（　）特征。', o:['可处理性','真伪性','共享性','时效性'], a:0, e:'对身份证号码加工处理得到性别，体现可处理性。'},
+    {q:'[第34题]（配图）……相同。这一事例说明有些数据是（　）。', o:['可控制的','固定不变的','会消失的','随机出现的'], a:3, e:'考查数据特点中的"随机"，如抛骰子每次点数不一定相同。'}
+  ],
+  '综合训练七': [
+    {q:'[第3题] 人们利用天气预报作为穿衣或出行的参考，这体现了信息具有（　）。', o:['时效性','价值性','共享性','依附性'], a:1, e:'天气预报作为穿衣、出行参考，具有使用价值，体现价值性。'},
+    {q:'[第13题] 二进制数 1011 与十进制数 2 相加的结果是（　）。', o:['(1100)₂','(1111)₂','(1101)₂','(1110)₂'], a:2, e:'1011(11) + 2 = 13 = 1101。'},
+    {q:'[第23题] 某位图图像包含 256 种颜色，此图像的色彩位数至少为（　）。', o:['6 位','5 位','8 位','7 位'], a:2, e:'256=2⁸，需 8 位。'},
+    {q:'[第27题] 学校需要录制一段安全教育的视频，以下可用的数字化采集工具是（　）。', o:['摄像机','显示器','麦克风','录音机'], a:0, e:'摄像机可采集视频；麦克风、录音机只能采集声音。'},
+    {q:'[第31题] 程序员用记事本编写了程序代码，其数据的表现形式是（　）。', o:['动画','视频','文本','图形'], a:2, e:'记事本里的代码以文本形式呈现。'}
+  ],
+  '综合训练八': [
+    {q:'[第1题] 用于描述和记录客观事物属性的符号称为（　）。', o:['信息','数据','知识','标识符'], a:1, e:'这是教材对"数据"的定义：描述和记录客观事物属性的符号。'},
+    {q:'[第2题] 体育老师根据学生身体健康数据优化课堂教学，这主要体现了信息的（　）特征。', o:['价值性','依附性','传递性','真伪性'], a:0, e:'信息用于优化教学、产生价值，体现价值性。'},
+    {q:'[第3题] 在计算机中，通常用英文单词"Byte"来表示（　）。', o:['二进制位','字长','字节','时钟频率'], a:2, e:'Byte 即字节，1B=8bit。'},
+    {q:'[第7题] 数据的记录形式是多种多样的。下列属于数据的是（　）。', o:['年平均气温','实验报告册','行车记录仪','旅客身份证'], a:0, e:'年平均气温是数值型数据；报告册、身份证是载体，记录仪是设备。'},
+    {q:'[第14题] 以下属于内存容量单位的是（　）。', o:['MHz','b/s','GB','MIPS'], a:2, e:'GB（吉字节）是存储容量单位；MHz 是频率、b/s 是速率、MIPS 是运算速度。'},
+    {q:'[第19题] 将十进制数 28 转换为二进制数，下列正确的是（　）。', o:['00111','11010','11100','10100'], a:2, e:'28=16+8+4 → 11100。'},
+    {q:'[第24题] 教师使用学籍管理系统筛选出团员信息，这主要体现了信息的（　）特征。', o:['真伪性','可处理性','传递性','价值性'], a:1, e:'对学籍数据进行筛选加工，体现可处理性。'},
+    {q:'[第38题] 数值数据通常采用数制来表达。以下关于六进制数进位规则的描述，正确的是（　）。', o:['逢六进一','逢十进一','逢一进六','逢二进一'], a:0, e:'n 进制规则是"逢 n 进一"，六进制即逢六进一。'}
+  ],
+  '综合训练九': [
+    {q:'[第4题] 某人使用优惠券购物时，发现优惠券过期不能使用，这主要体现了信息的（　）特征。', o:['真伪性','时效性','相对性','不确定性'], a:1, e:'优惠券信息过期失效，体现时效性。'},
+    {q:'[第6题] 某位图图像的色彩位数为 6 位，此图像可呈现的颜色数量最多为（　）。', o:['32','128','256','64'], a:3, e:'2⁶=64 种颜色。'},
+    {q:'[第17题] 剩余容量为 1MB 的 U 盘，可以存储英文字符的个数是（　）。', o:['1000×1000 个','1024 个','1024×1024 个','2×1024 个'], a:2, e:'1MB=1024×1024B，一个英文字符占 1B，故约 1024×1024 个。'},
+    {q:'[第25题] 网络中的资源可以被用户下载使用，这主要体现的信息特征是（　）。', o:['真伪性','共享性','时效性','依附性'], a:1, e:'资源可被多个用户获取使用，体现共享性。'}
+  ],
+  '综合训练十': [
+    {q:'[第3题] 李涛得知市教育局领导要来校检查的消息后，通过班级微信群告知全班同学，这体现了信息具有（　）。', o:['载体依附性','时效性','可处理性','共享性'], a:3, e:'信息在群内被多人共同接收，体现共享性。'},
+    {q:'[第4题] 二进制数 0101 与 0111 相加的运算结果是（　）。', o:['1100','1101','1011','1111'], a:0, e:'0101(5)+0111(7)=12=1100。'},
+    {q:'[第6题] 将十进制数 25 转换为二进制数，下列正确的是（　）。', o:['11001','00111','11010','10111'], a:0, e:'25=16+8+1 → 11001。'},
+    {q:'[第14题] 声音、图像等模拟数据转换为数字数据的过程是（　）。', o:['采样→编码→量化','量化→采样→编码','编码→量化→采样','采样→量化→编码'], a:3, e:'模拟数据数字化三步：采样→量化→编码。'},
+    {q:'[第16题] 以下关于信息概念的描述，正确的是（　）。', o:['信息会带给人们不确定的东西','信息是指向明确的事件和消息','信息可以消除不确定性的东西','信息是指未确定性的事件和消息'], a:2, e:'香农认为信息可以消除认识上的不确定性。'},
+    {q:'[第17题] 存储容量 1GB 等于（　）。', o:['1024KB','1024MB','1024×1024B','3×1024B'], a:1, e:'1GB=1024MB。'},
+    {q:'[第35题] 学校宣传栏通过文字和图像宣传交通安全知识，这主要体现了信息的（　）特征。', o:['浏览性','可处理性','可视化','依附性'], a:3, e:'信息依附于文字、图像这些载体，体现载体依附性。'},
+    {q:'[第38题] 以下关于信息概念的描述，正确的是（　）。①信息一定包含声音 ②视频一定包含信息 ③声音是信息的载体 ④图像可以表达信息', o:['①②④','①②③','①③④','②③④'], a:3, e:'①错（信息不一定包含声音）；②③④正确。'}
+  ]
+};
+
+
+function mountQuiz(list, containerId){
+  const root = document.getElementById(containerId);
+  if(!root) return;
+  function build(){
+    root.innerHTML = '';
+    let answered = 0, correct = 0;
+
+    const bar = document.createElement('div'); bar.className = 'exam-bar';
+    const stat = document.createElement('span'); stat.className = 'exam-stat';
+    const prog = document.createElement('div'); prog.className = 'exam-progress';
+    const fill = document.createElement('div'); fill.className = 'bar'; prog.appendChild(fill);
+    const acc = document.createElement('span'); acc.className = 'exam-acc';
+    const reset = document.createElement('button'); reset.className = 'reset-btn'; reset.textContent = '↺ 重做';
+    reset.onclick = build;
+    bar.append(stat, prog, acc, reset);
+
+    const done = document.createElement('div'); done.className = 'exam-done';
+    root.append(bar, done);
+
+    function update(){
+      stat.innerHTML = `进度：已答 <b>${answered}</b> / ${list.length}　正确 <b>${correct}</b>`;
+      acc.innerHTML = answered ? `正确率 <b>${Math.round(correct/answered*100)}%</b>` : '正确率 <b>--</b>';
+      fill.style.width = (answered/list.length*100) + '%';
+      fill.classList.toggle('full', answered === list.length);
+      fill.classList.toggle('good', answered === list.length && correct === list.length);
+      if(answered === list.length){
+        const rate = Math.round(correct/list.length*100);
+        done.textContent = rate === 100
+          ? '🎉 太棒了！全部正确，这一组题你已经完全掌握！'
+          : (rate >= 80 ? `✅ 已完成本组练习，正确率 ${rate}%，掌握得不错！` : `📌 已完成本组练习，正确率 ${rate}%，建议结合解析复习错题。`);
+        done.classList.add('show');
+      } else {
+        done.classList.remove('show');
+      }
+    }
+
+    list.forEach((item, i)=>{
+      const box = document.createElement('div');
+      box.className = 'qitem';
+      const head = document.createElement('div');
+      head.className = 'q-head';
+      head.innerHTML = `<span class="n">${i+1}</span>${item.q}`;
+      if(item.a === -1) head.innerHTML += `<span class="hint-img">配图题</span>`;
+      box.appendChild(head);
+
+      const opts = document.createElement('div');
+      item.o.forEach((opt, j)=>{
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.innerHTML = `<span class="letter">${String.fromCharCode(65+j)}</span><span>${opt}</span>`;
+        b.onclick = ()=>{
+          if(b.classList.contains('disabled')) return;
+          answered++;
+          if(item.a === -1){
+            box.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+            const ex = box.querySelector('.explain');
+            ex.innerHTML = '<b>说明：</b>' + item.e;
+            ex.classList.add('show');
+            updateStat();
+            return;
+          }
+          box.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+          if(j === item.a){ b.classList.add('correct'); correct++; }
+          else { b.classList.add('wrong'); box.querySelectorAll('.opt')[item.a].classList.add('correct'); }
+          const ex = box.querySelector('.explain');
+          ex.innerHTML = '<b>解析：</b>' + item.e;
+          ex.classList.add('show');
+          updateStat();
+        };
+        opts.appendChild(b);
+      });
+      box.appendChild(opts);
+      const ex = document.createElement('div');
+      ex.className = 'explain';
+      box.appendChild(ex);
+      root.appendChild(box);
+    });
+
+    function updateStat(){ update(); }
+    update();
+  }
+  build();
+}
+mountQuiz(EXAM.u1, 'exam-u1');
+mountQuiz(EXAM.u2num, 'exam-u2');
+mountQuiz(EXAM.u2b, 'exam-u2b');
+mountQuiz(EXAM.u3, 'exam-u3');
+
+
+/* ---------- 嵌入式小练渲染 ---------- */
+function mountMini(el){
+  const src = el.dataset.src, idxStr = el.dataset.idx;
+  const list = idxStr.split(',').map(i=>EXAM[src][+i]);
+  const holder = document.createElement('div');
+  el.appendChild(holder);
+  holder.id = 'mini-' + Math.random().toString(36).slice(2,8);
+  const head = document.createElement('div');
+  head.className = 'mini-head';
+  head.innerHTML = '<span class="tag-mini">✏️ 讲完即练</span><span class="hint">从本单元真题中精选 ' + list.length + ' 题，完整题组见本课时尾部</span>';
+  el.insertBefore(head, holder);
+  mountQuiz(list, holder.id);
+}
+document.querySelectorAll('.mini-quiz').forEach(mountMini);
+
+/* ---------- 综合训练真题渲染 ---------- */
+(function renderZX(){
+  const container = document.getElementById('zx-container');
+  if(!container) return;
+  let seq = 0;
+  for(const name in ZX){
+    const card = document.createElement('div');
+    card.className = 'card';
+    const h = document.createElement('h3');
+    h.innerHTML = `<span class="ico">📝</span>${name}（共 ${ZX[name].length} 题）`;
+    card.appendChild(h);
+    const quizId = 'zx-quiz-' + (seq++);
+    const quiz = document.createElement('div');
+    quiz.id = quizId;
+    card.appendChild(quiz);
+    container.appendChild(card);
+    mountQuiz(ZX[name], quizId);
+  }
+})();
+
+/* ---------- 进制转换 ---------- */
+const sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+function dec2bin(){
+  const out = document.getElementById('convResult');
+  let n = parseInt(document.getElementById('decInput').value, 10);
+  if(isNaN(n) || n<0){ out.textContent='请输入非负整数'; out.classList.add('show'); return; }
+  if(n===0){ out.innerHTML='<span class="ans">0</span> 的二进制是 <span class="ans">0</span>'; out.classList.add('show'); return; }
+  let steps=[], num=n, rems=[];
+  while(num>0){ const r=num%2; rems.push(r); steps.push(`${num} ÷ 2 = ${Math.floor(num/2)} …… 余 ${r}`); num=Math.floor(num/2); }
+  const bin = rems.reverse().join('');
+  out.innerHTML = '除 2 取余过程：<br>' + steps.join('<br>') + `<br><br>✅ 余数倒序得：<span class="ans">${n}(十进制) = ${bin}B</span>`;
+  out.classList.add('show');
+}
+function bin2dec(){
+  const out = document.getElementById('convResult');
+  const s = document.getElementById('binInput').value.trim();
+  if(!/^[01]+$/.test(s)){ out.textContent='请输入只含 0 和 1 的二进制数'; out.classList.add('show'); return; }
+  const arr = s.split('').reverse();
+  let terms=[], sum=0;
+  arr.forEach((ch,i)=>{ const v = ch==='1' ? Math.pow(2,i) : 0; if(v) terms.push('1×2' + (sup[i] || ('^'+i))); sum += v; });
+  out.innerHTML = '按权展开：' + terms.join(' + ') + `<br><br>✅ <span class="ans">${s}B = ${sum}(十进制)</span>`;
+  out.classList.add('show');
+}
+
+/* ---------- 声音容量 ---------- */
+function soundCalc(){
+  const out = document.getElementById('soundResult');
+  const f=parseFloat(document.getElementById('freq').value), b=parseFloat(document.getElementById('bits').value),
+        c=parseInt(document.getElementById('chan').value), t=parseFloat(document.getElementById('dur').value);
+  if([f,b,c,t].some(isNaN)){ out.textContent='请填写完整数字'; out.classList.add('show'); return; }
+  const B = f*1000*b*c*t/8, KB=B/1024, MB=KB/1024;
+  out.innerHTML = `容量 = ${f}kHz×1000 × ${b}位 × ${c}声道 × ${t}秒 ÷ 8<br>` +
+    `= ${f*1000} × ${b} × ${c} × ${t} ÷ 8<br>` +
+    `✅ = <span class="ans">${B.toFixed(0)} B</span> ≈ <span class="ans">${KB.toFixed(1)} KB</span>` +
+    (MB>=0.01 ? ` ≈ ${MB.toFixed(2)} MB` : '');
+  out.classList.add('show');
+}
+
+/* ---------- 图像容量 ---------- */
+function imageCalc(){
+  const out = document.getElementById('imageResult');
+  const w=parseInt(document.getElementById('w').value), h=parseInt(document.getElementById('h').value);
+  let bits=parseFloat(document.getElementById('cbits').value);
+  const cc=document.getElementById('ccount').value;
+  if(cc!=='' && cc!==undefined){
+    const n=parseInt(cc,10);
+    if(n>0 && (n&(n-1))===0){ bits=Math.round(Math.log2(n)); }
+    else { out.textContent='颜色种数需为 2 的幂（如 16、256）'; out.classList.add('show'); return; }
+  }
+  if([w,h,bits].some(v=>isNaN(v))){ out.textContent='请填写完整数字'; out.classList.add('show'); return; }
+  const B = w*h*bits/8, KB=B/1024;
+  const extra = cc!==''?`（${cc} 色 → 2^${bits} = ${cc}，即每像素 ${bits} 位）`:`（每像素 ${bits} 位）`;
+  out.innerHTML = `图像容量 = ${w}×${h} × ${bits} ÷ 8 ${extra}<br>` +
+    `✅ = <span class="ans">${B.toFixed(0)} B</span>` + (KB>=1?` ≈ ${KB.toFixed(2)} KB`: '');
+  out.classList.add('show');
+}
+
+/* 初始展开第1课时 */
+document.querySelector('.grp[data-unit="unit1"]').classList.add('open');
+updateProgress();
+
+/* ---------- 全站导航栏（移动端菜单） ---------- */
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', ()=> navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> navLinks.classList.remove('open')));
+
+/* ---------- URL hash 直达课时（首页课时链接跳转支持） ---------- */
+(function gotoFromHash(){
+  const h = decodeURIComponent(location.hash.replace('#',''));
+  const valid = ['unit1','unit2','unit3','unit4','zx','review','tools'];
+  if(h && valid.includes(h)){
+    goto(h);
+  }
+})();
+window.addEventListener('hashchange', ()=>{
+  const h = decodeURIComponent(location.hash.replace('#',''));
+  const valid = ['unit1','unit2','unit3','unit4','zx','review','tools'];
+  if(h && valid.includes(h)) goto(h);
+});
+</script>
+</body>
+</html>
